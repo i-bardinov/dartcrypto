@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>DartCrypto</title>
+</head>
+<body>
+    <p>Select Cryptosystem:
+        <select id="SelectCrypto">
+            <option disabled selected value="null">Choose Cryptosystem</option>
+            <option value="0">Caesar Cipher</option>
+            <option value="1">Affine Cipher</option>
+            <option value="2">Hill Cipher</option>
+            <option value="3">Vigenere Cipher</option>
+            <option value="4">Beaufort Cipher</option>
+        </select>
+    </p>
+    <p>Select Type:
+        <select id="SelectType" size="3">
+            <option selected value="0">Encryption</option>
+            <option value="1">Decryption</option>
+            <option value="2">Hacking</option>
+        </select>
+    </p>
+
+    <div id="CryptoBody">
+
+    </div>
+
+        <script type="application/dart" src="main.dart"></script>
+        <script src="main.dart.js"></script>
+
+</body>
+</html>
