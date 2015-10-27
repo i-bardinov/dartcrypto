@@ -35,7 +35,6 @@ class BeaufortCipher {
   List decrypt(List message) {
     checkKey();
     int keySize = key.length;
-    // TODO: not working
     for (int i = 0;
         i < message.length;
         i++) message[i] = (key[i % keySize] - message[i]) % modulo;

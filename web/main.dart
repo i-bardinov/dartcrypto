@@ -1,4 +1,4 @@
-import 'packages/dartcrypto/dartcrypto.dart';
+import 'package:dartcrypto/dartcrypto.dart';
 import 'utils.dart';
 import 'dart:html';
 
