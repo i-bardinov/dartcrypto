@@ -19,7 +19,7 @@ const String TEXT_DESCRIPTION_HILL = "";
 const String TEXT_DESCRIPTION_VIGENERE = "";
 const String TEXT_DESCRIPTION_BEAUFORT = "";
 const String TEXT_DESCRIPTION_VERNAM = "";
-const String TEXT_DESCRIPTION_GOST_28147_89 = "";
+const String TEXT_DESCRIPTION_MAGMA = "";
 
 const int CIPHER_CAESAR = 0;
 const int CIPHER_AFFINE = 1;
@@ -27,7 +27,7 @@ const int CIPHER_HILL = 2;
 const int CIPHER_VIGENERE = 3;
 const int CIPHER_BEAUFORT = 4;
 const int CIPHER_VERNAM = 5;
-const int CIPHER_GOST_28147_89 = 100;
+const int CIPHER_MAGMA = 100;
 
 const int CIPHER_TYPE_ENCRYPT = 0;
 const int CIPHER_TYPE_DECRYPT = 1;
