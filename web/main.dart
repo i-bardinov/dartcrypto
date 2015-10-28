@@ -18,6 +18,30 @@ void buildStructure(int cryptosystem, int type, Element element) {
   if (cryptosystem == null ||
       type == null) throw new ArgumentError.notNull('cryptosystem');
 
+  // DESCRIPTION
+  var PElementDescription = new ParagraphElement();
+  switch (cryptosystem) {
+    case CIPHER_CAESAR:
+      PElementDescription.text = TEXT_DESCRIPTION_CAESAR;
+      break;
+    case CIPHER_AFFINE:
+      PElementDescription.text = TEXT_DESCRIPTION_AFFINE;
+      break;
+    case CIPHER_HILL:
+      PElementDescription.text = TEXT_DESCRIPTION_HILL;
+      break;
+    case CIPHER_VIGENERE:
+      PElementDescription.text = TEXT_DESCRIPTION_VIGENERE;
+      break;
+    case CIPHER_BEAUFORT:
+      PElementDescription.text = TEXT_DESCRIPTION_BEAUFORT;
+      break;
+    case CIPHER_VERNAM:
+      PElementDescription.text = TEXT_DESCRIPTION_VERNAM;
+      break;
+  }
+  element.children.add(PElementDescription);
+
   // ALPHABET
   var PElement1 = new ParagraphElement()..text = TEXT_ALPHABET;
   var textAreaAlphabet = new TextAreaElement()..value = ALPHABET_STANDARD;

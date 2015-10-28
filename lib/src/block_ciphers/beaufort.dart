@@ -25,8 +25,9 @@ class BeaufortCipher {
     checkKey();
     int keySize = key.length;
     for (int i = 0;
-        i < message.length;
-        i++) message[i] = (key[i % keySize] - message[i]) % modulo;
+    i < message.length;
+    i++)
+      message[i] = (key[i % keySize] - message[i]) % modulo;
     return message;
   }
 
@@ -34,8 +35,9 @@ class BeaufortCipher {
     checkKey();
     int keySize = key.length;
     for (int i = 0;
-        i < message.length;
-        i++) message[i] = (key[i % keySize] - message[i]) % modulo;
+    i < message.length;
+    i++)
+      message[i] = (key[i % keySize] - message[i]) % modulo;
     return message;
   }
 }
