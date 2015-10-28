@@ -1,13 +1,11 @@
 library dartcrypto.vigenere;
 
 import "dart:math";
-import '../exceptions.dart';
+import 'package:dartcrypto/src/exceptions.dart';
 
 class VigenereCipher {
   int modulo;
   List key = null;
-
-  static int KEY_MAX_SIZE = 20;
 
   VigenereCipher(this.modulo, [this.key]);
 
@@ -16,11 +14,11 @@ class VigenereCipher {
     key.forEach((f) => f %= modulo);
   }
 
-  void generateKey() {
+  void generateKey(int length) {
     Random rand = new Random();
-    int size = rand.nextInt(KEY_MAX_SIZE) + 1;
     key.clear();
-    for (int i = 0; i < size; i++) key.add(rand.nextInt(modulo));
+    for (int i = 0; i < length; i++)
+      key.add(rand.nextInt(modulo));
   }
 
   List encrypt(List message) {

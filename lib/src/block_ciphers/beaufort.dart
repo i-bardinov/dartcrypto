@@ -7,8 +7,6 @@ class BeaufortCipher {
   int modulo;
   List key = null;
 
-  static int KEY_MAX_SIZE = 20;
-
   BeaufortCipher(this.modulo, [this.key]);
 
   void checkKey() {
@@ -16,11 +14,11 @@ class BeaufortCipher {
     key.forEach((f) => f %= modulo);
   }
 
-  void generateKey() {
+  void generateKey(int length) {
     Random rand = new Random();
-    int size = rand.nextInt(KEY_MAX_SIZE) + 1;
     key.clear();
-    for (int i = 0; i < size; i++) key.add(rand.nextInt(modulo));
+    for (int i = 0; i < length; i++)
+      key.add(rand.nextInt(modulo));
   }
 
   List encrypt(List message) {

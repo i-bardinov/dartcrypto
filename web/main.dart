@@ -1,21 +1,20 @@
 import 'package:dartcrypto/dartcrypto.dart';
 import 'utils.dart';
 import 'dart:html';
-
-DivElement body;
+import 'dart:math';
 
 void main() {
   SelectElement type = querySelector("#SelectType");
   SelectElement cryptosystem = querySelector("#SelectCrypto");
-  type.onChange.listen((e) =>
-      buildStructure(int.parse(cryptosystem.value), int.parse(type.value)));
-  cryptosystem.onChange.listen((e) =>
-      buildStructure(int.parse(cryptosystem.value), int.parse(type.value)));
-  body = querySelector("#CryptoBody");
+  DivElement body = querySelector("#CryptoBody");
+  type.onChange.listen((e) => buildStructure(
+      int.parse(cryptosystem.value), int.parse(type.value), body));
+  cryptosystem.onChange.listen((e) => buildStructure(
+      int.parse(cryptosystem.value), int.parse(type.value), body));
 }
 
-void buildStructure(int cryptosystem, int type) {
-  clear();
+void buildStructure(int cryptosystem, int type, Element element) {
+  clear(element);
   if (cryptosystem == null ||
       type == null) throw new ArgumentError.notNull('cryptosystem');
 
@@ -26,7 +25,7 @@ void buildStructure(int cryptosystem, int type) {
     ..add(new BRElement())
     ..add(new BRElement())
     ..add(textAreaAlphabet);
-  body.children.add(PElement1);
+  element.children.add(PElement1);
 
   // MESSAGE
   var PElement2 = new ParagraphElement();
@@ -37,13 +36,13 @@ void buildStructure(int cryptosystem, int type) {
   }
   var textArea = new TextAreaElement();
   PElement2.children..add(new BRElement())..add(new BRElement())..add(textArea);
-  body.children.add(PElement2);
+  element.children.add(PElement2);
 
   // KEY
   var PElement3 = new ParagraphElement();
   if (cryptosystem == CIPHER_AFFINE) PElement3.text = TEXT_KEY_AFFINE;
   else if (cryptosystem == CIPHER_CAESAR) PElement3.text = TEXT_KEY_CAESAR;
-  else PElement3.text = TEXT_KEY_HILL;
+  else PElement3.text = TEXT_KEY;
   // Generate key button
   var buttonGenerate = new ButtonElement()..text = BUTTON_GENERATE_KEY;
   if (cryptosystem != CIPHER_CAESAR) PElement3.children.add(buttonGenerate);
@@ -74,7 +73,7 @@ void buildStructure(int cryptosystem, int type) {
     PElement3.children.add(keyTextArea);
   }
 
-  body.children.add(PElement3);
+  element.children.add(PElement3);
 
   // RESULT BUTTON
   var buttonResult = new ButtonElement();
@@ -83,7 +82,7 @@ void buildStructure(int cryptosystem, int type) {
   } else if (type == CIPHER_TYPE_DECRYPT) {
     buttonResult.text = BUTTON_DECRYPT_MESSAGE;
   }
-  body.children.add(buttonResult);
+  element.children.add(buttonResult);
 
   // RESULT MESSAGE
   var PElement4 = new ParagraphElement();
@@ -97,9 +96,10 @@ void buildStructure(int cryptosystem, int type) {
     ..add(new BRElement())
     ..add(new BRElement())
     ..add(resultTextArea);
-  body.children.add(PElement4);
+  element.children.add(PElement4);
 
   // Buttons, TextAreas, Fields listen
+  Random rand = new Random();
   switch (cryptosystem) {
     case CIPHER_CAESAR:
     case CIPHER_AFFINE:
@@ -155,7 +155,7 @@ void buildStructure(int cryptosystem, int type) {
                 textAreaAlphabet.value));
       }
       buttonGenerate.onClick.listen((e) {
-        cipher.generateKey();
+        cipher.generateKey(rand.nextInt(KEY_MAX_DIM_HILL) + 1);
         keyTextArea.value =
             convertToString(cipher.key.toList(), textAreaAlphabet.value);
       });
@@ -183,7 +183,7 @@ void buildStructure(int cryptosystem, int type) {
                 textAreaAlphabet.value));
       }
       buttonGenerate.onClick.listen((e) {
-        cipher.generateKey();
+        cipher.generateKey(rand.nextInt(KEY_MAX_SIZE_VIGENERE));
         keyTextArea.value = convertToString(cipher.key, textAreaAlphabet.value);
       });
       break;
@@ -210,13 +210,40 @@ void buildStructure(int cryptosystem, int type) {
                 textAreaAlphabet.value));
       }
       buttonGenerate.onClick.listen((e) {
-        cipher.generateKey();
+        cipher.generateKey(KEY_MAX_SIZE_BEAUFORT);
+        keyTextArea.value = convertToString(cipher.key, textAreaAlphabet.value);
+      });
+      break;
+    case CIPHER_VERNAM:
+      VernamCipher cipher = new VernamCipher(textAreaAlphabet.value.length,
+      convertToList(keyTextArea.value, textAreaAlphabet.value));
+      textAreaAlphabet.onChange.listen((e) {
+        cipher.modulo = textAreaAlphabet.value.length;
+        cipher.key = convertToList(keyTextArea.value, textAreaAlphabet.value);
+      });
+      keyTextArea.onChange.listen((e) => cipher.key =
+      convertToList(keyTextArea.value, textAreaAlphabet.value));
+      if (type == CIPHER_TYPE_ENCRYPT) {
+        buttonResult.onClick.listen((e) =>
+        resultTextArea.value = convertToString(
+            cipher.encrypt(
+                convertToList(textArea.value, textAreaAlphabet.value)),
+            textAreaAlphabet.value));
+      } else if (type == CIPHER_TYPE_DECRYPT) {
+        buttonResult.onClick.listen((e) =>
+        resultTextArea.value = convertToString(
+            cipher.decrypt(
+                convertToList(textArea.value, textAreaAlphabet.value)),
+            textAreaAlphabet.value));
+      }
+      buttonGenerate.onClick.listen((e) {
+        cipher.generateKey(textArea.value.length);
         keyTextArea.value = convertToString(cipher.key, textAreaAlphabet.value);
       });
       break;
   }
 }
 
-void clear() {
-  body.children.clear();
+void clear(Element element) {
+  element.children.clear();
 }
