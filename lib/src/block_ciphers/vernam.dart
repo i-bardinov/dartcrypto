@@ -18,25 +18,22 @@ class VernamCipher {
   void generateKey(int length) {
     Random rand = new Random();
     key.clear();
-    for (int i = 0; i < length; i++)
-      key.add(rand.nextInt(modulo));
+    for (int i = 0; i < length; i++) key.add(rand.nextInt(modulo));
   }
 
   List encrypt(List message) {
     checkKey(message.length);
     for (int i = 0;
-    i < message.length;
-    i++)
-      message[i] = (message[i] + key[i]) % modulo;
+        i < message.length;
+        i++) message[i] = (message[i] + key[i]) % modulo;
     return message;
   }
 
   List decrypt(List message) {
     checkKey(message.length);
     for (int i = 0;
-    i < message.length;
-    i++)
-      message[i] = (message[i] - key[i]) % modulo;
+        i < message.length;
+        i++) message[i] = (message[i] - key[i]) % modulo;
     return message;
   }
 }

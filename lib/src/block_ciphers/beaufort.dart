@@ -17,17 +17,15 @@ class BeaufortCipher {
   void generateKey(int length) {
     Random rand = new Random();
     key.clear();
-    for (int i = 0; i < length; i++)
-      key.add(rand.nextInt(modulo));
+    for (int i = 0; i < length; i++) key.add(rand.nextInt(modulo));
   }
 
   List encrypt(List message) {
     checkKey();
     int keySize = key.length;
     for (int i = 0;
-    i < message.length;
-    i++)
-      message[i] = (key[i % keySize] - message[i]) % modulo;
+        i < message.length;
+        i++) message[i] = (key[i % keySize] - message[i]) % modulo;
     return message;
   }
 
@@ -35,9 +33,8 @@ class BeaufortCipher {
     checkKey();
     int keySize = key.length;
     for (int i = 0;
-    i < message.length;
-    i++)
-      message[i] = (key[i % keySize] - message[i]) % modulo;
+        i < message.length;
+        i++) message[i] = (key[i % keySize] - message[i]) % modulo;
     return message;
   }
 }

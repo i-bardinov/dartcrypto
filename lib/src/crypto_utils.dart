@@ -40,17 +40,15 @@ class Matrix {
   }
 
   void operator []=(int index, List value) {
-    if (value.length != columns)
-      throw new ArgumentError.value(value.length, 'value.length', 'Length of row cannot be > than column');
-    if (modulo != null && modulo != 0)
-      matrix[index] = value.map( (f) => f %= modulo);
-    else
-      matrix[index] = value;
+    if (value.length != columns) throw new ArgumentError.value(
+        value.length, 'value.length', 'Length of row cannot be > than column');
+    if (modulo != null && modulo != 0) matrix[index] =
+        value.map((f) => f %= modulo);
+    else matrix[index] = value;
   }
 
   int determinant() {
-    if (matrix[0].length == 1)
-      return matrix[0][0];
+    if (matrix[0].length == 1) return matrix[0][0];
     int determinant = 0;
     if (!isSquare()) throw new Exception(
         "Matrix is not square: $rows, $columns");

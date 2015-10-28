@@ -240,25 +240,25 @@ void buildStructure(int cryptosystem, int type, Element element) {
       break;
     case CIPHER_VERNAM:
       VernamCipher cipher = new VernamCipher(textAreaAlphabet.value.length,
-      convertToList(keyTextArea.value, textAreaAlphabet.value));
+          convertToList(keyTextArea.value, textAreaAlphabet.value));
       textAreaAlphabet.onChange.listen((e) {
         cipher.modulo = textAreaAlphabet.value.length;
         cipher.key = convertToList(keyTextArea.value, textAreaAlphabet.value);
       });
       keyTextArea.onChange.listen((e) => cipher.key =
-      convertToList(keyTextArea.value, textAreaAlphabet.value));
+          convertToList(keyTextArea.value, textAreaAlphabet.value));
       if (type == CIPHER_TYPE_ENCRYPT) {
         buttonResult.onClick.listen((e) =>
-        resultTextArea.value = convertToString(
-            cipher.encrypt(
-                convertToList(textArea.value, textAreaAlphabet.value)),
-            textAreaAlphabet.value));
+            resultTextArea.value = convertToString(
+                cipher.encrypt(
+                    convertToList(textArea.value, textAreaAlphabet.value)),
+                textAreaAlphabet.value));
       } else if (type == CIPHER_TYPE_DECRYPT) {
         buttonResult.onClick.listen((e) =>
-        resultTextArea.value = convertToString(
-            cipher.decrypt(
-                convertToList(textArea.value, textAreaAlphabet.value)),
-            textAreaAlphabet.value));
+            resultTextArea.value = convertToString(
+                cipher.decrypt(
+                    convertToList(textArea.value, textAreaAlphabet.value)),
+                textAreaAlphabet.value));
       }
       buttonGenerate.onClick.listen((e) {
         cipher.generateKey(textArea.value.length);

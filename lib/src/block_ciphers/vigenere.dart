@@ -17,8 +17,7 @@ class VigenereCipher {
   void generateKey(int length) {
     Random rand = new Random();
     key.clear();
-    for (int i = 0; i < length; i++)
-      key.add(rand.nextInt(modulo));
+    for (int i = 0; i < length; i++) key.add(rand.nextInt(modulo));
   }
 
   List encrypt(List message) {
