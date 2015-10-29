@@ -2,6 +2,8 @@ const String ALPHABET_STANDARD = "_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.?,-";
 const String TEXT_ALPHABET = "Alphabet: ";
 const String TEXT_MESSAGE_TO_ENCRYPT = "Message to encrypt: ";
 const String TEXT_MESSAGE_TO_DECRYPT = "Message to decrypt: ";
+const String TEXT_MESSAGE_TO_ENCRYPT_HEX = "Message to encrypt (HEX): ";
+const String TEXT_MESSAGE_TO_DECRYPT_HEX = "Message to decrypt (HEX): ";
 const String TEXT_KEY_AFFINE =
     "Key A and key B (Ax + B, A,B - Integers, x - symbol of message): ";
 const String TEXT_KEY_CAESAR =
@@ -9,6 +11,8 @@ const String TEXT_KEY_CAESAR =
 const String TEXT_KEY = "Key: ";
 const String TEXT_ENCRYPTED_MESSAGE = "Encrypted Message:  ";
 const String TEXT_DECRYPTED_MESSAGE = "Decrypted Message:  ";
+const String TEXT_ENCRYPTED_MESSAGE_HEX = "Encrypted Message (HEX):  ";
+const String TEXT_DECRYPTED_MESSAGE_HEX = "Decrypted Message (HEX):  ";
 const String BUTTON_GENERATE_KEY = "Generate Key";
 const String BUTTON_ENCRYPT_MESSAGE = "Encrypt";
 const String BUTTON_DECRYPT_MESSAGE = "Decrypt";

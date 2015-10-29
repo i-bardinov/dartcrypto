@@ -3,6 +3,7 @@ library dartcrypto.crypto_utils;
 import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:dartcrypto/src/exceptions.dart';
+import 'dart:convert';
 
 class Matrix {
   int rows;
@@ -187,6 +188,14 @@ List hexStringToBytes(String str) {
 
 String bytesToHexString(List list) {
   return CryptoUtils.bytesToHex(list);
+}
+
+String HexStringToString(String str) {
+  return UTF8.decode(hexStringToBytes(str));
+}
+
+String StringToHexString(String str) {
+  return bytesToHexString(UTF8.encode(str));
 }
 
 List ECB_mode_encryption(List message, enc) {

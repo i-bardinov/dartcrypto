@@ -62,8 +62,25 @@ void buildStructure(int cryptosystem, int type, Element element) {
     PElement2.text = TEXT_MESSAGE_TO_DECRYPT;
   }
   var textArea = new TextAreaElement();
-  PElement2.children..add(new BRElement())..add(new BRElement())..add(textArea);
-  element.children.add(PElement2);
+  if (type == CIPHER_TYPE_ENCRYPT) {
+    PElement2.children
+      ..add(new BRElement())
+      ..add(new BRElement())
+      ..add(textArea);
+    element.children.add(PElement2);
+  }
+  var PElement2Hex = new ParagraphElement();
+  if (type == CIPHER_TYPE_ENCRYPT) {
+    PElement2Hex.text = TEXT_MESSAGE_TO_ENCRYPT_HEX;
+  } else if (type == CIPHER_TYPE_DECRYPT) {
+    PElement2Hex.text = TEXT_MESSAGE_TO_DECRYPT_HEX;
+  }
+  var textAreaHex = new TextAreaElement();
+  PElement2Hex.children
+    ..add(new BRElement())
+    ..add(new BRElement())
+    ..add(textAreaHex);
+  element.children.add(PElement2Hex);
 
   // KEY
   var PElement3 = new ParagraphElement();
@@ -114,18 +131,44 @@ void buildStructure(int cryptosystem, int type, Element element) {
   // RESULT MESSAGE
   var PElement4 = new ParagraphElement();
   if (type == CIPHER_TYPE_ENCRYPT) {
-    PElement4.text = TEXT_ENCRYPTED_MESSAGE;
+    PElement4.text = TEXT_ENCRYPTED_MESSAGE_HEX;
   } else if (type == CIPHER_TYPE_DECRYPT) {
-    PElement4.text = TEXT_DECRYPTED_MESSAGE;
+    PElement4.text = TEXT_DECRYPTED_MESSAGE_HEX;
   }
-  var resultTextArea = new TextAreaElement();
+  var resultTextAreaHex = new TextAreaElement();
   PElement4.children
     ..add(new BRElement())
     ..add(new BRElement())
-    ..add(resultTextArea);
+    ..add(resultTextAreaHex);
   element.children.add(PElement4);
+  var PElement4More = new ParagraphElement();
+  if (type == CIPHER_TYPE_ENCRYPT) {
+    PElement4More.text = TEXT_ENCRYPTED_MESSAGE;
+  } else if (type == CIPHER_TYPE_DECRYPT) {
+    PElement4More.text = TEXT_DECRYPTED_MESSAGE;
+  }
+  var resultTextArea = new TextAreaElement();
+  if (type == CIPHER_TYPE_DECRYPT) {
+    PElement4More.children
+      ..add(new BRElement())
+      ..add(new BRElement())
+      ..add(resultTextArea);
+    element.children.add(PElement4More);
+  }
 
   // Buttons, TextAreas, Fields listen
+  if (type == CIPHER_TYPE_ENCRYPT) {
+    textAreaHex.onChange
+        .listen((e) => textArea.value = HexStringToString(textAreaHex.value));
+    textArea.onChange
+        .listen((e) => textAreaHex.value = StringToHexString(textArea.value));
+  }
+  if (type == CIPHER_TYPE_DECRYPT) {
+    resultTextAreaHex.onChange.listen((e) =>
+        resultTextArea.value = HexStringToString(resultTextAreaHex.value));
+    resultTextArea.onChange.listen((e) =>
+        resultTextAreaHex.value = StringToHexString(resultTextArea.value));
+  }
   Random rand = new Random();
   switch (cryptosystem) {
     case CIPHER_CAESAR:
@@ -140,15 +183,15 @@ void buildStructure(int cryptosystem, int type, Element element) {
           .listen((e) => cipher.key_B = int.parse(keyBInput.value));
       if (type == CIPHER_TYPE_ENCRYPT) {
         buttonResult.onClick.listen((e) =>
-            resultTextArea.value = convertToString(
+            resultTextAreaHex.value = convertToString(
                 cipher.encrypt(
-                    convertToList(textArea.value, textAreaAlphabet.value)),
+                    convertToList(textAreaHex.value, textAreaAlphabet.value)),
                 textAreaAlphabet.value));
       } else if (type == CIPHER_TYPE_DECRYPT) {
         buttonResult.onClick.listen((e) =>
-            resultTextArea.value = convertToString(
+            resultTextAreaHex.value = convertToString(
                 cipher.decrypt(
-                    convertToList(textArea.value, textAreaAlphabet.value)),
+                    convertToList(textAreaHex.value, textAreaAlphabet.value)),
                 textAreaAlphabet.value));
       }
       buttonGenerate.onClick.listen((e) {
@@ -170,15 +213,15 @@ void buildStructure(int cryptosystem, int type, Element element) {
       });
       if (type == CIPHER_TYPE_ENCRYPT) {
         buttonResult.onClick.listen((e) =>
-            resultTextArea.value = convertToString(
+            resultTextAreaHex.value = convertToString(
                 cipher.encrypt(
-                    convertToList(textArea.value, textAreaAlphabet.value)),
+                    convertToList(textAreaHex.value, textAreaAlphabet.value)),
                 textAreaAlphabet.value));
       } else if (type == CIPHER_TYPE_DECRYPT) {
         buttonResult.onClick.listen((e) =>
-            resultTextArea.value = convertToString(
+            resultTextAreaHex.value = convertToString(
                 cipher.decrypt(
-                    convertToList(textArea.value, textAreaAlphabet.value)),
+                    convertToList(textAreaHex.value, textAreaAlphabet.value)),
                 textAreaAlphabet.value));
       }
       buttonGenerate.onClick.listen((e) {
@@ -198,15 +241,15 @@ void buildStructure(int cryptosystem, int type, Element element) {
           convertToList(keyTextArea.value, textAreaAlphabet.value));
       if (type == CIPHER_TYPE_ENCRYPT) {
         buttonResult.onClick.listen((e) =>
-            resultTextArea.value = convertToString(
+            resultTextAreaHex.value = convertToString(
                 cipher.encrypt(
-                    convertToList(textArea.value, textAreaAlphabet.value)),
+                    convertToList(textAreaHex.value, textAreaAlphabet.value)),
                 textAreaAlphabet.value));
       } else if (type == CIPHER_TYPE_DECRYPT) {
         buttonResult.onClick.listen((e) =>
-            resultTextArea.value = convertToString(
+            resultTextAreaHex.value = convertToString(
                 cipher.decrypt(
-                    convertToList(textArea.value, textAreaAlphabet.value)),
+                    convertToList(textAreaHex.value, textAreaAlphabet.value)),
                 textAreaAlphabet.value));
       }
       buttonGenerate.onClick.listen((e) {
@@ -225,15 +268,15 @@ void buildStructure(int cryptosystem, int type, Element element) {
           convertToList(keyTextArea.value, textAreaAlphabet.value));
       if (type == CIPHER_TYPE_ENCRYPT) {
         buttonResult.onClick.listen((e) =>
-            resultTextArea.value = convertToString(
+            resultTextAreaHex.value = convertToString(
                 cipher.encrypt(
-                    convertToList(textArea.value, textAreaAlphabet.value)),
+                    convertToList(textAreaHex.value, textAreaAlphabet.value)),
                 textAreaAlphabet.value));
       } else if (type == CIPHER_TYPE_DECRYPT) {
         buttonResult.onClick.listen((e) =>
-            resultTextArea.value = convertToString(
+            resultTextAreaHex.value = convertToString(
                 cipher.decrypt(
-                    convertToList(textArea.value, textAreaAlphabet.value)),
+                    convertToList(textAreaHex.value, textAreaAlphabet.value)),
                 textAreaAlphabet.value));
       }
       buttonGenerate.onClick.listen((e) {
@@ -247,21 +290,25 @@ void buildStructure(int cryptosystem, int type, Element element) {
       keyTextArea.onChange
           .listen((e) => cipher.key = hexStringToBytes(keyTextArea.value));
       if (type == CIPHER_TYPE_ENCRYPT) {
-        buttonResult.onClick.listen((e) => resultTextArea.value =
-            bytesToHexString(cipher.encrypt(hexStringToBytes(textArea.value))));
+        buttonResult.onClick.listen((e) =>
+            resultTextAreaHex.value = bytesToHexString(
+                cipher.encrypt(hexStringToBytes(textAreaHex.value))));
       } else if (type == CIPHER_TYPE_DECRYPT) {
-        buttonResult.onClick.listen((e) => resultTextArea.value =
-            bytesToHexString(cipher.decrypt(hexStringToBytes(textArea.value))));
+        buttonResult.onClick.listen((e) {
+          resultTextAreaHex.value = bytesToHexString(
+              cipher.decrypt(hexStringToBytes(textAreaHex.value)));
+          resultTextArea.value = HexStringToString(resultTextAreaHex.value);
+        });
       }
       buttonGenerate.onClick.listen((e) {
-        cipher.generateKey(hexStringToBytes(textArea.value).length);
+        cipher.generateKey(hexStringToBytes(textAreaHex.value).length);
         keyTextArea.value = bytesToHexString(cipher.key);
       });
       break;
     case CIPHER_AES:
       buttonResult.onClick.listen((e) {
-        resultTextArea.value =
-            bytesToHexString(hexStringToBytes(textArea.value));
+        resultTextAreaHex.value =
+            bytesToHexString(hexStringToBytes(textAreaHex.value));
       });
       break;
   }
@@ -270,4 +317,3 @@ void buildStructure(int cryptosystem, int type, Element element) {
 void clear(Element element) {
   element.children.clear();
 }
-
