@@ -1,7 +1,7 @@
 library dartcrypto.affine;
 
 import 'dart:math';
-import '../../exceptions.dart';
+import 'package:dartcrypto/src/exceptions.dart';
 
 class AffineCipher {
   int key_A = 1;

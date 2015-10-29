@@ -2,6 +2,7 @@ import 'package:dartcrypto/dartcrypto.dart';
 import 'utils.dart';
 import 'dart:html';
 import 'dart:math';
+import 'dart:convert';
 
 void main() {
   SelectElement type = querySelector("#SelectType");
@@ -43,11 +44,9 @@ void buildStructure(int cryptosystem, int type, Element element) {
   element.children.add(PElementDescription);
 
   // ALPHABET
-  var PElement1 = new ParagraphElement()
-    ..text = TEXT_ALPHABET;
-  var textAreaAlphabet = new TextAreaElement()
-    ..value = ALPHABET_STANDARD;
-  if (cryptosystem < 100) {
+  var PElement1 = new ParagraphElement()..text = TEXT_ALPHABET;
+  var textAreaAlphabet = new TextAreaElement()..value = ALPHABET_STANDARD;
+  if (cryptosystem < 99) {
     PElement1.children
       ..add(new BRElement())
       ..add(new BRElement())
@@ -243,30 +242,26 @@ void buildStructure(int cryptosystem, int type, Element element) {
       });
       break;
     case CIPHER_VERNAM:
-      VernamCipher cipher = new VernamCipher(textAreaAlphabet.value.length,
-          convertToList(keyTextArea.value, textAreaAlphabet.value));
-      textAreaAlphabet.onChange.listen((e) {
-        cipher.modulo = textAreaAlphabet.value.length;
-        cipher.key = convertToList(keyTextArea.value, textAreaAlphabet.value);
-      });
-      keyTextArea.onChange.listen((e) => cipher.key =
-          convertToList(keyTextArea.value, textAreaAlphabet.value));
+      VernamCipher cipher =
+          new VernamCipher(256, hexStringToBytes(keyTextArea.value));
+      keyTextArea.onChange
+          .listen((e) => cipher.key = hexStringToBytes(keyTextArea.value));
       if (type == CIPHER_TYPE_ENCRYPT) {
-        buttonResult.onClick.listen((e) =>
-            resultTextArea.value = convertToString(
-                cipher.encrypt(
-                    convertToList(textArea.value, textAreaAlphabet.value)),
-                textAreaAlphabet.value));
+        buttonResult.onClick.listen((e) => resultTextArea.value =
+            bytesToHexString(cipher.encrypt(hexStringToBytes(textArea.value))));
       } else if (type == CIPHER_TYPE_DECRYPT) {
-        buttonResult.onClick.listen((e) =>
-            resultTextArea.value = convertToString(
-                cipher.decrypt(
-                    convertToList(textArea.value, textAreaAlphabet.value)),
-                textAreaAlphabet.value));
+        buttonResult.onClick.listen((e) => resultTextArea.value =
+            bytesToHexString(cipher.decrypt(hexStringToBytes(textArea.value))));
       }
       buttonGenerate.onClick.listen((e) {
-        cipher.generateKey(textArea.value.length);
-        keyTextArea.value = convertToString(cipher.key, textAreaAlphabet.value);
+        cipher.generateKey(hexStringToBytes(textArea.value).length);
+        keyTextArea.value = bytesToHexString(cipher.key);
+      });
+      break;
+    case CIPHER_AES:
+      buttonResult.onClick.listen((e) {
+        resultTextArea.value =
+            bytesToHexString(hexStringToBytes(textArea.value));
       });
       break;
   }
@@ -275,3 +270,4 @@ void buildStructure(int cryptosystem, int type, Element element) {
 void clear(Element element) {
   element.children.clear();
 }
+

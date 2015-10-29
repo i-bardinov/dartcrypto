@@ -26,8 +26,9 @@ const int CIPHER_AFFINE = 1;
 const int CIPHER_HILL = 2;
 const int CIPHER_VIGENERE = 3;
 const int CIPHER_BEAUFORT = 4;
-const int CIPHER_VERNAM = 5;
+const int CIPHER_VERNAM = 99;
 const int CIPHER_MAGMA = 100;
+const int CIPHER_AES = 101;
 
 const int CIPHER_TYPE_ENCRYPT = 0;
 const int CIPHER_TYPE_DECRYPT = 1;

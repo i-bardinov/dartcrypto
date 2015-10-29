@@ -1,8 +1,8 @@
 library dartcrypto.hill;
 
 import 'dart:math';
-import '../../crypto_utils.dart';
-import "../../exceptions.dart";
+import 'package:dartcrypto/src/crypto_utils.dart';
+import "package:dartcrypto/src/exceptions.dart";
 
 class HillCipher {
   Matrix key = null;

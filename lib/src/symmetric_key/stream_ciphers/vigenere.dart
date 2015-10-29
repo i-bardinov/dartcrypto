@@ -1,7 +1,7 @@
 library dartcrypto.vigenere;
 
 import "dart:math";
-import '../../exceptions.dart';
+import 'package:dartcrypto/src/exceptions.dart';
 
 class VigenereCipher {
   int modulo;

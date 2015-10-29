@@ -1,6 +1,8 @@
 library dartcrypto.crypto_utils;
 
 import 'dart:math';
+import 'package:crypto/crypto.dart';
+import 'package:dartcrypto/src/exceptions.dart';
 
 class Matrix {
   int rows;
@@ -162,6 +164,29 @@ List convertToList(String str, [String alphabet]) {
       j < alphabetSize;
       j++) if (str[i] == alphabet[j]) list.add(j);
   return list;
+}
+
+List hexStringToBytes(String str) {
+  int k = 0;
+  /*return new List.generate((str.length / 2).ceil(), (f) {
+    if (str[k+1] == null)
+      f = int.parse(str[k] + '0', radix: 16);
+    else
+      f = int.parse(str[k] + str[k + 1], radix: 16);
+    k += 2;
+  });*/
+  List list = new List();
+  int len = str.length;
+  if (len != (len / 2).floor() * 2) throw new PopUpError(
+      "Cannot response hex number!");
+  for (int i = 0;
+  i < len;
+  i += 2) list.add(int.parse(str[i] + str[i + 1], radix: 16));
+  return list;
+}
+
+String bytesToHexString(List list) {
+  return CryptoUtils.bytesToHex(list);
 }
 
 List ECB_mode_encryption(List message, enc) {
