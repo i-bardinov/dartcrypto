@@ -1,13 +1,13 @@
-library dartcrypto.beaufort;
+library dartcrypto.vigenere;
 
 import "dart:math";
-import '../exceptions.dart';
+import '../../exceptions.dart';
 
-class BeaufortCipher {
+class VigenereCipher {
   int modulo;
   List key = null;
 
-  BeaufortCipher(this.modulo, [this.key]);
+  VigenereCipher(this.modulo, [this.key]);
 
   void checkKey() {
     if (key.isEmpty) throw new PopUpError("Key is empty");
@@ -25,7 +25,7 @@ class BeaufortCipher {
     int keySize = key.length;
     for (int i = 0;
         i < message.length;
-        i++) message[i] = (key[i % keySize] - message[i]) % modulo;
+        i++) message[i] = (message[i] + key[i % keySize]) % modulo;
     return message;
   }
 
@@ -34,7 +34,7 @@ class BeaufortCipher {
     int keySize = key.length;
     for (int i = 0;
         i < message.length;
-        i++) message[i] = (key[i % keySize] - message[i]) % modulo;
+        i++) message[i] = (message[i] - key[i % keySize] + modulo) % modulo;
     return message;
   }
 }

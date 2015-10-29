@@ -1,7 +1,7 @@
 library dartcrypto.vernam;
 
 import 'dart:math';
-import 'package:dartcrypto/src/exceptions.dart';
+import '../../exceptions.dart';
 
 class VernamCipher {
   List key = null;

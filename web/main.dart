@@ -43,13 +43,17 @@ void buildStructure(int cryptosystem, int type, Element element) {
   element.children.add(PElementDescription);
 
   // ALPHABET
-  var PElement1 = new ParagraphElement()..text = TEXT_ALPHABET;
-  var textAreaAlphabet = new TextAreaElement()..value = ALPHABET_STANDARD;
-  PElement1.children
-    ..add(new BRElement())
-    ..add(new BRElement())
-    ..add(textAreaAlphabet);
-  element.children.add(PElement1);
+  var PElement1 = new ParagraphElement()
+    ..text = TEXT_ALPHABET;
+  var textAreaAlphabet = new TextAreaElement()
+    ..value = ALPHABET_STANDARD;
+  if (cryptosystem < 100) {
+    PElement1.children
+      ..add(new BRElement())
+      ..add(new BRElement())
+      ..add(textAreaAlphabet);
+    element.children.add(PElement1);
+  }
 
   // MESSAGE
   var PElement2 = new ParagraphElement();
