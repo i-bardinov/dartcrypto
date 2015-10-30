@@ -8,7 +8,7 @@ const String TEXT_KEY_AFFINE =
     "Key A and key B (Ax + B, A,B - Integers, x - symbol of message): ";
 const String TEXT_KEY_CAESAR =
     "Key B (x + B, B - Integer, x - symbol of message): ";
-const String TEXT_KEY = "Key: ";
+const String TEXT_KEY = "Key (HEX): ";
 const String TEXT_ENCRYPTED_MESSAGE = "Encrypted Message:  ";
 const String TEXT_DECRYPTED_MESSAGE = "Decrypted Message:  ";
 const String TEXT_ENCRYPTED_MESSAGE_HEX = "Encrypted Message (HEX):  ";

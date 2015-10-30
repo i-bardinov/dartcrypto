@@ -1,177 +1,28 @@
 import 'package:dartcrypto/dartcrypto.dart';
+import 'package:dartcrypto/src/exceptions.dart';
 import 'utils.dart';
 import 'dart:html';
 import 'dart:math';
 import 'dart:convert';
 
 void main() {
-  SelectElement type = querySelector("#SelectType");
   SelectElement cryptosystem = querySelector("#SelectCrypto");
-  DivElement body = querySelector("#CryptoBody");
-  type.onChange.listen((e) => buildStructure(
-      int.parse(cryptosystem.value), int.parse(type.value), body));
   cryptosystem.onChange.listen((e) => buildStructure(
-      int.parse(cryptosystem.value), int.parse(type.value), body));
+      int.parse(cryptosystem.value)));
 }
 
-void buildStructure(int cryptosystem, int type, Element element) {
-  clear(element);
-  if (cryptosystem == null ||
-      type == null) throw new ArgumentError.notNull('cryptosystem');
+void buildStructure(int cryptosystem) {
+  if (cryptosystem == null) throw new PopUpError('Select Cryptosystem!');
 
-  // DESCRIPTION
-  var PElementDescription = new ParagraphElement();
-  switch (cryptosystem) {
-    case CIPHER_CAESAR:
-      PElementDescription.text = TEXT_DESCRIPTION_CAESAR;
-      break;
-    case CIPHER_AFFINE:
-      PElementDescription.text = TEXT_DESCRIPTION_AFFINE;
-      break;
-    case CIPHER_HILL:
-      PElementDescription.text = TEXT_DESCRIPTION_HILL;
-      break;
-    case CIPHER_VIGENERE:
-      PElementDescription.text = TEXT_DESCRIPTION_VIGENERE;
-      break;
-    case CIPHER_BEAUFORT:
-      PElementDescription.text = TEXT_DESCRIPTION_BEAUFORT;
-      break;
-    case CIPHER_VERNAM:
-      PElementDescription.text = TEXT_DESCRIPTION_VERNAM;
-      break;
-  }
-  element.children.add(PElementDescription);
+  TextAreaElement inputTextArea = querySelector("#inputTextArea");
+  TextAreaElement keyTextArea = querySelector("#keyTextArea");
+  TextAreaElement outputTextArea = querySelector("#outputTextArea");
+  DivElement encryptButton = querySelector("#encryptButton");
+  DivElement decryptButton = querySelector("#decryptButton");
 
-  // ALPHABET
-  var PElement1 = new ParagraphElement()..text = TEXT_ALPHABET;
-  var textAreaAlphabet = new TextAreaElement()..value = ALPHABET_STANDARD;
-  if (cryptosystem < 99) {
-    PElement1.children
-      ..add(new BRElement())
-      ..add(new BRElement())
-      ..add(textAreaAlphabet);
-    element.children.add(PElement1);
-  }
-
-  // MESSAGE
-  var PElement2 = new ParagraphElement();
-  if (type == CIPHER_TYPE_ENCRYPT) {
-    PElement2.text = TEXT_MESSAGE_TO_ENCRYPT;
-  } else if (type == CIPHER_TYPE_DECRYPT) {
-    PElement2.text = TEXT_MESSAGE_TO_DECRYPT;
-  }
-  var textArea = new TextAreaElement();
-  if (type == CIPHER_TYPE_ENCRYPT) {
-    PElement2.children
-      ..add(new BRElement())
-      ..add(new BRElement())
-      ..add(textArea);
-    element.children.add(PElement2);
-  }
-  var PElement2Hex = new ParagraphElement();
-  if (type == CIPHER_TYPE_ENCRYPT) {
-    PElement2Hex.text = TEXT_MESSAGE_TO_ENCRYPT_HEX;
-  } else if (type == CIPHER_TYPE_DECRYPT) {
-    PElement2Hex.text = TEXT_MESSAGE_TO_DECRYPT_HEX;
-  }
-  var textAreaHex = new TextAreaElement();
-  PElement2Hex.children
-    ..add(new BRElement())
-    ..add(new BRElement())
-    ..add(textAreaHex);
-  element.children.add(PElement2Hex);
-
-  // KEY
-  var PElement3 = new ParagraphElement();
-  if (cryptosystem == CIPHER_AFFINE) PElement3.text = TEXT_KEY_AFFINE;
-  else if (cryptosystem == CIPHER_CAESAR) PElement3.text = TEXT_KEY_CAESAR;
-  else PElement3.text = TEXT_KEY;
-  // Generate key button
-  var buttonGenerate = new ButtonElement()..text = BUTTON_GENERATE_KEY;
-  if (cryptosystem != CIPHER_CAESAR) PElement3.children.add(buttonGenerate);
-  PElement3.children..add(new BRElement())..add(new BRElement());
-
-  var keyAInput = new InputElement();
-  var keyBInput = new InputElement();
-  var keyTextArea = new TextAreaElement();
-  if (cryptosystem == CIPHER_CAESAR || cryptosystem == CIPHER_AFFINE) {
-    keyAInput
-      ..type = "text"
-      ..value = "1"
-      ..size = 10
-      ..pattern = "^[ 0-9]";
-    keyBInput
-      ..type = "text"
-      ..value = "0"
-      ..size = 10
-      ..pattern = "^[ 0-9]";
-    if (cryptosystem == CIPHER_AFFINE) {
-      PElement3.children
-        ..add(keyAInput)
-        ..add(new BRElement())
-        ..add(new BRElement());
-    }
-    PElement3.children.add(keyBInput);
-  } else {
-    PElement3.children.add(keyTextArea);
-  }
-
-  element.children.add(PElement3);
-
-  // RESULT BUTTON
-  var buttonResult = new ButtonElement();
-  if (type == CIPHER_TYPE_ENCRYPT) {
-    buttonResult.text = BUTTON_ENCRYPT_MESSAGE;
-  } else if (type == CIPHER_TYPE_DECRYPT) {
-    buttonResult.text = BUTTON_DECRYPT_MESSAGE;
-  }
-  element.children.add(buttonResult);
-
-  // RESULT MESSAGE
-  var PElement4 = new ParagraphElement();
-  if (type == CIPHER_TYPE_ENCRYPT) {
-    PElement4.text = TEXT_ENCRYPTED_MESSAGE_HEX;
-  } else if (type == CIPHER_TYPE_DECRYPT) {
-    PElement4.text = TEXT_DECRYPTED_MESSAGE_HEX;
-  }
-  var resultTextAreaHex = new TextAreaElement();
-  PElement4.children
-    ..add(new BRElement())
-    ..add(new BRElement())
-    ..add(resultTextAreaHex);
-  element.children.add(PElement4);
-  var PElement4More = new ParagraphElement();
-  if (type == CIPHER_TYPE_ENCRYPT) {
-    PElement4More.text = TEXT_ENCRYPTED_MESSAGE;
-  } else if (type == CIPHER_TYPE_DECRYPT) {
-    PElement4More.text = TEXT_DECRYPTED_MESSAGE;
-  }
-  var resultTextArea = new TextAreaElement();
-  if (type == CIPHER_TYPE_DECRYPT) {
-    PElement4More.children
-      ..add(new BRElement())
-      ..add(new BRElement())
-      ..add(resultTextArea);
-    element.children.add(PElement4More);
-  }
-
-  // Buttons, TextAreas, Fields listen
-  if (type == CIPHER_TYPE_ENCRYPT) {
-    textAreaHex.onChange
-        .listen((e) => textArea.value = HexStringToString(textAreaHex.value));
-    textArea.onChange
-        .listen((e) => textAreaHex.value = StringToHexString(textArea.value));
-  }
-  if (type == CIPHER_TYPE_DECRYPT) {
-    resultTextAreaHex.onChange.listen((e) =>
-        resultTextArea.value = HexStringToString(resultTextAreaHex.value));
-    resultTextArea.onChange.listen((e) =>
-        resultTextAreaHex.value = StringToHexString(resultTextArea.value));
-  }
   Random rand = new Random();
   switch (cryptosystem) {
-    case CIPHER_CAESAR:
+  /*case CIPHER_CAESAR:
     case CIPHER_AFFINE:
       AffineCipher cipher = new AffineCipher(textAreaAlphabet.value.length,
           int.parse(keyAInput.value), int.parse(keyBInput.value));
@@ -283,33 +134,18 @@ void buildStructure(int cryptosystem, int type, Element element) {
         cipher.generateKey(KEY_MAX_SIZE_BEAUFORT);
         keyTextArea.value = convertToString(cipher.key, textAreaAlphabet.value);
       });
-      break;
+      break;*/
     case CIPHER_VERNAM:
-      VernamCipher cipher =
-          new VernamCipher(256, hexStringToBytes(keyTextArea.value));
-      keyTextArea.onChange
-          .listen((e) => cipher.key = hexStringToBytes(keyTextArea.value));
-      if (type == CIPHER_TYPE_ENCRYPT) {
-        buttonResult.onClick.listen((e) =>
-            resultTextAreaHex.value = bytesToHexString(
-                cipher.encrypt(hexStringToBytes(textAreaHex.value))));
-      } else if (type == CIPHER_TYPE_DECRYPT) {
-        buttonResult.onClick.listen((e) {
-          resultTextAreaHex.value = bytesToHexString(
-              cipher.decrypt(hexStringToBytes(textAreaHex.value)));
-          resultTextArea.value = HexStringToString(resultTextAreaHex.value);
-        });
-      }
-      buttonGenerate.onClick.listen((e) {
-        cipher.generateKey(hexStringToBytes(textAreaHex.value).length);
-        keyTextArea.value = bytesToHexString(cipher.key);
-      });
+      VernamCipher cipher = new VernamCipher(256, hexStringToBytes(keyTextArea.value));
+      keyTextArea.onChange.listen((e) => cipher.key = hexStringToBytes(keyTextArea.value));
+      encryptButton.onClick.listen((e) => outputTextArea.value = bytesToHexString(cipher.encrypt(hexStringToBytes(inputTextArea.value))));
+      decryptButton.onClick.listen((e) => inputTextArea.value = bytesToHexString(cipher.decrypt(hexStringToBytes(outputTextArea.value))));
       break;
     case CIPHER_AES:
-      buttonResult.onClick.listen((e) {
+    /*buttonResult.onClick.listen((e) {
         resultTextAreaHex.value =
             bytesToHexString(hexStringToBytes(textAreaHex.value));
-      });
+      });*/
       break;
   }
 }

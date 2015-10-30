@@ -23,6 +23,7 @@ class VernamCipher {
 
   List encrypt(List message) {
     checkKey(message.length);
+    print(key.toString());
     for (int i = 0; i < message.length; i++) message[i] = message[i] ^ key[i];
     return message;
   }
