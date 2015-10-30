@@ -11,7 +11,6 @@ class VigenereCipher {
 
   void checkKey() {
     if (key.isEmpty) throw new PopUpError("Key is empty");
-    key.forEach((f) => f %= modulo);
   }
 
   void generateKey(int length) {
@@ -34,7 +33,7 @@ class VigenereCipher {
     int keySize = key.length;
     for (int i = 0;
         i < message.length;
-        i++) message[i] = (message[i] - key[i % keySize] + modulo) % modulo;
+        i++) message[i] = (message[i] - key[i % keySize]) % modulo;
     return message;
   }
 }

@@ -8,7 +8,7 @@ class AffineCipher {
   int key_B = 0;
   int modulo = 0;
 
-  AffineCipher(this.modulo, [this.key_A, this.key_B]);
+  AffineCipher(this.modulo, {this.key_A, this.key_B});
 
   void checkKey() {
     if (modulo <

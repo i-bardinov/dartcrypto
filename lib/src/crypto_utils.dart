@@ -182,12 +182,20 @@ String bytesToHexString(List list) {
   return CryptoUtils.bytesToHex(list);
 }
 
-String HexStringToString(String str) {
-  return UTF8.decode(hexStringToBytes(str));
+String hexStringToString(String str) {
+  return bytesToString(hexStringToBytes(str));
 }
 
-String StringToHexString(String str) {
-  return bytesToHexString(UTF8.encode(str));
+String stringToHexString(String str) {
+  return bytesToHexString(stringToBytes(str));
+}
+
+List stringToBytes(String str) {
+  return UTF8.encode(str);
+}
+
+String bytesToString(List list) {
+  return UTF8.decode(list);
 }
 
 List ECB_mode_encryption(List message, enc) {

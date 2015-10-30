@@ -25,7 +25,7 @@ class HillCipher {
   void setKey(List list) {
     int dim = sqrt(list.length).ceil();
     dimension = dim;
-    if (list.length < pow(dim, 2)) list.add(0);
+    while (list.length < pow(dim, 2)) list.add(0);
     key = new Matrix(dim, dim, list, modulo);
   }
 

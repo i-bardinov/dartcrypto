@@ -23,14 +23,13 @@ class VernamCipher {
 
   List encrypt(List message) {
     checkKey(message.length);
-    print(key.toString());
-    for (int i = 0; i < message.length; i++) message[i] = message[i] ^ key[i];
+    for (int i = 0; i < message.length; i++) message[i] = (message[i] + key[i]) % modulo;
     return message;
   }
 
   List decrypt(List message) {
     checkKey(message.length);
-    for (int i = 0; i < message.length; i++) message[i] = message[i] ^ key[i];
+    for (int i = 0; i < message.length; i++) message[i] = (message[i] - key[i]) % modulo;
     return message;
   }
 }
