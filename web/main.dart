@@ -31,13 +31,16 @@ void buildStructure(int cryptosystem) {
   Random rand = new Random();
   switch (cryptosystem) {
     case CIPHER_CAESAR:
-      AffineCipher cipher = new AffineCipher(256, key_A: 1, key_B: hexStringToBytes(keyTextArea.value)[0]);
+      AffineCipher cipher = new AffineCipher(256);
+      if (keyTextArea.value != null && keyTextArea.value.isNotEmpty) cipher.key_B = hexStringToBytes(keyTextArea.value)[0];
       streamKeyChange = keyTextArea.onChange.listen((e) => cipher.key_B = hexStringToBytes(keyTextArea.value)[0]);
       streamEncrypt = encryptButton.onClick.listen((e) => outputTextArea.value = bytesToHexString(cipher.encrypt(hexStringToBytes(inputTextArea.value))));
       streamDecrypt = decryptButton.onClick.listen((e) => inputTextArea.value = bytesToHexString(cipher.decrypt(hexStringToBytes(outputTextArea.value))));
       break;
     case CIPHER_AFFINE:
-      AffineCipher cipher = new AffineCipher(256, key_A: hexStringToBytes(keyTextArea.value)[0], key_B: hexStringToBytes(keyTextArea.value)[1]);
+      AffineCipher cipher = new AffineCipher(256);
+      if (keyTextArea.value != null && keyTextArea.value.isNotEmpty) cipher.key_A = hexStringToBytes(keyTextArea.value)[0];
+      if (keyTextArea.value != null && keyTextArea.value.isNotEmpty) cipher.key_B = hexStringToBytes(keyTextArea.value)[1];
       streamKeyChange = keyTextArea.onChange.listen((e) {
         cipher.key_A = hexStringToBytes(keyTextArea.value)[0];
         cipher.key_B = hexStringToBytes(keyTextArea.value)[1];
