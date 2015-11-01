@@ -1,4 +1,4 @@
-library dartcrypto.aes;
+library dartcrypto.ciphers.aes;
 
 import 'dart:math';
 

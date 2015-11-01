@@ -1,4 +1,4 @@
-library dartcrypto.affine;
+library dartcrypto.ciphers.affine;
 
 import 'dart:math';
 import 'package:dartcrypto/src/exceptions.dart';
@@ -8,7 +8,7 @@ class AffineCipher {
   int key_B = 0;
   int modulo = 0;
 
-  AffineCipher(this.modulo, {this.key_A, this.key_B});
+  AffineCipher(this.modulo, {this.key_A: 1, this.key_B: 0});
 
   void checkKey() {
     if (modulo <

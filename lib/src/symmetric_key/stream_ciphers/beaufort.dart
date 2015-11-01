@@ -1,4 +1,4 @@
-library dartcrypto.beaufort;
+library dartcrypto.ciphers.beaufort;
 
 import "dart:math";
 import 'package:dartcrypto/src/exceptions.dart';

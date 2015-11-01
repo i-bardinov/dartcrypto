@@ -1,4 +1,4 @@
-library dartcrypto.rsa;
+library dartcrypto.ciphers.rsa;
 
 import 'dart:math';
 

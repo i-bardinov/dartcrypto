@@ -1,7 +1,7 @@
-library dartcrypto.hill;
+library dartcrypto.ciphers.hill;
 
 import 'dart:math';
-import 'package:dartcrypto/src/crypto_utils.dart';
+import 'package:dartcrypto/src/utils/matrix.dart';
 import "package:dartcrypto/src/exceptions.dart";
 
 class HillCipher {
@@ -18,14 +18,14 @@ class HillCipher {
     if (pow(dimension, 2) != key.toList().length) throw new PopUpError(
         "Key is incorrect! Key length should be square but length is ${key.toList().length}");
     int det = key.determinant();
-    if (det == 0 || det.modInverse(modulo) == null) throw new PopUpError(
-        'Key is incorrect! Key determinant shouldn\'t be 0 and should be inverse! Det = $det.');
+    if (det == 0 || det.gcd(modulo) != 1 || det.modInverse(modulo) == null) throw new PopUpError(
+        'Key is incorrect! $det (Key determinant) shouldn\'t be 0 and coprime with $modulo!');
   }
 
   void setKey(List list) {
     int dim = sqrt(list.length).ceil();
     dimension = dim;
-    while (list.length < pow(dim, 2)) list.add(0);
+    while (list.length < pow(dim, 2)) list.add(0x00);
     key = new Matrix(dim, dim, list, modulo);
   }
 

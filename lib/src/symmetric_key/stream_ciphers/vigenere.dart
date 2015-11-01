@@ -1,4 +1,4 @@
-library dartcrypto.vigenere;
+library dartcrypto.ciphers.vigenere;
 
 import "dart:math";
 import 'package:dartcrypto/src/exceptions.dart';

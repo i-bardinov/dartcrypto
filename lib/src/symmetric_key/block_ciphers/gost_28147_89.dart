@@ -1,4 +1,4 @@
-library dartcrypto.gost_28147_89;
+library dartcrypto.ciphers.magma;
 
 import 'dart:math';
 

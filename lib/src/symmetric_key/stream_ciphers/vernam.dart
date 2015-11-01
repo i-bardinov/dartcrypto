@@ -1,4 +1,4 @@
-library dartcrypto.vernam;
+library dartcrypto.ciphers.vernam;
 
 import 'dart:math';
 import 'package:dartcrypto/src/exceptions.dart';
