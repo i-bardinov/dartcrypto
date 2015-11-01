@@ -5,13 +5,13 @@ import 'package:dartcrypto/src/utils/matrix.dart';
 import "package:dartcrypto/src/exceptions.dart";
 
 class HillCipher {
-  Matrix key = null;
+  Matrix key = new Matrix(1,1,[1]);
   int dimension = 0;
   int modulo = 0;
 
   static int KEY_MAX_DIMENSION = 4;
 
-  HillCipher(this.modulo, [this.dimension, this.key]);
+  HillCipher(this.modulo, {this.dimension, this.key});
 
   void checkKey() {
     if (key == null || key.isEmpty()) throw new PopUpError("Key is null!");

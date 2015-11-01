@@ -5,7 +5,7 @@ import 'package:dartcrypto/src/exceptions.dart';
 
 class VigenereCipher {
   int modulo;
-  List key = null;
+  List key = [1];
 
   VigenereCipher(this.modulo, [this.key]);
 

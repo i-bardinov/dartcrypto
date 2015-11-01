@@ -2,107 +2,113 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="style/style.css">
     <title>DartCrypto</title>
     <link rel="import" href="https://www.polymer-project.org/0.5/components/paper-ripple/paper-ripple.html">
 </head>
 
 <body>
 
-    <div id="frame">
-        <div id="wrapper">
+<div id="frame">
+    <div id="wrapper">
 
-            <h1>
-                <a href="/">DartCrypto</a>
-            </h1>
+        <h1>
+            <a href="/">DartCrypto</a>
+        </h1>
 
-            <div id="about">
-                <p>
-                    Designed and coded by
-                    <a href="http://vk.com/ilya_bardinov" target="_blank">Ilya Bardinov</a>
-                </p>
-                <div id="social">
-                    <a href="https://twitter.com/ilya_bardinov" target="_blank">
-                        <span>Follow @ilya_bardinov on Twitter</span>
-                    </a>
-                </div>
-            </div>
-
-            <p class="intro">
-                DartCrypto is an OpenSource web application under the
-                <a href="https://github.com/ilya-bardinov/dartcrypto/blob/master/LICENSE" target="_blank">Apache License</a>
-                where you can convert, encode and decode content between different format systems.
-                This happens fully in your browser using
-                <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a>,
-                compiled from <a href="https://en.wikipedia.org/wiki/Dart_(programming_language)" target="_blank">Dart</a>,
-                no content will be sent to any kind of server.
-                Any feedback appreciated, just leave me a tweet or contribute.
-            </p>
-
-            <p class="intro">
-                <b>Attention!</b> Some encryption methods offered below are very basic and therefore not considered as secure.
-            </p>
-
+        <div id="about">
             <p>
-                <select id="SelectCrypto">
-                    <option disabled selected value="null">Choose Cryptosystem</option>
-                    <option value="0">Caesar Cipher</option>
-                    <option value="1">Affine Cipher</option>
-                    <option value="2">Hill Cipher</option>
-                    <option value="3">Vigenere Cipher</option>
-                    <option value="4">Beaufort Cipher</option>
-                    <option value="5">Vernam Cipher</option>
-                    <option value="100">GOST 28147-89 (Magma Cipher)</option>
-                    <option value="101">AES Cipher</option>
-                </select>
+                Designed and coded by
+                <a href="https://www.facebook.com/profile.php?id=100009290034807" target="_blank">Ilya Bardinov</a>
             </p>
 
-            <div id="output">
-                <div id="outputField">
-                    Message to Decrypt:
-                </div>
-                <div id="outputFieldContainer">
-                    <textarea spellcheck="false" id="outputTextArea"></textarea>
-                </div>
-                <section>
-                    <div class="button raised blue" id="decryptButton">
-                        <div align="center" fit>DECRYPT</div>
-                        <paper-ripple fit></paper-ripple>
-                    </div>
-                </section>
+            <div id="social">
+                <a href="https://twitter.com/ilya_bardinov" target="_blank">
+                    <span>Follow @ilya_bardinov on Twitter</span>
+                </a>
             </div>
-
-            <div id="key">
-                <div id="keyField">
-                    Key:
-                </div>
-                <div id="keyFieldContainer">
-                    <textarea spellcheck="false" id="keyTextArea"></textarea>
-                </div>
-            </div>
-
-            <div id="input">
-                <div id="inputField">
-                    Message to Encrypt:
-                </div>
-                <div id="inputFieldContainer">
-                    <textarea spellcheck="false" id="inputTextArea"></textarea>
-                </div>
-                <section>
-                    <div class="button raised blue" id="encryptButton">
-                        <div align="center" fit>ENCRYPT</div>
-                        <paper-ripple fit></paper-ripple>
-                    </div>
-                </section>
-            </div>
-
-
         </div>
+
+        <p class="intro">
+            DartCrypto is an OpenSource web application under the
+            <a href="https://github.com/ilya-bardinov/dartcrypto/blob/master/LICENSE" target="_blank">Apache License</a>
+            where you can convert, encode and decode content between different format systems.
+            This happens fully in your browser using
+            <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a>,
+            compiled from <a href="https://en.wikipedia.org/wiki/Dart_(programming_language)" target="_blank">Dart</a>,
+            no content will be sent to any kind of server.
+            Any feedback appreciated, just leave me a tweet or contribute.
+        </p>
+
+        <p class="intro">
+            <b>Attention!</b> Some encryption methods offered below are very basic and therefore not considered as
+            secure.
+        </p>
+
+        <p>
+            <select id="SelectCrypto">
+                <option disabled selected value="null">Choose Cryptosystem</option>
+                <option value="0">Caesar Cipher</option>
+                <option value="1">Affine Cipher</option>
+                <option value="2">Hill Cipher</option>
+                <option value="3">Vigenere Cipher</option>
+                <option value="4">Beaufort Cipher</option>
+                <option value="5">Vernam Cipher</option>
+                <option value="100">GOST 28147-89 (Magma Cipher)</option>
+                <option value="101">AES Cipher</option>
+            </select>
+        </p>
+
+        <p id="description">
+
+        </p>
+
+        <div id="output">
+            <div id="outputField">
+                Message to Decrypt:
+            </div>
+            <div id="outputFieldContainer">
+                <textarea spellcheck="false" id="outputTextArea"></textarea>
+            </div>
+            <section>
+                <div class="button raised blue" id="decryptButton">
+                    <div align="center" fit>DECRYPT</div>
+                    <paper-ripple fit></paper-ripple>
+                </div>
+            </section>
+        </div>
+
+        <div id="key">
+            <div id="keyField">
+                Key:
+            </div>
+            <div id="keyFieldContainer">
+                <textarea spellcheck="false" id="keyTextArea"></textarea>
+            </div>
+        </div>
+
+        <div id="input">
+            <div id="inputField">
+                Message to Encrypt:
+            </div>
+            <div id="inputFieldContainer">
+                <textarea spellcheck="false" id="inputTextArea"></textarea>
+            </div>
+            <section>
+                <div class="button raised blue" id="encryptButton">
+                    <div align="center" fit>ENCRYPT</div>
+                    <paper-ripple fit></paper-ripple>
+                </div>
+            </section>
+        </div>
+
 
     </div>
 
-    <script type="application/dart" src="main.dart"></script>
-    <!--<script src="main.js"></script>-->
+</div>
+
+<script type="application/dart" src="scripts/main.dart"></script>
+<!--<script src="scripts/main.js"></script>-->
 
 </body>
 </html>

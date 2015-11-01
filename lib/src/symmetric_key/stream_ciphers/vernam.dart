@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:dartcrypto/src/exceptions.dart';
 
 class VernamCipher {
-  List key = null;
+  List key = [1];
   int modulo;
 
   VernamCipher(this.modulo, [this.key]);
