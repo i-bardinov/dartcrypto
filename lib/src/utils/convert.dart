@@ -30,9 +30,10 @@ List hexStringToBytes(String str, {int octets: 1}) {
   int size = octets * 2;
   List list = new List();
   int len = str.length;
-  if (len != (len / size).floor() * size) throw new PopUpError(
-      "Cannot response hexadecimal number!");
-  for (int i = 0; i < len; i += size) list.add(int.parse(str.substring(i, i+size),
+  if (len % size !=
+      0) throw new PopUpError("Cannot response hexadecimal number!");
+  for (int i = 0; i < len; i += size) list.add(int.parse(
+      str.substring(i, i + size),
       radix: 16,
       onError: (source) =>
           throw new PopUpError("Message should be hexadecimal")));

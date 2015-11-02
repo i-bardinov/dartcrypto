@@ -10,12 +10,13 @@ class AffineCipher {
 
   AffineCipher(this.modulo, {this.key_A: 1, this.key_B: 0});
 
-  void checkKey() {
+  String checkKey() {
     if (modulo <
-        1) throw new PopUpError("Alphabet size is $modulo! It should be > 0!");
+        1) return "Alphabet size is $modulo! It should be > 0!";
     int gcd = key_A.gcd(modulo);
-    if (gcd != 1) throw new PopUpError(
-        "GCD(key A, alphabet size) = GCD($key_A, $modulo) = $gcd but should be = 1!");
+    if (gcd != 1) return
+        "Key[1] = $key_A should be prime!";
+    return '';
   }
 
   void generateKey() {
@@ -26,12 +27,14 @@ class AffineCipher {
   }
 
   List encrypt(List message) {
-    checkKey();
+    String error = checkKey();
+    if (error != '') throw new PopUpError(error);
     return message.map((f) => (key_A * f + key_B) % modulo).toList();
   }
 
   List decrypt(List message) {
-    checkKey();
+    String error = checkKey();
+    if (error != '') throw new PopUpError(error);
     int invKey_A = key_A.modInverse(modulo);
     return message.map((f) => (invKey_A * (f - key_B)) % modulo).toList();
   }

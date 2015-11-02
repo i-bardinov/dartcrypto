@@ -5,7 +5,7 @@ import 'package:dartcrypto/src/exceptions.dart';
 
 class BeaufortCipher {
   int modulo;
-  List key = [1];
+  List key = [0];
 
   BeaufortCipher(this.modulo, [this.key]);
 

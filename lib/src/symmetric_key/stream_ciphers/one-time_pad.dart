@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:dartcrypto/src/exceptions.dart';
 
 class OTPCipher {
-  List key = [1];
+  List key = [0];
   int modulo;
 
   OTPCipher(this.modulo, [this.key]);
