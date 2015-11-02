@@ -4,27 +4,25 @@ import 'dart:async';
 import 'dart:html';
 import 'dart:math';
 
-double fullOffsetTop(Element element) =>
-element.getBoundingClientRect().top +
-window.pageYOffset -
-document.documentElement.clientTop;
+double fullOffsetTop(Element element) => element.getBoundingClientRect().top +
+    window.pageYOffset -
+    document.documentElement.clientTop;
 
-Duration getDuration(Element targetElement, num speed){
+Duration getDuration(Element targetElement, num speed) {
   var distance = (window.pageYOffset - fullOffsetTop(targetElement)).abs();
   return new Duration(milliseconds: distance ~/ speed);
 }
 
 Future scrollTo(Element el, Duration duration, TimingFunction tf) {
-
   var isCompleted = false,
-  isInterrupted = false,
-  completer = new Completer(),
-  startPos = window.pageYOffset,
-  targetPos = fullOffsetTop(el),
-  overScroll =
-  max(targetPos + window.innerHeight - document.body.scrollHeight, 0),
-  startTime = null,
-  direction = (targetPos - startPos).sign;
+      isInterrupted = false,
+      completer = new Completer(),
+      startPos = window.pageYOffset,
+      targetPos = fullOffsetTop(el),
+      overScroll =
+      max(targetPos + window.innerHeight - document.body.scrollHeight, 0),
+      startTime = null,
+      direction = (targetPos - startPos).sign;
 
   targetPos -= overScroll;
 
@@ -32,16 +30,16 @@ Future scrollTo(Element el, Duration duration, TimingFunction tf) {
 
   //make text unselectable and disable events
   //like onMouseOver for better performance during the scroll.
-  String disable =
-  "-webkit-user-select: none;"
-  "-moz-user-select: none;"
-  "-ms-user-select: none;"
-  "-o-user-select: none;"
-  "user-select: none;"
-  "pointer-events: none;";
+  String disable = "-webkit-user-select: none;"
+      "-moz-user-select: none;"
+      "-ms-user-select: none;"
+      "-o-user-select: none;"
+      "user-select: none;"
+      "pointer-events: none;";
 
-  String oldBodyStyle = document.body.getAttribute("style") != null ?
-  document.body.getAttribute("style") : "";
+  String oldBodyStyle = document.body.getAttribute("style") != null
+      ? document.body.getAttribute("style")
+      : "";
 
   //return control to the user if he/she tries to interact with the page.
   window.onMouseWheel.first.then((_) => isInterrupted = isCompleted = true);
@@ -51,12 +49,11 @@ Future scrollTo(Element el, Duration duration, TimingFunction tf) {
 
   iter() {
     window.animationFrame.then((_) {
-
       if (startTime == null) startTime = window.performance.now();
       var deltaTime = window.performance.now() - startTime,
-      progress = deltaTime / duration.inMilliseconds,
-      precision = (1000 / 60 / duration.inMilliseconds) / 4,
-      dist = totalDistance * tf(progress, precision);
+          progress = deltaTime / duration.inMilliseconds,
+          precision = (1000 / 60 / duration.inMilliseconds) / 4,
+          dist = totalDistance * tf(progress, precision);
       var curPos = startPos + dist * direction;
 
       if (progress >= 1.0) isCompleted = true;
@@ -65,10 +62,11 @@ Future scrollTo(Element el, Duration duration, TimingFunction tf) {
         window.scrollTo(0, curPos.toInt());
         iter();
       } else {
-        document.body.setAttribute("style", document.body.getAttribute("style"
-        ).replaceFirst(disable, ""));
-        isInterrupted ? completer.completeError("Interrupted by the user") :
-        completer.complete("completed");
+        document.body.setAttribute("style",
+            document.body.getAttribute("style").replaceFirst(disable, ""));
+        isInterrupted
+            ? completer.completeError("Interrupted by the user")
+            : completer.complete("completed");
       }
     });
   }
@@ -76,9 +74,9 @@ Future scrollTo(Element el, Duration duration, TimingFunction tf) {
   return completer.future;
 }
 
-typedef num TimingFunction(num time,num precision);
+typedef num TimingFunction(num time, num precision);
 
-abstract class TimingFunctions{
+abstract class TimingFunctions {
   static TimingFunction easeInOut = makeCubicBezier(0.42, 0, 0.58, 1);
   static TimingFunction easeOut = makeCubicBezier(0.25, 0.1, 0.25, 1);
 }
@@ -96,11 +94,11 @@ TimingFunction makeCubicBezier(x1, y1, x2, y2) {
 
   var derivativeCurveX = (t) {
     var v = 1 - t;
-    return 3 * (2 * (t - 1) * t + v * v) * x1 + 3 * (-t * t * t + 2 * v * t) *
-    x2;
+    return 3 * (2 * (t - 1) * t + v * v) * x1 +
+        3 * (-t * t * t + 2 * v * t) * x2;
   };
   return (t, precision) {
-    var x = t,t0,t1,t2,x2,d2,i;
+    var x = t, t0, t1, t2, x2, d2, i;
     for (i = 0; i < 8; i++) {
       t2 = x;
       x2 = curveX(t2) - x;

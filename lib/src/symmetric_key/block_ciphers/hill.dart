@@ -9,8 +9,6 @@ class HillCipher {
   int dimension = 0;
   int modulo = 0;
 
-  static int KEY_MAX_DIMENSION = 4;
-
   HillCipher(this.modulo, {this.dimension, this.key});
 
   void checkKey() {

@@ -2,19 +2,22 @@ import 'package:dartcrypto/dartcrypto.dart';
 import 'utils.dart';
 import 'dart:html';
 import 'scrolling.dart';
+import 'toast.dart';
 
 var streamEncrypt = null;
 var streamDecrypt = null;
 var streamKeyChange = null;
 
 void main() {
-  SelectElement cryptosystem = querySelector("#SelectCrypto");
-  cryptosystem.onChange
-      .listen((e) => buildStructure(int.parse(cryptosystem.value)));
+  ElementList menuList = querySelectorAll('.drop ul li a');
+  menuList.forEach( (f) => f.onClick.listen( (e) => buildStructure(int.parse(f.id))));
 }
 
 void buildStructure(int cryptosystem) {
-  if (cryptosystem == null) throw new PopUpError('Select Cryptosystem!');
+  if (cryptosystem == null) {
+    toast("You didn\'t select anything!");
+    return;
+  }
 
   TextAreaElement inputTextArea = querySelector("#inputTextArea");
   TextAreaElement keyTextArea = querySelector("#keyTextArea");
@@ -37,7 +40,7 @@ void buildStructure(int cryptosystem) {
       streamKeyChange = keyTextArea.onChange.listen((e) {
         if (hexStringToBytes(keyTextArea.value).length == 1) cipher.key_B =
             hexStringToBytes(keyTextArea.value)[0];
-        else throw new PopUpError("Key size is not 1!");
+        else toast('Key size is not 1!');
       });
       streamEncrypt = encryptButton.onClick.listen((e) {
         outputTextArea.value = bytesToHexString(
@@ -60,7 +63,7 @@ void buildStructure(int cryptosystem) {
         if (hexStringToBytes(keyTextArea.value).length == 2) {
           cipher.key_A = hexStringToBytes(keyTextArea.value)[0];
           cipher.key_B = hexStringToBytes(keyTextArea.value)[1];
-        } else throw new PopUpError("Key size is not 2!");
+        } else toast('Key size is not 2!');
       });
       streamEncrypt = encryptButton.onClick.listen((e) {
         outputTextArea.value = bytesToHexString(
@@ -163,8 +166,7 @@ void buildStructure(int cryptosystem) {
       });*/
       break;
     default:
-      descriptionParagraph.text = "UNKNOWN CIPHER";
-      throw new PopUpError("Unknown cipher!");
+      toast("Unknown selection!");
   }
   scrollTo(encryptButton, getDuration(encryptButton, 2), TimingFunctions.easeInOut);
 }
