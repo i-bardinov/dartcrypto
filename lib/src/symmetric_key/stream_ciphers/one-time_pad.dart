@@ -25,7 +25,7 @@ class OTPCipher {
     checkKey(message.length);
     for (int i = 0;
         i < message.length;
-        i++) message[i] = (message[i] ^ key[i]);
+        i++) message[i] = message[i] ^ key[i];
     return message;
   }
 
@@ -33,7 +33,7 @@ class OTPCipher {
     checkKey(message.length);
     for (int i = 0;
         i < message.length;
-        i++) message[i] = (message[i] ^ key[i]);
+        i++) message[i] = message[i] ^ key[i];
     return message;
   }
 }
