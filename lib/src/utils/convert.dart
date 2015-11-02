@@ -26,12 +26,13 @@ List stringToBytesByAlphabet(String str, [String alphabet]) {
   return list;
 }
 
-List hexStringToBytes(String str) {
+List hexStringToBytes(String str, {int octets: 1}) {
+  int size = octets * 2;
   List list = new List();
   int len = str.length;
-  if (len != (len / 2).floor() * 2) throw new PopUpError(
+  if (len != (len / size).floor() * size) throw new PopUpError(
       "Cannot response hexadecimal number!");
-  for (int i = 0; i < len; i += 2) list.add(int.parse(str[i] + str[i + 1],
+  for (int i = 0; i < len; i += size) list.add(int.parse(str.substring(i, i+size),
       radix: 16,
       onError: (source) =>
           throw new PopUpError("Message should be hexadecimal")));
@@ -42,8 +43,8 @@ String bytesToHexString(List list) {
   return CryptoUtils.bytesToHex(list);
 }
 
-String hexStringToString(String str) {
-  return bytesToString(hexStringToBytes(str));
+String hexStringToString(String str, {int octets: 2}) {
+  return bytesToString(hexStringToBytes(str, octets: octets));
 }
 
 String stringToHexString(String str) {
