@@ -1,13 +1,13 @@
-library dartcrypto.ciphers.vernam;
+library dartcrypto.ciphers.otp;
 
 import 'dart:math';
 import 'package:dartcrypto/src/exceptions.dart';
 
-class VernamCipher {
+class OTPCipher {
   List key = [1];
   int modulo;
 
-  VernamCipher(this.modulo, [this.key]);
+  OTPCipher(this.modulo, [this.key]);
 
   void checkKey(int key_length) {
     if (key.isEmpty) throw new PopUpError("Key is empty");
@@ -23,13 +23,17 @@ class VernamCipher {
 
   List encrypt(List message) {
     checkKey(message.length);
-    for (int i = 0; i < message.length; i++) message[i] = (message[i] + key[i]) % modulo;
+    for (int i = 0;
+        i < message.length;
+        i++) message[i] = (message[i] ^ key[i]);
     return message;
   }
 
   List decrypt(List message) {
     checkKey(message.length);
-    for (int i = 0; i < message.length; i++) message[i] = (message[i] - key[i]) % modulo;
+    for (int i = 0;
+        i < message.length;
+        i++) message[i] = (message[i] ^ key[i]);
     return message;
   }
 }
