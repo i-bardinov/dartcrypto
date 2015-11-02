@@ -11,11 +11,13 @@ class AffineCipher {
   AffineCipher(this.modulo, {this.key_A: 1, this.key_B: 0});
 
   String checkKey() {
+    if (key_A == null) return "Key[1] is null!";
+    if (key_B == null) return "Key[2] is null!";
     if (modulo <
         1) return "Alphabet size is $modulo! It should be > 0!";
     int gcd = key_A.gcd(modulo);
     if (gcd != 1) return
-        "Key[1] = $key_A should be prime!";
+        "Key[1] = ${key_A.toRadixString(16)} should be prime!";
     return '';
   }
 

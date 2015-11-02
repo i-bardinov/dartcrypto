@@ -43,10 +43,11 @@ void buildStructure(int cryptosystem) {
     case CIPHER_CAESAR:
       descriptionParagraph.setInnerHtml(TEXT_DESCRIPTION_CAESAR,
           validator: nodeValidator);
-      AffineCipher cipher = new AffineCipher(256, key_A: 1, key_B: 0);
+      AffineCipher cipher = new AffineCipher(256, key_A: 01, key_B: null);
       streamKeyChange = keyTextArea.onChange.listen((e) {
         if (keyTextArea.value.length % 2 != 0) {
           toast('Incorrect key!');
+          cipher.key_B = null;
           return;
         }
         if (hexStringToBytes(keyTextArea.value).length == 1) {
@@ -56,7 +57,10 @@ void buildStructure(int cryptosystem) {
             toast(error);
             return;
           }
-        } else toast('Key size is not 1 octet!');
+        } else {
+          toast('Key size is not 1 octet!');
+          cipher.key_B = null;
+        }
       });
       streamEncrypt = encryptButton.onClick.listen((e) {
         String error = cipher.checkKey();
@@ -97,10 +101,12 @@ void buildStructure(int cryptosystem) {
     case CIPHER_AFFINE:
       descriptionParagraph.appendHtml(TEXT_DESCRIPTION_AFFINE,
           validator: nodeValidator);
-      AffineCipher cipher = new AffineCipher(256, key_A: 1, key_B: 0);
+      AffineCipher cipher = new AffineCipher(256, key_A: null, key_B: null);
       streamKeyChange = keyTextArea.onChange.listen((e) {
         if (keyTextArea.value.length % 2 != 0) {
           toast('Incorrect key!');
+          cipher.key_A = null;
+          cipher.key_B = null;
           return;
         }
         if (hexStringToBytes(keyTextArea.value).length == 2) {
@@ -111,7 +117,11 @@ void buildStructure(int cryptosystem) {
             toast(error);
             return;
           }
-        } else toast('Key size is not 2 octet!');
+        } else {
+          toast('Key size is not 2 octet!');
+          cipher.key_A = null;
+          cipher.key_B = null;
+        }
       });
       streamEncrypt = encryptButton.onClick.listen((e) {
         String error = cipher.checkKey();
