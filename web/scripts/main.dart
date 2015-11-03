@@ -166,8 +166,9 @@ void buildStructure(int cryptosystem) {
           validator: nodeValidator);
       HillCipher cipher = new HillCipher(256);
       streamKeyChange = keyTextArea.onChange.listen((e) {
-        int dim = sqrt((keyTextArea.value.length/2).floor()).floor();
-        if (keyTextArea.value.length % 2 != 0 || (keyTextArea.value.length/2).floor() > pow(dim, 2)) {
+        int dim = sqrt((keyTextArea.value.length / 2).floor()).floor();
+        if (keyTextArea.value.length % 2 != 0 ||
+            (keyTextArea.value.length / 2).floor() > pow(dim, 2)) {
           toast('Incorrect key length!');
           cipher.key = null;
           return;
@@ -175,8 +176,9 @@ void buildStructure(int cryptosystem) {
         cipher.setKey(hexStringToBytes(keyTextArea.value));
       });
       streamEncrypt = encryptButton.onClick.listen((e) {
-        int dim = sqrt((keyTextArea.value.length/2).floor()).floor();
-        if (keyTextArea.value.length % 2 != 0 || (keyTextArea.value.length/2).floor() > pow(dim, 2)) {
+        int dim = sqrt((keyTextArea.value.length / 2).floor()).floor();
+        if (keyTextArea.value.length % 2 != 0 ||
+            (keyTextArea.value.length / 2).floor() > pow(dim, 2)) {
           toast('Incorrect key length!');
           cipher.key = null;
           return;
@@ -197,8 +199,9 @@ void buildStructure(int cryptosystem) {
         keyTextArea.value = bytesToHexString(cipher.key.toList());
       });
       streamDecrypt = decryptButton.onClick.listen((e) {
-        int dim = sqrt((keyTextArea.value.length/2).floor()).floor();
-        if (keyTextArea.value.length % 2 != 0 || (keyTextArea.value.length/2).floor() > pow(dim, 2)) {
+        int dim = sqrt((keyTextArea.value.length / 2).floor()).floor();
+        if (keyTextArea.value.length % 2 != 0 ||
+            (keyTextArea.value.length / 2).floor() > pow(dim, 2)) {
           toast('Incorrect key length!');
           cipher.key = null;
           return;
@@ -219,7 +222,8 @@ void buildStructure(int cryptosystem) {
         keyTextArea.value = bytesToHexString(cipher.key.toList());
       });
       int dim = sqrt(keyTextArea.value.length).floor();
-      if (keyTextArea.value.length % 2 != 0 || keyTextArea.value.length > pow(dim, 2)) {
+      if (keyTextArea.value.length % 2 != 0 ||
+          keyTextArea.value.length > pow(dim, 2)) {
         toast('Incorrect key length!');
         cipher.key = null;
       } else cipher.setKey(hexStringToBytes(keyTextArea.value));
@@ -297,6 +301,11 @@ void buildStructure(int cryptosystem) {
     case HASH_SHA_1:
       descriptionParagraph.appendHtml(TEXT_DESCRIPTION_SHA_1,
           validator: nodeValidator);
+      querySelector('#key').style.display = 'none';
+      querySelector('#input').style.width = '450px';
+      querySelector('#output').style.width = '450px';
+      querySelector('#input textarea').style.width = '410px';
+      querySelector('#output textarea').style.width = '410px';
       break;
     default:
       toast("Unknown selection!");
