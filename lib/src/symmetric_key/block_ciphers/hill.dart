@@ -5,19 +5,22 @@ import 'package:dartcrypto/src/utils/matrix.dart';
 import "package:dartcrypto/src/exceptions.dart";
 
 class HillCipher {
-  Matrix key = new Matrix(1,1,[1]);
+  Matrix key = null;
   int dimension = 0;
   int modulo = 0;
 
   HillCipher(this.modulo, {this.dimension, this.key});
 
-  void checkKey() {
-    if (key == null || key.isEmpty()) throw new PopUpError("Key is null!");
-    if (pow(dimension, 2) != key.toList().length) throw new PopUpError(
-        "Key is incorrect! Key length should be square but length is ${key.toList().length}");
+  String checkKey() {
+    if (key == null || key.isEmpty()) return 'Key is null!';
+    if (pow(dimension, 2) !=
+        key.toList().length) return "Key length should be square!";
     int det = key.determinant();
-    if (det == 0 || det.gcd(modulo) != 1 || det.modInverse(modulo) == null) throw new PopUpError(
-        'Key is incorrect! $det (Key determinant) shouldn\'t be 0 and coprime with $modulo!');
+    if (det == 0 ||
+        det.gcd(modulo) != 1 ||
+        det.modInverse(modulo) ==
+            null) return 'Determinant should be prime!';
+    return '';
   }
 
   void setKey(List list) {
@@ -39,7 +42,8 @@ class HillCipher {
   }
 
   List encrypt(List message) {
-    checkKey();
+    String error = checkKey();
+    if (error != '') throw new PopUpError(error);
     while (message.length % dimension != 0) message.add(0);
     List encMessage = new List();
     int k = -1;
@@ -55,7 +59,8 @@ class HillCipher {
   }
 
   List decrypt(List message) {
-    checkKey();
+    String error = checkKey();
+    if (error != '') throw new PopUpError(error);
     while (message.length % dimension != 0) message.add(0);
     Matrix invKey = key.inverse();
     List decMessage = new List();

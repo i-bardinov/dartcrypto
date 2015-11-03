@@ -1,6 +1,7 @@
 import 'package:dartcrypto/dartcrypto.dart';
 import 'utils.dart';
 import 'dart:html';
+import 'dart:math';
 import 'scrolling.dart';
 import 'toast.dart';
 
@@ -96,7 +97,7 @@ void buildStructure(int cryptosystem) {
       });
       if (hexStringToBytes(keyTextArea.value).length == 1) {
         cipher.key_B = hexStringToBytes(keyTextArea.value)[0];
-      } else toast('Key size is not 1 octet!');
+      }
       break;
     case CIPHER_AFFINE:
       descriptionParagraph.appendHtml(TEXT_DESCRIPTION_AFFINE,
@@ -158,28 +159,70 @@ void buildStructure(int cryptosystem) {
       if (hexStringToBytes(keyTextArea.value).length == 2) {
         cipher.key_A = hexStringToBytes(keyTextArea.value)[0];
         cipher.key_B = hexStringToBytes(keyTextArea.value)[1];
-      } else toast('Key size is not 2 octet!');
+      }
       break;
     case CIPHER_HILL:
       descriptionParagraph.appendHtml(TEXT_DESCRIPTION_HILL,
           validator: nodeValidator);
       HillCipher cipher = new HillCipher(256);
       streamKeyChange = keyTextArea.onChange.listen((e) {
+        int dim = sqrt((keyTextArea.value.length/2).floor()).floor();
+        if (keyTextArea.value.length % 2 != 0 || (keyTextArea.value.length/2).floor() > pow(dim, 2)) {
+          toast('Incorrect key length!');
+          cipher.key = null;
+          return;
+        }
         cipher.setKey(hexStringToBytes(keyTextArea.value));
-        keyTextArea.value = bytesToHexString(cipher.key.toList());
       });
       streamEncrypt = encryptButton.onClick.listen((e) {
+        int dim = sqrt((keyTextArea.value.length/2).floor()).floor();
+        if (keyTextArea.value.length % 2 != 0 || (keyTextArea.value.length/2).floor() > pow(dim, 2)) {
+          toast('Incorrect key length!');
+          cipher.key = null;
+          return;
+        }
+        cipher.setKey(hexStringToBytes(keyTextArea.value));
+        String error = cipher.checkKey();
+        if (error != '') {
+          toast(error);
+          return;
+        }
+        if (inputTextArea.value.length % 2 != 0) {
+          toast('Incorrect message!');
+          inputTextArea.value = '';
+          return;
+        }
         outputTextArea.value = bytesToHexString(
             cipher.encrypt(hexStringToBytes(inputTextArea.value)));
         keyTextArea.value = bytesToHexString(cipher.key.toList());
       });
       streamDecrypt = decryptButton.onClick.listen((e) {
+        int dim = sqrt((keyTextArea.value.length/2).floor()).floor();
+        if (keyTextArea.value.length % 2 != 0 || (keyTextArea.value.length/2).floor() > pow(dim, 2)) {
+          toast('Incorrect key length!');
+          cipher.key = null;
+          return;
+        }
+        cipher.setKey(hexStringToBytes(keyTextArea.value));
+        String error = cipher.checkKey();
+        if (error != '') {
+          toast(error);
+          return;
+        }
+        if (inputTextArea.value.length % 2 != 0) {
+          toast('Incorrect message!');
+          inputTextArea.value = '';
+          return;
+        }
         inputTextArea.value = bytesToHexString(
             cipher.decrypt(hexStringToBytes(outputTextArea.value)));
         keyTextArea.value = bytesToHexString(cipher.key.toList());
       });
-      cipher.setKey(hexStringToBytes(keyTextArea.value));
-      keyTextArea.value = bytesToHexString(cipher.key.toList());
+      int dim = sqrt(keyTextArea.value.length).floor();
+      if (keyTextArea.value.length % 2 != 0 || keyTextArea.value.length > pow(dim, 2)) {
+        toast('Incorrect key length!');
+        cipher.key = null;
+      } else cipher.setKey(hexStringToBytes(keyTextArea.value));
       break;
     case CIPHER_VIGENERE:
       descriptionParagraph.appendHtml(TEXT_DESCRIPTION_VIGENERE,
