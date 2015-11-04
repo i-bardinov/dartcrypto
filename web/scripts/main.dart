@@ -1,7 +1,6 @@
 import 'package:dartcrypto/dartcrypto.dart';
 import 'utils.dart';
 import 'dart:html';
-import 'dart:math';
 import 'scrolling.dart';
 import 'toast.dart';
 import 'dart:convert';
