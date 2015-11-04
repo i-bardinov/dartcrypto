@@ -3,4 +3,5 @@
  * implement One-Time Pad cipher (Vernam cipher) in XOR;
  * implement Encoding selectors;
  * implement Encoding menu;
- * new design;
+ * new design; 
+ 
