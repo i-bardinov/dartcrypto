@@ -136,7 +136,7 @@ h1 a {
 
 #bigInput {
     width: 50%;
-    margin: 2% 25% 50px 25%;
+    margin: 2% 25% 5% 25%;
 }
 
 #key {
@@ -155,8 +155,8 @@ h1 a {
     font-family: "Source Code Pro", monospace;
     font-size: 14px;
     line-height: 22px;
-    margin: 0 0 5px 0;
-    padding: 8px 10px 8px 10px;
+    margin: 0 0 1% 0;
+    padding: 0.8% 1% 0.8% 1%;
     text-align: center;
 }
 
@@ -173,10 +173,10 @@ h1 a {
     font-family: "Source Code Pro", monospace;
     font-size: 14px;
     line-height: 22px;
-    width: 86%;
+    width: 90%;
     height: 200px;
     color: #1f1f1f;
-    padding: 5px 20px 5px 20px;
+    padding: 2% 5% 2% 5%;
 }
 
 #bigInput textarea {
