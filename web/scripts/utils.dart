@@ -421,7 +421,8 @@ const int CIPHER_HILL = 1101;
 const int CIPHER_MAGMA = 2001;
 const int CIPHER_AES = 2002;
 
-const int CIPHER_RSA = 3001;
+const int CIPHER_RSA_GENERATOR = 3001;
+const int CIPHER_RSA = 3002;
 
 const int HASH_SHA_1 = 4001;
 

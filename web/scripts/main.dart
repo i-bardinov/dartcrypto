@@ -46,7 +46,9 @@ void buildStructure(int type) {
       buildStandardCiphers(type);
       break;
     case CIPHER_RSA:
-      buildRSA();
+      //buildRSA();
+      break;
+    case CIPHER_RSA_GENERATOR:
       break;
     case ENCODINGS:
       buildEncoding();
@@ -1117,20 +1119,20 @@ void buildRSA() {
   int outputEncode = ENCODING_HEX;
 
   wrapper.setInnerHtml(HTML_CODE_RSA, validator: nodeValidator);
-
+/*
   TextAreaElement inputTextArea = querySelector("#inputTextArea");
   TextAreaElement keyTextArea = querySelector("#keyTextArea");
   TextAreaElement outputTextArea = querySelector("#outputTextArea");
   TextAreaElement initVectorTextArea = querySelector("#initvectTextArea");
   DivElement encryptButton = querySelector("#encryptButton");
   DivElement decryptButton = querySelector("#decryptButton");
-  ParagraphElement descriptionParagraph = querySelector('#description');
+  ParagraphElement descriptionParagraph = querySelector('#description');*/
 
-  descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RSA,
-  validator: nodeValidator);
+  /*descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RSA,
+  validator: nodeValidator);*/
 
-  scrollTo(
-      inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);
+  /*scrollTo(
+      inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);*/
 }
 
 class MyUriPolicy implements UriPolicy {
