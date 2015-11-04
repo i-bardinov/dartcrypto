@@ -9,9 +9,9 @@ class BeaufortCipher {
 
   BeaufortCipher(this.modulo, [this.key]);
 
-  void checkKey() {
-    if (key.isEmpty) throw new PopUpError("Key is empty");
-    key.forEach((f) => f %= modulo);
+  String checkKey([int key_length = 0]) {
+    if (key.isEmpty) return "Key is incorrect";
+    return '';
   }
 
   void generateKey(int length) {
@@ -21,7 +21,8 @@ class BeaufortCipher {
   }
 
   List encrypt(List message) {
-    checkKey();
+    String error = checkKey();
+    if (error != '') throw new PopUpError(error);
     int keySize = key.length;
     for (int i = 0;
         i < message.length;
@@ -30,7 +31,8 @@ class BeaufortCipher {
   }
 
   List decrypt(List message) {
-    checkKey();
+    String error = checkKey();
+    if (error != '') throw new PopUpError(error);
     int keySize = key.length;
     for (int i = 0;
         i < message.length;

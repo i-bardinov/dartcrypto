@@ -9,10 +9,16 @@ class OTPCipher {
 
   OTPCipher(this.modulo, [this.key]);
 
-  void checkKey(int key_length) {
-    if (key.isEmpty) throw new PopUpError("Key is empty");
-    if (key.length != key_length) throw new PopUpError(
-        "Key size is not equival to message size");
+  String checkKey([int key_length = 0]) {
+    if (key.isEmpty) return 'Key is incorrect!';
+    if (key_length != 0 && key.length < key_length) {
+      Random rand = new Random();
+      List list = new List();
+      key.forEach( (f) => list.add(f));
+      for (int i = 0; i < key_length-key.length; i++) list.add(rand.nextInt(modulo));
+      key = list;
+    }
+    return '';
   }
 
   void generateKey(int length) {
@@ -22,18 +28,16 @@ class OTPCipher {
   }
 
   List encrypt(List message) {
-    checkKey(message.length);
-    for (int i = 0;
-        i < message.length;
-        i++) message[i] = message[i] ^ key[i];
+    String error = checkKey(message.length);
+    if (error != '') throw new PopUpError(error);
+    for (int i = 0; i < message.length; i++) message[i] = message[i] ^ key[i];
     return message;
   }
 
   List decrypt(List message) {
-    checkKey(message.length);
-    for (int i = 0;
-        i < message.length;
-        i++) message[i] = message[i] ^ key[i];
+    String error = checkKey(message.length);
+    if (error != '') throw new PopUpError(error);
+    for (int i = 0; i < message.length; i++) message[i] = message[i] ^ key[i];
     return message;
   }
 }

@@ -34,7 +34,7 @@ body {
 
 #wrapper {
     display: block;
-    width: 1000px;
+    width: 75%;
     margin: 0 auto 0;
     padding: 20px 20px 0 20px;
 }
@@ -66,14 +66,14 @@ p {
 }
 
 p.intro {
-    width: 700px;
+    width: 70%;
     text-align: justify;
 }
 
 #about {
     display: block;
     margin: 21px 0 0 0;
-    width: 200px;
+    width: 20%;
     height: 125px;
     float: right;
     text-align: right;
@@ -119,7 +119,6 @@ h1 a {
 
 #description {
     text-align: justify;
-    display: none;
     font-size: 18px;
     font-weight: normal;
 }
@@ -128,14 +127,21 @@ h1 a {
 
 #output,
 #input,
-#key {
+#key,
+#bigInput {
     display: block;
-    width: 300px;
-    margin: 20px 0 0 0;
+    width: 30%;
+    margin: 2% 0 0 0;
+    text-align: center;
+}
+
+#bigInput {
+    width: 50%;
+    margin: 2% 25% 50px 25%;
 }
 
 #key {
-    margin: 20px 50px 0 0;
+    margin: 2% 5% 0 0;
 }
 
 #output,
@@ -151,13 +157,16 @@ h1 a {
     font-size: 14px;
     line-height: 22px;
     margin: 0 0 5px 0;
-    padding: 8px 20px 8px 20px;
+    padding: 8px 10px 8px 10px;
     text-align: center;
 }
 
 #input textarea,
 #output textarea,
-#key textarea {
+#key textarea,
+#bigInput textarea,
+#key #keyInputA,
+#key #keyInputB {
     border: none;
     background: #e0e0e0;
     outline: none;
@@ -165,10 +174,21 @@ h1 a {
     font-family: "Source Code Pro", monospace;
     font-size: 14px;
     line-height: 22px;
-    width: 260px;
+    width: 86%;
     height: 200px;
     color: #1f1f1f;
     padding: 5px 20px 5px 20px;
+}
+
+#bigInput textarea {
+    width: 90%;
+    padding: 1% 5% 1% 5%;
+
+}
+
+#key #keyInputA,
+#key #keyInputB {
+    height: 30px;
 }
 
 /* --- BUTTONS --- */
@@ -291,24 +311,71 @@ a, li {
     transform: scale(1);
 }
 
-/* --- ERROR MESSAGE --- */
-/*
-.toast {
-    width: 200px;
-    height: 20px;
-    position: absolute;
-    left:50%;
-    margin-left:-100px;
-    bottom:10px;
-    background-color: #383838;
-    color: #F0F0F0;
-    font-size: 20px;
-    padding:10px;
-    text-align:center;
-    border-radius: 2px;
-    -webkit-box-shadow: 0 0 24px -1px rgba(56, 56, 56, 1);
-    -moz-box-shadow: 0 0 24px -1px rgba(56, 56, 56, 1);
-    box-shadow: 0 0 24px -1px rgba(56, 56, 56, 1);
+/* --- RADIO BUTTON --- */
+
+.radio {
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: normal;
+    display: inline-block;
+    padding-right: 20px;
+    font-size: 16px;
+    line-height: 49px;
+    cursor: pointer;
+    color: #525252;
+}
+
+.radio:hover .inner {
+    -webkit-transform: scale(0.5);
+    -ms-transform: scale(0.5);
+    transform: scale(0.5);
+    opacity: .5;
+}
+
+.radio input {
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.radio input:checked + .outer .inner {
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1);
     opacity: 1;
 }
-*/
+
+.radio input:checked + .outer { border: 3px solid #009688; }
+
+.radio input:focus + .outer .inner {
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    background-color: #009688;
+}
+
+.radio .outer {
+    width: 20px;
+    height: 20px;
+    display: block;
+    float: left;
+    margin: 10px 9px 3px 3px;
+    border: 3px solid #009688;
+    border-radius: 50%;
+    background-color: #f7f7f7;
+}
+
+.radio .inner {
+    -webkit-transition: all 0.25s ease-in-out;
+    transition: all 0.25s ease-in-out;
+    width: 16px;
+    height: 16px;
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
+    transform: scale(0);
+    display: block;
+    margin: 2px;
+    border-radius: 50%;
+    background-color: #009688;
+    opacity: 0;
+}

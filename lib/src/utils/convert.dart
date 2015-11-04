@@ -1,11 +1,10 @@
 library dartcrypto.utils.convert;
 
-import 'package:crypto/crypto.dart';
-import 'package:dartcrypto/src/exceptions.dart';
+import 'package:cryptoutils/cryptoutils.dart';
 import 'dart:convert';
 
 String bytesToStringByAlphabet(List list, [String alphabet]) {
-  if (list == null) throw new ArgumentError.notNull('list');
+  if (list == null) return null;
   if (alphabet == null) return new String.fromCharCodes(list);
 
   String str = '';
@@ -15,7 +14,7 @@ String bytesToStringByAlphabet(List list, [String alphabet]) {
 }
 
 List stringToBytesByAlphabet(String str, [String alphabet]) {
-  if (str == null) throw new ArgumentError.notNull('str');
+  if (str == null) return null;
   if (alphabet == null) return str.runes.toList();
 
   int alphabetSize = alphabet.length;
@@ -26,36 +25,47 @@ List stringToBytesByAlphabet(String str, [String alphabet]) {
   return list;
 }
 
-List hexStringToBytes(String str, {int octets: 1}) {
-  int size = octets * 2;
-  List list = new List();
-  int len = str.length;
-  if (len % size !=
-      0) throw new PopUpError("Cannot response hexadecimal number!");
-  for (int i = 0; i < len; i += size) list.add(int.parse(
-      str.substring(i, i + size),
-      radix: 16,
-      onError: (source) =>
-          throw new PopUpError("Message should be hexadecimal")));
-  return list;
+List hexStringToBytes(String str) {
+  if (str == null) return null;
+  return CryptoUtils.hexToBytes(str);
 }
 
 String bytesToHexString(List list) {
+  if (list == null) return null;
   return CryptoUtils.bytesToHex(list);
 }
 
-String hexStringToString(String str, {int octets: 2}) {
-  return bytesToString(hexStringToBytes(str, octets: octets));
+String hexStringToString(String str) {
+  if (str == null) return null;
+  List list = hexStringToBytes(str);
+  if (list == null) return null;
+  return bytesToString(list);
 }
 
 String stringToHexString(String str) {
+  if (str == null) return null;
   return bytesToHexString(stringToBytes(str));
 }
 
 List stringToBytes(String str) {
-  return UTF8.encode(str);
+  if (str == null) return null;
+  //TODO: implement encoding
+  return LATIN1.encode(str);
 }
 
 String bytesToString(List list) {
-  return UTF8.decode(list);
+  if (list == null) return null;
+  //TODO: implement decoding
+  return LATIN1.decode(list);
+}
+
+String bytesToBase64String(List list) {
+  if (list == null) return null;
+  return CryptoUtils.bytesToBase64(list);
+}
+
+List base64StringToBytes(String str) {
+  if (str == null) return null;
+  if (str.length % 4 != 0) return null;
+  return CryptoUtils.base64StringToBytes(str);
 }
