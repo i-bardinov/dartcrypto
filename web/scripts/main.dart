@@ -10,9 +10,10 @@ NodeValidator nodeValidator = new NodeValidatorBuilder()
   ..allowTextElements()
   ..allowHtml5()
   ..allowElement('a', attributes: ['href', 'target'])
-  ..allowElement('div', attributes: ['fit'])
+  ..allowElement('div', attributes: ['fit', 'display'])
   ..allowElement('paper-ripple', attributes: ['fit'])
-  ..allowElement('input', attributes: ['pattern'])
+  ..allowElement('input', attributes: ['pattern', 'style', 'display'])
+  ..allowElement('textarea', attributes: ['style', 'display'])
   ..allowNavigation(new MyUriPolicy());
 
 void main() {
@@ -34,13 +35,15 @@ void buildStructure(int type) {
     case CIPHER_AFFINE:
       buildAffine();
       break;
-    case CIPHER_BEAUFORT:
-    case CIPHER_VIGENERE:
     case CIPHER_HILL:
-    case CIPHER_OTP:
     case CIPHER_AES:
     case CIPHER_MAGMA:
     case CIPHER_RSA:
+      buildBlockCiphers(type);
+      break;
+    case CIPHER_BEAUFORT:
+    case CIPHER_VIGENERE:
+    case CIPHER_OTP:
       buildStandardCiphers(type);
       break;
     case ENCODINGS:
@@ -612,11 +615,6 @@ void buildStandardCiphers(int type) {
 
   var cipher = null;
   switch (type) {
-    case CIPHER_HILL:
-      descriptionParagraph.appendHtml(TEXT_DESCRIPTION_HILL,
-          validator: nodeValidator);
-      cipher = new HillCipher(256);
-      break;
     case CIPHER_VIGENERE:
       descriptionParagraph.appendHtml(TEXT_DESCRIPTION_VIGENERE,
           validator: nodeValidator);
@@ -721,6 +719,303 @@ void buildStandardCiphers(int type) {
       else list = cipher.decrypt(base64StringToBytes(outputTextArea.value));
     }
     if (list == null) toast('Incorrect message!');
+    if (inputEncode == ENCODING_HEX) inputTextArea.value =
+        bytesToHexString(list);
+    else if (inputEncode == ENCODING_LATIN1) inputTextArea.value =
+        bytesToString(list);
+    else if (inputEncode == ENCODING_BASE64) inputTextArea.value =
+        bytesToBase64String(list);
+    if (keyEncode == ENCODING_HEX) keyTextArea.value =
+        bytesToHexString(cipher.key);
+    else if (keyEncode == ENCODING_LATIN1) keyTextArea.value =
+        bytesToString(cipher.key);
+    else if (keyEncode == ENCODING_BASE64) keyTextArea.value =
+        bytesToBase64String(cipher.key);
+  });
+
+  scrollTo(
+      encryptButton, getDuration(encryptButton, 2), TimingFunctions.easeInOut);
+}
+
+void buildBlockCiphers(int type) {
+  SpanElement wrapper = querySelector('#dynamic');
+  wrapper.setInnerHtml('');
+  int inputEncode = ENCODING_LATIN1;
+  int keyEncode = ENCODING_LATIN1;
+  int outputEncode = ENCODING_HEX;
+
+  int mode = BLOCK_MODE_ECB;
+
+  wrapper.setInnerHtml(HTML_CODE_BLOCK_CIPHERS, validator: nodeValidator);
+
+  TextAreaElement inputTextArea = querySelector("#inputTextArea");
+  TextAreaElement keyTextArea = querySelector("#keyTextArea");
+  TextAreaElement outputTextArea = querySelector("#outputTextArea");
+  TextAreaElement initVectorTextArea = querySelector("#initvectTextArea");
+  DivElement encryptButton = querySelector("#encryptButton");
+  DivElement decryptButton = querySelector("#decryptButton");
+  ParagraphElement descriptionParagraph = querySelector('#description');
+
+  querySelector("#plaintextInput").onClick.listen((e) {
+    if (inputEncode == ENCODING_HEX) {
+      inputTextArea.value = hexStringToString(inputTextArea.value);
+    }
+    if (inputEncode == ENCODING_BASE64) {
+      inputTextArea.value =
+          bytesToString(base64StringToBytes(inputTextArea.value));
+    }
+    inputEncode = ENCODING_LATIN1;
+  });
+  querySelector("#hextextInput").onClick.listen((e) {
+    if (inputEncode == ENCODING_LATIN1) {
+      inputTextArea.value = stringToHexString(inputTextArea.value);
+    }
+    if (inputEncode == ENCODING_BASE64) {
+      inputTextArea.value =
+          bytesToHexString(base64StringToBytes(inputTextArea.value));
+    }
+    inputEncode = ENCODING_HEX;
+  });
+  querySelector("#base64Input").onClick.listen((e) {
+    if (inputEncode == ENCODING_LATIN1) {
+      inputTextArea.value =
+          bytesToBase64String(stringToBytes(inputTextArea.value));
+    }
+    if (inputEncode == ENCODING_HEX) {
+      inputTextArea.value =
+          bytesToBase64String(hexStringToBytes(inputTextArea.value));
+    }
+    inputEncode = ENCODING_BASE64;
+  });
+  querySelector("#plaintextKey").onClick.listen((e) {
+    if (keyEncode == ENCODING_HEX) {
+      keyTextArea.value = hexStringToString(keyTextArea.value);
+      initVectorTextArea.value = hexStringToString(initVectorTextArea.value);
+    }
+    if (keyEncode == ENCODING_BASE64) {
+      keyTextArea.value = bytesToString(base64StringToBytes(keyTextArea.value));
+      initVectorTextArea.value =
+          bytesToString(base64StringToBytes(initVectorTextArea.value));
+    }
+    keyEncode = ENCODING_LATIN1;
+  });
+  querySelector("#hextextKey").onClick.listen((e) {
+    if (keyEncode == ENCODING_LATIN1) {
+      keyTextArea.value = stringToHexString(keyTextArea.value);
+      initVectorTextArea.value = stringToHexString(initVectorTextArea.value);
+    }
+    if (keyEncode == ENCODING_BASE64) {
+      keyTextArea.value =
+          bytesToHexString(base64StringToBytes(keyTextArea.value));
+      initVectorTextArea.value =
+          bytesToHexString(base64StringToBytes(initVectorTextArea.value));
+    }
+    keyEncode = ENCODING_HEX;
+  });
+  querySelector("#base64Key").onClick.listen((e) {
+    if (keyEncode == ENCODING_LATIN1) {
+      keyTextArea.value = bytesToBase64String(stringToBytes(keyTextArea.value));
+      initVectorTextArea.value =
+          bytesToBase64String(stringToBytes(initVectorTextArea.value));
+    }
+    if (keyEncode == ENCODING_HEX) {
+      keyTextArea.value =
+          bytesToBase64String(hexStringToBytes(keyTextArea.value));
+      initVectorTextArea.value =
+          bytesToBase64String(hexStringToBytes(initVectorTextArea.value));
+    }
+    keyEncode = ENCODING_BASE64;
+  });
+  querySelector("#plaintextOutput").onClick.listen((e) {
+    if (outputEncode == ENCODING_HEX) {
+      outputTextArea.value = hexStringToString(outputTextArea.value);
+    }
+    if (outputEncode == ENCODING_BASE64) {
+      outputTextArea.value =
+          bytesToString(base64StringToBytes(outputTextArea.value));
+    }
+    outputEncode = ENCODING_LATIN1;
+  });
+  querySelector("#hextextOutput").onClick.listen((e) {
+    if (outputEncode == ENCODING_LATIN1) {
+      outputTextArea.value = stringToHexString(outputTextArea.value);
+    }
+    if (outputEncode == ENCODING_BASE64) {
+      outputTextArea.value =
+          bytesToHexString(base64StringToBytes(outputTextArea.value));
+    }
+    outputEncode = ENCODING_HEX;
+  });
+  querySelector("#base64Output").onClick.listen((e) {
+    if (outputEncode == ENCODING_LATIN1) {
+      outputTextArea.value =
+          bytesToBase64String(stringToBytes(outputTextArea.value));
+    }
+    if (outputEncode == ENCODING_HEX) {
+      outputTextArea.value =
+          bytesToBase64String(hexStringToBytes(outputTextArea.value));
+    }
+    outputEncode = ENCODING_BASE64;
+  });
+
+  String height = keyTextArea.style.height;
+  querySelector("#ecbMode").onClick.listen((e) {
+    mode = BLOCK_MODE_ECB;
+    initVectorTextArea.style.display = 'none';
+    keyTextArea.style.height = height;
+  });
+  querySelector("#cbcMode").onClick.listen((e) {
+    mode = BLOCK_MODE_CBC;
+    initVectorTextArea.style.display = 'block';
+    keyTextArea.style.height = '140px';
+  });
+  querySelector("#pcbcMode").onClick.listen((e) {
+    mode = BLOCK_MODE_PCBC;
+    initVectorTextArea.style.display = 'block';
+    keyTextArea.style.height = '140px';
+  });
+  querySelector("#cfbMode").onClick.listen((e) {
+    mode = BLOCK_MODE_CFB;
+    initVectorTextArea.style.display = 'block';
+    keyTextArea.style.height = '140px';
+  });
+  querySelector("#ofbMode").onClick.listen((e) {
+    mode = BLOCK_MODE_OFB;
+    initVectorTextArea.style.display = 'none';
+    keyTextArea.style.height = height;
+  });
+  querySelector("#ctrMode").onClick.listen((e) {
+    mode = BLOCK_MODE_CTR;
+    initVectorTextArea.style.display = 'none';
+    keyTextArea.style.height = height;
+  });
+
+  var cipher = null;
+  switch (type) {
+    case CIPHER_HILL:
+      descriptionParagraph.appendHtml(TEXT_DESCRIPTION_HILL,
+          validator: nodeValidator);
+      cipher = new HillCipher(256);
+      break;
+  }
+
+  keyTextArea.onChange.listen((e) {
+    if (keyEncode == ENCODING_HEX) cipher.key =
+        hexStringToBytes(keyTextArea.value);
+    else if (keyEncode == ENCODING_LATIN1) {
+      cipher.key = stringToBytes(keyTextArea.value);
+    } else if (keyEncode == ENCODING_BASE64) {
+      if (keyTextArea.value.length % 4 != 0) {
+        toast('Incorrect key!');
+        cipher.key = null;
+        return;
+      } else cipher.key = base64StringToBytes(keyTextArea.value);
+    }
+    String error = cipher.checkKey();
+    if (error != '') {
+      toast(error);
+      return;
+    }
+  });
+  encryptButton.onClick.listen((e) {
+    outputTextArea.value = '';
+    List initvector = null;
+    if (keyEncode == ENCODING_HEX) {
+      cipher.key = hexStringToBytes(keyTextArea.value);
+      initvector = hexStringToBytes(initVectorTextArea.value);
+    } else if (keyEncode == ENCODING_LATIN1) {
+      cipher.key = stringToBytes(keyTextArea.value);
+      initvector = stringToBytes(initVectorTextArea.value);
+    } else if (keyEncode == ENCODING_BASE64) {
+      initvector = base64StringToBytes(initVectorTextArea.value);
+      if (keyTextArea.value.length % 4 != 0) {
+        toast('Incorrect key!');
+        cipher.key = null;
+        return;
+      } else cipher.key = base64StringToBytes(keyTextArea.value);
+    }
+    String error = cipher.checkKey();
+    if (error != '') {
+      toast(error);
+      return;
+    }
+    List list = null;
+    if (inputEncode == ENCODING_HEX) list = cipher.encrypt(
+        hexStringToBytes(inputTextArea.value),
+        mode: mode,
+        initVec: initvector);
+    else if (inputEncode == ENCODING_LATIN1) list = cipher.encrypt(
+        stringToBytes(inputTextArea.value),
+        mode: mode,
+        initVec: initvector);
+    else if (inputEncode == ENCODING_BASE64) {
+      if (inputTextArea.value.length % 4 != 0) {
+        list = null;
+        toast('Incorrect message!');
+        return;
+      } else list = cipher.encrypt(base64StringToBytes(inputTextArea.value),
+          mode: mode, initVec: initvector);
+    }
+    if (list == null) {
+      toast('Incorrect message or IV!');
+      return;
+    }
+    if (outputEncode == ENCODING_HEX) outputTextArea.value =
+        bytesToHexString(list);
+    else if (outputEncode == ENCODING_LATIN1) outputTextArea.value =
+        bytesToString(list);
+    else if (outputEncode == ENCODING_BASE64) outputTextArea.value =
+        bytesToBase64String(list);
+    if (keyEncode == ENCODING_HEX) keyTextArea.value =
+        bytesToHexString(cipher.key);
+    else if (keyEncode == ENCODING_LATIN1) keyTextArea.value =
+        bytesToString(cipher.key);
+    else if (keyEncode == ENCODING_BASE64) keyTextArea.value =
+        bytesToBase64String(cipher.key);
+  });
+  decryptButton.onClick.listen((e) {
+    inputTextArea.value = '';
+    List initvector = null;
+    if (keyEncode == ENCODING_HEX) {
+      cipher.key = hexStringToBytes(keyTextArea.value);
+      initvector = hexStringToBytes(initVectorTextArea.value);
+    } else if (keyEncode == ENCODING_LATIN1) {
+      cipher.key = stringToBytes(keyTextArea.value);
+      initvector = stringToBytes(initVectorTextArea.value);
+    } else if (keyEncode == ENCODING_BASE64) {
+      initvector = base64StringToBytes(initVectorTextArea.value);
+      if (keyTextArea.value.length % 4 != 0) {
+        toast('Incorrect key!');
+        cipher.key = null;
+        return;
+      } else cipher.key = base64StringToBytes(keyTextArea.value);
+    }
+    String error = cipher.checkKey();
+    if (error != '') {
+      toast(error);
+      return;
+    }
+    List list = null;
+    if (outputEncode == ENCODING_HEX) list = cipher.decrypt(
+        hexStringToBytes(outputTextArea.value),
+        mode: mode,
+        initVec: initvector);
+    else if (outputEncode == ENCODING_LATIN1) list = cipher.decrypt(
+        stringToBytes(outputTextArea.value),
+        mode: mode,
+        initVec: initvector);
+    else if (outputEncode == ENCODING_BASE64) {
+      if (outputTextArea.value.length % 4 != 0) {
+        list = null;
+        toast('Incorrect message!');
+        return;
+      } else list = cipher.decrypt(base64StringToBytes(outputTextArea.value),
+          mode: mode, initVec: initvector);
+    }
+    if (list == null) {
+      toast('Incorrect message or IV!');
+      return;
+    }
     if (inputEncode == ENCODING_HEX) inputTextArea.value =
         bytesToHexString(list);
     else if (inputEncode == ENCODING_LATIN1) inputTextArea.value =
