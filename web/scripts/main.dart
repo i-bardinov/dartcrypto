@@ -36,15 +36,17 @@ void buildStructure(int type) {
       buildAffine();
       break;
     case CIPHER_HILL:
-    case CIPHER_AES:
-    case CIPHER_MAGMA:
-    case CIPHER_RSA:
+    //case CIPHER_AES:
+    //case CIPHER_MAGMA:
       buildBlockCiphers(type);
       break;
     case CIPHER_BEAUFORT:
     case CIPHER_VIGENERE:
     case CIPHER_OTP:
       buildStandardCiphers(type);
+      break;
+    case CIPHER_RSA:
+      buildRSA();
       break;
     case ENCODINGS:
       buildEncoding();
@@ -1102,6 +1104,30 @@ void buildEncoding() {
 
   descriptionParagraph.appendHtml(TEXT_DESCRIPTION_ENCODINGS,
       validator: nodeValidator);
+
+  scrollTo(
+      inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);
+}
+
+void buildRSA() {
+  SpanElement wrapper = querySelector('#dynamic');
+  wrapper.setInnerHtml('');
+  int inputEncode = ENCODING_LATIN1;
+  int keyEncode = ENCODING_LATIN1;
+  int outputEncode = ENCODING_HEX;
+
+  wrapper.setInnerHtml(HTML_CODE_RSA, validator: nodeValidator);
+
+  TextAreaElement inputTextArea = querySelector("#inputTextArea");
+  TextAreaElement keyTextArea = querySelector("#keyTextArea");
+  TextAreaElement outputTextArea = querySelector("#outputTextArea");
+  TextAreaElement initVectorTextArea = querySelector("#initvectTextArea");
+  DivElement encryptButton = querySelector("#encryptButton");
+  DivElement decryptButton = querySelector("#decryptButton");
+  ParagraphElement descriptionParagraph = querySelector('#description');
+
+  descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RSA,
+  validator: nodeValidator);
 
   scrollTo(
       inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);

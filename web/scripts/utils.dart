@@ -341,6 +341,69 @@ const String HTML_CODE_ENCODINGS =
         </div>
 ''';
 
+const String HTML_CODE_RSA =
+'''
+        <p id="description">
+        </p>
+        <div id="output">
+            <div id="outputField">
+                Message to Decrypt:
+            </div>
+              <label class="radio"><input id="plaintextOutput" type="radio" name="radiosOutput"><span class="outer"><span class="inner"></span></span>Latin1</label>
+              <label class="radio"><input id="hextextOutput" type="radio" name="radiosOutput" checked><span class="outer"><span class="inner"></span></span>Hex</label>
+              <label class="radio"><input id="base64Output" type="radio" name="radiosOutput"><span class="outer"><span class="inner"></span></span>Base64</label>
+            <div id="outputFieldContainer">
+                <textarea spellcheck="false" id="outputTextArea" style="height:300px"></textarea>
+            </div>
+            <section>
+                <div class="button raised blue" id="decryptButton">
+                    <div align="center" fit>DECRYPT</div>
+                    <paper-ripple fit></paper-ripple>
+                </div>
+            </section>
+        </div>
+
+        <div id="key">
+            <div id="keyField">
+                Key:
+            </div>
+              <label class="radio"><input id="plaintextKey" type="radio" name="radiosKey" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
+              <label class="radio"><input id="hextextKey" type="radio" name="radiosKey"><span class="outer"><span class="inner"></span></span>Hex</label>
+              <label class="radio"><input id="base64Key" type="radio" name="radiosKey"><span class="outer"><span class="inner"></span></span>Base64</label>
+
+            <div id="keyFieldContainer">
+                <textarea spellcheck="false" id="keyTextArea" style="height:200px"></textarea>
+            </div>
+              <label class="radio"><input id="ecbMode" type="radio" name="radiosMode" checked><span class="outer"><span class="inner"></span></span>ECB</label>
+              <label class="radio"><input id="cbcMode" type="radio" name="radiosMode"><span class="outer"><span class="inner"></span></span>CBC</label>
+              <label class="radio"><input id="pcbcMode" type="radio" name="radiosMode"><span class="outer"><span class="inner"></span></span>PCBC</label>
+              <label class="radio"><input id="cfbMode" type="radio" name="radiosMode"><span class="outer"><span class="inner"></span></span>CFB</label>
+              <label class="radio"><input id="ofbMode" type="radio" name="radiosMode"><span class="outer"><span class="inner"></span></span>OFC</label>
+              <label class="radio"><input id="ctrMode" type="radio" name="radiosMode"><span class="outer"><span class="inner"></span></span>CTR</label>
+            <div id="initvectFieldContainer">
+                <textarea spellcheck="false" id="initvectTextArea" style='height:48px; display:none'></textarea>
+            </div>
+        </div>
+
+        <div id="input">
+            <div id="inputField">
+                Message to Encrypt:
+            </div>
+              <label class="radio"><input id="plaintextInput" type="radio" name="radiosInput" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
+              <label class="radio"><input id="hextextInput" type="radio" name="radiosInput"><span class="outer"><span class="inner"></span></span>Hex</label>
+              <label class="radio"><input id="base64Input" type="radio" name="radiosInput"><span class="outer"><span class="inner"></span></span>Base64</label>
+            <div id="inputFieldContainer">
+                <textarea spellcheck="false" id="inputTextArea" style="height:300px"></textarea>
+            </div>
+            <section>
+                <div class="button raised blue" id="encryptButton">
+                    <div align="center" fit>ENCRYPT</div>
+                    <paper-ripple fit></paper-ripple>
+                </div>
+            </section>
+        </div>
+''';
+
 const int ENCODINGS = 100;
 const int ENCODING_LATIN1 = 101;
 const int ENCODING_HEX = 102;
