@@ -4,6 +4,11 @@ import 'dart:html';
 import 'scrolling.dart';
 import 'toast.dart';
 import 'dart:convert';
+import 'dart:math' as math;
+
+List inputEncode = [ENCODING_LATIN1];
+List keyEncode = [ENCODING_LATIN1];
+List outputEncode = [ENCODING_HEX];
 
 NodeValidator nodeValidator = new NodeValidatorBuilder()
   ..allowTextElements()
@@ -27,16 +32,18 @@ void buildStructure(int type) {
     return;
   }
 
+  SpanElement wrapper = querySelector('#dynamic');
+  ParagraphElement descriptionParagraph = querySelector('#description');
+  wrapper.setInnerHtml('');
+
   switch (type) {
     case CIPHER_CAESAR:
-      buildCaesar();
-      break;
     case CIPHER_AFFINE:
-      buildAffine();
+      buildAffine(type);
       break;
     case CIPHER_HILL:
-    //case CIPHER_AES:
-    //case CIPHER_MAGMA:
+      //case CIPHER_AES:
+      //case CIPHER_MAGMA:
       buildBlockCiphers(type);
       break;
     case CIPHER_BEAUFORT:
@@ -45,6 +52,9 @@ void buildStructure(int type) {
       buildStandardCiphers(type);
       break;
     case CIPHER_RSA:
+      wrapper?.setInnerHtml(HTML_CODE_RSA, validator: nodeValidator);
+      descriptionParagraph?.appendHtml(TEXT_DESCRIPTION_RSA,
+          validator: nodeValidator);
       //buildRSA();
       break;
     case CIPHER_RSA_GENERATOR:
@@ -55,479 +65,104 @@ void buildStructure(int type) {
   }
 }
 
-void buildCaesar() {
+void buildAffine(int type) {
   SpanElement wrapper = querySelector('#dynamic');
-  wrapper.setInnerHtml('');
-  int inputEncode = ENCODING_LATIN1;
-  int keyEncode = ENCODING_LATIN1;
-  int outputEncode = ENCODING_HEX;
-
-  wrapper.setInnerHtml(HTML_CODE_CAESAR, validator: nodeValidator);
+  wrapper?.setInnerHtml(HTML_CODE_AFFINE, validator: nodeValidator);
 
   TextAreaElement inputTextArea = querySelector("#inputTextArea");
-  InputElement inputKeyB = querySelector("#keyInputB");
+  TextAreaElement keyTextAreaA = querySelector("#keyTextAreaA");
+  TextAreaElement keyTextAreaB = querySelector("#keyTextAreaB");
   TextAreaElement outputTextArea = querySelector("#outputTextArea");
   DivElement encryptButton = querySelector("#encryptButton");
   DivElement decryptButton = querySelector("#decryptButton");
   ParagraphElement descriptionParagraph = querySelector('#description');
 
-  querySelector("#plaintextInput").onClick.listen((e) {
-    if (inputEncode == ENCODING_HEX) inputTextArea.value =
-        hexStringToString(inputTextArea.value);
-    if (inputEncode == ENCODING_BASE64) inputTextArea.value =
-        bytesToString(base64StringToBytes(inputTextArea.value));
-    inputEncode = ENCODING_LATIN1;
-  });
-  querySelector("#hextextInput").onClick.listen((e) {
-    if (inputEncode == ENCODING_LATIN1) inputTextArea.value =
-        stringToHexString(inputTextArea.value);
-    if (inputEncode == ENCODING_BASE64) inputTextArea.value =
-        bytesToHexString(base64StringToBytes(inputTextArea.value));
-    inputEncode = ENCODING_HEX;
-  });
-  querySelector("#base64Input").onClick.listen((e) {
-    if (inputEncode == ENCODING_LATIN1) inputTextArea.value =
-        bytesToBase64String(stringToBytes(inputTextArea.value));
-    if (inputEncode == ENCODING_HEX) inputTextArea.value =
-        bytesToBase64String(hexStringToBytes(inputTextArea.value));
-    inputEncode = ENCODING_BASE64;
-  });
-  querySelector("#plaintextKey").onClick.listen((e) {
-    if (keyEncode == ENCODING_HEX) inputKeyB.value =
-        hexStringToString(inputKeyB.value);
-    if (keyEncode == ENCODING_BASE64) inputKeyB.value =
-        bytesToString(base64StringToBytes(inputKeyB.value));
-    keyEncode = ENCODING_LATIN1;
-  });
-  querySelector("#hextextKey").onClick.listen((e) {
-    if (keyEncode == ENCODING_LATIN1) inputKeyB.value =
-        stringToHexString(inputKeyB.value);
-    if (keyEncode == ENCODING_BASE64) inputKeyB.value =
-        bytesToHexString(base64StringToBytes(inputKeyB.value));
-    keyEncode = ENCODING_HEX;
-  });
-  querySelector("#base64Key").onClick.listen((e) {
-    if (keyEncode == ENCODING_LATIN1) inputKeyB.value =
-        bytesToBase64String(stringToBytes(inputKeyB.value));
+  encodings(inputTextArea, inputEncode, type: "Input");
+  encodings(keyTextAreaA, keyEncode, type: "Key", changeValue: false);
+  encodings(keyTextAreaB, keyEncode, type: "Key");
+  encodings(outputTextArea, outputEncode, type: "Output");
 
-    if (keyEncode == ENCODING_HEX) inputKeyB.value =
-        bytesToBase64String(hexStringToBytes(inputKeyB.value));
-    keyEncode = ENCODING_BASE64;
-  });
-  querySelector("#plaintextOutput").onClick.listen((e) {
-    if (outputEncode == ENCODING_HEX) outputTextArea.value =
-        hexStringToString(outputTextArea.value);
-    if (outputEncode == ENCODING_BASE64) outputTextArea.value =
-        bytesToString(base64StringToBytes(outputTextArea.value));
-    outputEncode = ENCODING_LATIN1;
-  });
-  querySelector("#hextextOutput").onClick.listen((e) {
-    if (outputEncode == ENCODING_LATIN1) outputTextArea.value =
-        stringToHexString(outputTextArea.value);
-    if (outputEncode == ENCODING_BASE64) outputTextArea.value =
-        bytesToHexString(base64StringToBytes(outputTextArea.value));
-    outputEncode = ENCODING_HEX;
-  });
-  querySelector("#base64Output").onClick.listen((e) {
-    if (outputEncode == ENCODING_LATIN1) outputTextArea.value =
-        bytesToBase64String(stringToBytes(outputTextArea.value));
-    if (outputEncode == ENCODING_HEX) outputTextArea.value =
-        bytesToBase64String(hexStringToBytes(outputTextArea.value));
-    outputEncode = ENCODING_BASE64;
-  });
-
-  descriptionParagraph.appendHtml(TEXT_DESCRIPTION_CAESAR,
-      validator: nodeValidator);
-
-  AffineCipher cipher = new AffineCipher(256, key_A: 1, key_B: null);
-  inputKeyB.onChange.listen((e) {
-    if (keyEncode == ENCODING_HEX) cipher.key_B =
-        int.parse(inputKeyB.value, radix: 16, onError: (source) => null);
-    else if (keyEncode == ENCODING_LATIN1) {
-      if (inputKeyB.value.length != 1) {
-        toast('Incorrect key size!');
-        cipher.key_B = null;
-        return;
-      } else cipher.key_B = stringToBytes(inputKeyB.value)[0];
-    } else if (keyEncode == ENCODING_BASE64) {
-      if (inputKeyB.value.length % 4 != 0 ||
-          base64StringToBytes(inputKeyB.value).length != 1) {
-        toast('Incorrect key!');
-        cipher.key_B = null;
-        return;
-      } else cipher.key_B = base64StringToBytes(inputKeyB.value)[0];
-    }
-    String error = cipher.checkKey();
-    if (error != '') {
-      toast(error);
-      return;
-    }
-  });
-  encryptButton.onClick.listen((e) {
-    outputTextArea.value = '';
-    if (keyEncode == ENCODING_HEX) cipher.key_B =
-        int.parse(inputKeyB.value, radix: 16, onError: (source) => null);
-    else if (keyEncode == ENCODING_LATIN1) {
-      if (inputKeyB.value.length != 1) {
-        toast('Incorrect key size!');
-        cipher.key_B = null;
-        return;
-      } else cipher.key_B = stringToBytes(inputKeyB.value)[0];
-    } else if (keyEncode == ENCODING_BASE64) {
-      if (inputKeyB.value.length % 4 != 0 ||
-          base64StringToBytes(inputKeyB.value).length != 1) {
-        toast('Incorrect key!');
-        cipher.key_B = null;
-        return;
-      } else cipher.key_B = base64StringToBytes(inputKeyB.value)[0];
-    }
-    String error = cipher.checkKey();
-    if (error != '') {
-      toast(error);
-      return;
-    }
-    List list = null;
-    if (inputEncode == ENCODING_HEX) list =
-        cipher.encrypt(hexStringToBytes(inputTextArea.value));
-    else if (inputEncode == ENCODING_LATIN1) list =
-        cipher.encrypt(stringToBytes(inputTextArea.value));
-    else if (inputEncode == ENCODING_BASE64) {
-      if (inputTextArea.value.length % 4 != 0) list = null;
-      else list = cipher.encrypt(base64StringToBytes(inputTextArea.value));
-    }
-    if (list == null) toast('Incorrect message!');
-    if (outputEncode == ENCODING_HEX) outputTextArea.value =
-        bytesToHexString(list);
-    else if (outputEncode == ENCODING_LATIN1) outputTextArea.value =
-        bytesToString(list);
-    else if (outputEncode == ENCODING_BASE64) outputTextArea.value =
-        bytesToBase64String(list);
-    if (keyEncode == ENCODING_HEX) inputKeyB.value =
-        bytesToHexString([cipher.key_B]);
-    else if (keyEncode == ENCODING_LATIN1) inputKeyB.value =
-        bytesToString([cipher.key_B]);
-    else if (keyEncode == ENCODING_BASE64) inputKeyB.value =
-        bytesToBase64String([cipher.key_B]);
-  });
-  decryptButton.onClick.listen((e) {
-    inputTextArea.value = '';
-    if (keyEncode == ENCODING_HEX) cipher.key_B =
-        int.parse(inputKeyB.value, radix: 16, onError: (source) => null);
-    else if (keyEncode == ENCODING_LATIN1) {
-      if (inputKeyB.value.length != 1) {
-        toast('Incorrect key size!');
-        cipher.key_B = null;
-        return;
-      } else cipher.key_B = stringToBytes(inputKeyB.value)[0];
-    } else if (keyEncode == ENCODING_BASE64) {
-      if (inputKeyB.value.length % 4 != 0 ||
-          base64StringToBytes(inputKeyB.value).length != 1) {
-        toast('Incorrect key!');
-        cipher.key_B = null;
-        return;
-      } else cipher.key_B = base64StringToBytes(inputKeyB.value)[0];
-    }
-    String error = cipher.checkKey();
-    if (error != '') {
-      toast(error);
-      return;
-    }
-    List list = null;
-    if (outputEncode == ENCODING_HEX) list =
-        cipher.decrypt(hexStringToBytes(outputTextArea.value));
-    else if (outputEncode == ENCODING_LATIN1) list =
-        cipher.decrypt(stringToBytes(outputTextArea.value));
-    else if (outputEncode == ENCODING_BASE64) {
-      if (outputTextArea.value.length % 4 != 0) list = null;
-      else list = cipher.decrypt(base64StringToBytes(outputTextArea.value));
-    }
-    if (list == null) toast('Incorrect message!');
-    if (inputEncode == ENCODING_HEX) inputTextArea.value =
-        bytesToHexString(list);
-    else if (inputEncode == ENCODING_LATIN1) inputTextArea.value =
-        bytesToString(list);
-    else if (inputEncode == ENCODING_BASE64) inputTextArea.value =
-        bytesToBase64String(list);
-    if (keyEncode == ENCODING_HEX) inputKeyB.value =
-        bytesToHexString([cipher.key_B]);
-    else if (keyEncode == ENCODING_LATIN1) inputKeyB.value =
-        bytesToString([cipher.key_B]);
-    else if (keyEncode == ENCODING_BASE64) inputKeyB.value =
-        bytesToBase64String([cipher.key_B]);
-  });
-
-  scrollTo(
-      encryptButton, getDuration(encryptButton, 2), TimingFunctions.easeInOut);
-}
-
-void buildAffine() {
-  SpanElement wrapper = querySelector('#dynamic');
-  wrapper.setInnerHtml('');
-  int inputEncode = ENCODING_LATIN1;
-  int keyEncode = ENCODING_LATIN1;
-  int outputEncode = ENCODING_HEX;
-
-  wrapper.setInnerHtml(HTML_CODE_AFFINE, validator: nodeValidator);
-
-  TextAreaElement inputTextArea = querySelector("#inputTextArea");
-  InputElement inputKeyA = querySelector("#keyInputA");
-  InputElement inputKeyB = querySelector("#keyInputB");
-  TextAreaElement outputTextArea = querySelector("#outputTextArea");
-  DivElement encryptButton = querySelector("#encryptButton");
-  DivElement decryptButton = querySelector("#decryptButton");
-  ParagraphElement descriptionParagraph = querySelector('#description');
-
-  querySelector("#plaintextInput").onClick.listen((e) {
-    if (inputEncode == ENCODING_HEX) inputTextArea.value =
-        hexStringToString(inputTextArea.value);
-    if (inputEncode == ENCODING_BASE64) inputTextArea.value =
-        bytesToString(base64StringToBytes(inputTextArea.value));
-    inputEncode = ENCODING_LATIN1;
-  });
-  querySelector("#hextextInput").onClick.listen((e) {
-    if (inputEncode == ENCODING_LATIN1) inputTextArea.value =
-        stringToHexString(inputTextArea.value);
-    if (inputEncode == ENCODING_BASE64) inputTextArea.value =
-        bytesToHexString(base64StringToBytes(inputTextArea.value));
-    inputEncode = ENCODING_HEX;
-  });
-  querySelector("#base64Input").onClick.listen((e) {
-    if (inputEncode == ENCODING_LATIN1) inputTextArea.value =
-        bytesToBase64String(stringToBytes(inputTextArea.value));
-    if (inputEncode == ENCODING_HEX) inputTextArea.value =
-        bytesToBase64String(hexStringToBytes(inputTextArea.value));
-    inputEncode = ENCODING_BASE64;
-  });
-  querySelector("#plaintextKey").onClick.listen((e) {
-    if (keyEncode == ENCODING_HEX) {
-      inputKeyA.value = hexStringToString(inputKeyA.value);
-      inputKeyB.value = hexStringToString(inputKeyB.value);
-    }
-    if (keyEncode == ENCODING_BASE64) {
-      inputKeyB.value = bytesToString(base64StringToBytes(inputKeyB.value));
-      inputKeyA.value = bytesToString(base64StringToBytes(inputKeyA.value));
-    }
-    keyEncode = ENCODING_LATIN1;
-  });
-  querySelector("#hextextKey").onClick.listen((e) {
-    if (keyEncode == ENCODING_LATIN1) {
-      inputKeyA.value = stringToHexString(inputKeyA.value);
-      inputKeyB.value = stringToHexString(inputKeyB.value);
-    }
-    if (keyEncode == ENCODING_BASE64) {
-      inputKeyA.value = bytesToHexString(base64StringToBytes(inputKeyA.value));
-      inputKeyB.value = bytesToHexString(base64StringToBytes(inputKeyB.value));
-    }
-    keyEncode = ENCODING_HEX;
-  });
-  querySelector("#base64Key").onClick.listen((e) {
-    if (keyEncode == ENCODING_LATIN1) {
-      inputKeyA.value = bytesToBase64String(stringToBytes(inputKeyA.value));
-      inputKeyB.value = bytesToBase64String(stringToBytes(inputKeyB.value));
-    }
-    if (keyEncode == ENCODING_HEX) {
-      inputKeyA.value = bytesToBase64String(hexStringToBytes(inputKeyA.value));
-      inputKeyB.value = bytesToBase64String(hexStringToBytes(inputKeyB.value));
-    }
-    keyEncode = ENCODING_BASE64;
-  });
-  querySelector("#plaintextOutput").onClick.listen((e) {
-    if (outputEncode == ENCODING_HEX) outputTextArea.value =
-        hexStringToString(outputTextArea.value);
-    if (outputEncode == ENCODING_BASE64) outputTextArea.value =
-        bytesToString(base64StringToBytes(outputTextArea.value));
-    outputEncode = ENCODING_LATIN1;
-  });
-  querySelector("#hextextOutput").onClick.listen((e) {
-    if (outputEncode == ENCODING_LATIN1) outputTextArea.value =
-        stringToHexString(outputTextArea.value);
-    if (outputEncode == ENCODING_BASE64) outputTextArea.value =
-        bytesToHexString(base64StringToBytes(outputTextArea.value));
-    outputEncode = ENCODING_HEX;
-  });
-  querySelector("#base64Output").onClick.listen((e) {
-    if (outputEncode == ENCODING_LATIN1) outputTextArea.value =
-        bytesToBase64String(stringToBytes(outputTextArea.value));
-    if (outputEncode == ENCODING_HEX) outputTextArea.value =
-        bytesToBase64String(hexStringToBytes(outputTextArea.value));
-    outputEncode = ENCODING_BASE64;
-  });
-
-  descriptionParagraph.appendHtml(TEXT_DESCRIPTION_AFFINE,
-      validator: nodeValidator);
+  if (type == CIPHER_CAESAR) {
+    descriptionParagraph?.appendHtml(TEXT_DESCRIPTION_CAESAR,
+        validator: nodeValidator);
+    keyTextAreaA.value = bytesToString([0x01]);
+    keyTextAreaA.style.display = 'none';
+    querySelector('#BRelement').style.display = 'none';
+  } else if (type == CIPHER_AFFINE) {
+    descriptionParagraph?.appendHtml(TEXT_DESCRIPTION_AFFINE,
+        validator: nodeValidator);
+  }
 
   AffineCipher cipher = new AffineCipher(256, key_A: null, key_B: null);
-  inputKeyA.onChange.listen((e) {
-    if (keyEncode == ENCODING_HEX) cipher.key_A =
-        int.parse(inputKeyA.value, radix: 16, onError: (source) => null);
-    else if (keyEncode == ENCODING_LATIN1) {
-      if (inputKeyA.value.length != 1) {
-        toast('Incorrect key 1 size!');
-        cipher.key_A = null;
-        return;
-      } else cipher.key_A = stringToBytes(inputKeyA.value)[0];
-    } else if (keyEncode == ENCODING_BASE64) {
-      if (inputKeyA.value.length % 4 != 0 ||
-          base64StringToBytes(inputKeyA.value).length != 1) {
-        toast('Incorrect key 1!');
-        cipher.key_A = null;
-        return;
-      } else cipher.key_A = base64StringToBytes(inputKeyA.value)[0];
+
+  void checkKey(String key, {int keyNumber: 0}) {
+    List tempKey = null;
+    try {
+      if (key == null) throw new Exception("Key $keyNumber is empty!");
+      if (keyEncode[0] == ENCODING_HEX) tempKey = hexStringToBytes(key);
+      else if (keyEncode[0] == ENCODING_LATIN1) tempKey = stringToBytes(key);
+      else if (keyEncode[0] == ENCODING_BASE64) tempKey =
+          base64StringToBytes(key);
+      if (tempKey == null || tempKey.length != 1) throw new Exception(
+          "Incorrect encoding key $keyNumber!");
+      if (keyNumber == 1) cipher.key_A = tempKey[0];
+      else if (keyNumber == 2) cipher.key_B = tempKey[0];
+    } catch (e) {
+      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
+      throw new Exception(e);
     }
-  });
-  inputKeyB.onChange.listen((e) {
-    if (keyEncode == ENCODING_HEX) cipher.key_B =
-        int.parse(inputKeyB.value, radix: 16, onError: (source) => null);
-    else if (keyEncode == ENCODING_LATIN1) {
-      if (inputKeyB.value.length != 1) {
-        toast('Incorrect key 2 size!');
-        cipher.key_B = null;
-        return;
-      } else cipher.key_B = stringToBytes(inputKeyB.value)[0];
-    } else if (keyEncode == ENCODING_BASE64) {
-      if (inputKeyB.value.length % 4 != 0 ||
-          base64StringToBytes(inputKeyB.value).length != 1) {
-        toast('Incorrect key 2!');
-        cipher.key_B = null;
-        return;
-      } else cipher.key_B = base64StringToBytes(inputKeyB.value)[0];
-    }
-    String error = cipher.checkKey();
-    if (error != '') {
-      toast(error);
-      return;
-    }
-  });
+  }
+
+  keyTextAreaA.onChange
+      .listen((e) => checkKey(keyTextAreaA.value, keyNumber: 1));
+  keyTextAreaB.onChange
+      .listen((e) => checkKey(keyTextAreaB.value, keyNumber: 2));
   encryptButton.onClick.listen((e) {
     outputTextArea.value = '';
-    if (keyEncode == ENCODING_HEX) cipher.key_A =
-        int.parse(inputKeyA.value, radix: 16, onError: (source) => null);
-    else if (keyEncode == ENCODING_LATIN1) {
-      if (inputKeyA.value.length != 1) {
-        toast('Incorrect key 1 size!');
-        cipher.key_A = null;
-        return;
-      } else cipher.key_A = stringToBytes(inputKeyA.value)[0];
-    } else if (keyEncode == ENCODING_BASE64) {
-      if (inputKeyA.value.length % 4 != 0 ||
-          base64StringToBytes(inputKeyA.value).length != 1) {
-        toast('Incorrect key 1!');
-        cipher.key_A = null;
-        return;
-      } else cipher.key_A = base64StringToBytes(inputKeyA.value)[0];
-    }
-    if (keyEncode == ENCODING_HEX) cipher.key_B =
-        int.parse(inputKeyB.value, radix: 16, onError: (source) => null);
-    else if (keyEncode == ENCODING_LATIN1) {
-      if (inputKeyB.value.length != 1) {
-        toast('Incorrect key 2 size!');
-        cipher.key_B = null;
-        return;
-      } else cipher.key_B = stringToBytes(inputKeyB.value)[0];
-    } else if (keyEncode == ENCODING_BASE64) {
-      if (inputKeyB.value.length % 4 != 0 ||
-          base64StringToBytes(inputKeyB.value).length != 1) {
-        toast('Incorrect key 2!');
-        cipher.key_B = null;
-        return;
-      } else cipher.key_B = base64StringToBytes(inputKeyB.value)[0];
-    }
-    String error = cipher.checkKey();
-    if (error != '') {
-      toast(error);
-      return;
-    }
-    List list = null;
-    if (inputEncode == ENCODING_HEX) list =
-        cipher.encrypt(hexStringToBytes(inputTextArea.value));
-    else if (inputEncode == ENCODING_LATIN1) list =
-        cipher.encrypt(stringToBytes(inputTextArea.value));
-    else if (inputEncode == ENCODING_BASE64) {
-      if (inputTextArea.value.length % 4 != 0) list = null;
-      else list = cipher.encrypt(base64StringToBytes(inputTextArea.value));
-    }
-    if (list == null) toast('Incorrect message!');
-    if (outputEncode == ENCODING_HEX) outputTextArea.value =
-        bytesToHexString(list);
-    else if (outputEncode == ENCODING_LATIN1) outputTextArea.value =
-        bytesToString(list);
-    else if (outputEncode == ENCODING_BASE64) outputTextArea.value =
-        bytesToBase64String(list);
-    if (keyEncode == ENCODING_HEX) {
-      inputKeyA.value = bytesToHexString([cipher.key_A]);
-      inputKeyB.value = bytesToHexString([cipher.key_B]);
-    } else if (keyEncode == ENCODING_LATIN1) {
-      inputKeyB.value = bytesToString([cipher.key_B]);
-      inputKeyA.value = bytesToString([cipher.key_A]);
-    } else if (keyEncode == ENCODING_BASE64) {
-      inputKeyA.value = bytesToBase64String([cipher.key_A]);
-      inputKeyB.value = bytesToBase64String([cipher.key_B]);
+    try {
+      checkKey(keyTextAreaA.value, keyNumber: 1);
+      checkKey(keyTextAreaB.value, keyNumber: 2);
+      List list = null;
+      if (inputEncode[0] == ENCODING_HEX) list =
+          cipher.encrypt(hexStringToBytes(inputTextArea.value));
+      else if (inputEncode[0] == ENCODING_LATIN1) list =
+          cipher.encrypt(stringToBytes(inputTextArea.value));
+      else if (inputEncode[0] == ENCODING_BASE64) list =
+          cipher.encrypt(base64StringToBytes(inputTextArea.value));
+      if (list == null) throw new Exception('Incorrect message encoding!');
+      if (outputEncode[0] == ENCODING_HEX) outputTextArea.value =
+          bytesToHexString(list);
+      else if (outputEncode[0] == ENCODING_LATIN1) outputTextArea.value =
+          bytesToString(list);
+      else if (outputEncode[0] == ENCODING_BASE64) outputTextArea.value =
+          bytesToBase64String(list);
+    } catch (e) {
+      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
+      throw new Exception(e);
     }
   });
   decryptButton.onClick.listen((e) {
     inputTextArea.value = '';
-    if (keyEncode == ENCODING_HEX) cipher.key_A =
-        int.parse(inputKeyA.value, radix: 16, onError: (source) => null);
-    else if (keyEncode == ENCODING_LATIN1) {
-      if (inputKeyA.value.length != 1) {
-        toast('Incorrect key 1 size!');
-        cipher.key_A = null;
-        return;
-      } else cipher.key_A = stringToBytes(inputKeyA.value)[0];
-    } else if (keyEncode == ENCODING_BASE64) {
-      if (inputKeyA.value.length % 4 != 0 ||
-          base64StringToBytes(inputKeyA.value).length != 1) {
-        toast('Incorrect key 1!');
-        cipher.key_A = null;
-        return;
-      } else cipher.key_A = base64StringToBytes(inputKeyA.value)[0];
-    }
-    if (keyEncode == ENCODING_HEX) cipher.key_B =
-        int.parse(inputKeyB.value, radix: 16, onError: (source) => null);
-    else if (keyEncode == ENCODING_LATIN1) {
-      if (inputKeyB.value.length != 1) {
-        toast('Incorrect key size!');
-        cipher.key_B = null;
-        return;
-      } else cipher.key_B = stringToBytes(inputKeyB.value)[0];
-    } else if (keyEncode == ENCODING_BASE64) {
-      if (inputKeyB.value.length % 4 != 0 ||
-          base64StringToBytes(inputKeyB.value).length != 1) {
-        toast('Incorrect key!');
-        cipher.key_B = null;
-        return;
-      } else cipher.key_B = base64StringToBytes(inputKeyB.value)[0];
-    }
-    String error = cipher.checkKey();
-    if (error != '') {
-      toast(error);
-      return;
-    }
-    List list = null;
-    if (outputEncode == ENCODING_HEX) list =
-        cipher.decrypt(hexStringToBytes(outputTextArea.value));
-    else if (outputEncode == ENCODING_LATIN1) list =
-        cipher.decrypt(stringToBytes(outputTextArea.value));
-    else if (outputEncode == ENCODING_BASE64) {
-      if (outputTextArea.value.length % 4 != 0) list = null;
-      else list = cipher.decrypt(base64StringToBytes(outputTextArea.value));
-    }
-    if (list == null) toast('Incorrect message!');
-    if (inputEncode == ENCODING_HEX) inputTextArea.value =
-        bytesToHexString(list);
-    else if (inputEncode == ENCODING_LATIN1) inputTextArea.value =
-        bytesToString(list);
-    else if (inputEncode == ENCODING_BASE64) inputTextArea.value =
-        bytesToBase64String(list);
-    if (keyEncode == ENCODING_HEX) {
-      inputKeyA.value = bytesToHexString([cipher.key_A]);
-      inputKeyB.value = bytesToHexString([cipher.key_B]);
-    } else if (keyEncode == ENCODING_LATIN1) {
-      inputKeyB.value = bytesToString([cipher.key_B]);
-      inputKeyA.value = bytesToString([cipher.key_A]);
-    } else if (keyEncode == ENCODING_BASE64) {
-      inputKeyA.value = bytesToBase64String([cipher.key_A]);
-      inputKeyB.value = bytesToBase64String([cipher.key_B]);
+    try {
+      checkKey(keyTextAreaA.value, keyNumber: 1);
+      checkKey(keyTextAreaB.value, keyNumber: 2);
+      List list = null;
+      if (outputEncode[0] == ENCODING_HEX) list =
+          cipher.decrypt(hexStringToBytes(outputTextArea.value));
+      else if (outputEncode[0] == ENCODING_LATIN1) list =
+          cipher.decrypt(stringToBytes(outputTextArea.value));
+      else if (outputEncode[0] == ENCODING_BASE64) list =
+          cipher.decrypt(base64StringToBytes(outputTextArea.value));
+      if (list == null) throw new Exception('Incorrect message encoding!');
+      if (inputEncode[0] == ENCODING_HEX) inputTextArea.value =
+          bytesToHexString(list);
+      else if (inputEncode[0] == ENCODING_LATIN1) inputTextArea.value =
+          bytesToString(list);
+      else if (inputEncode[0] == ENCODING_BASE64) inputTextArea.value =
+          bytesToBase64String(list);
+    } catch (e) {
+      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
+      throw new Exception(e);
     }
   });
 
@@ -537,12 +172,7 @@ void buildAffine() {
 
 void buildStandardCiphers(int type) {
   SpanElement wrapper = querySelector('#dynamic');
-  wrapper.setInnerHtml('');
-  int inputEncode = ENCODING_LATIN1;
-  int keyEncode = ENCODING_LATIN1;
-  int outputEncode = ENCODING_HEX;
-
-  wrapper.setInnerHtml(HTML_CODE_STANDARD_CIPHERS, validator: nodeValidator);
+  wrapper?.setInnerHtml(HTML_CODE_STANDARD_CIPHERS, validator: nodeValidator);
 
   TextAreaElement inputTextArea = querySelector("#inputTextArea");
   TextAreaElement keyTextArea = querySelector("#keyTextArea");
@@ -551,189 +181,84 @@ void buildStandardCiphers(int type) {
   DivElement decryptButton = querySelector("#decryptButton");
   ParagraphElement descriptionParagraph = querySelector('#description');
 
-  querySelector("#plaintextInput").onClick.listen((e) {
-    if (inputEncode == ENCODING_HEX) inputTextArea.value =
-        hexStringToString(inputTextArea.value);
-    if (inputEncode == ENCODING_BASE64) inputTextArea.value =
-        bytesToString(base64StringToBytes(inputTextArea.value));
-    inputEncode = ENCODING_LATIN1;
-  });
-  querySelector("#hextextInput").onClick.listen((e) {
-    if (inputEncode == ENCODING_LATIN1) inputTextArea.value =
-        stringToHexString(inputTextArea.value);
-    if (inputEncode == ENCODING_BASE64) inputTextArea.value =
-        bytesToHexString(base64StringToBytes(inputTextArea.value));
-    inputEncode = ENCODING_HEX;
-  });
-  querySelector("#base64Input").onClick.listen((e) {
-    if (inputEncode == ENCODING_LATIN1) inputTextArea.value =
-        bytesToBase64String(stringToBytes(inputTextArea.value));
-    if (inputEncode == ENCODING_HEX) inputTextArea.value =
-        bytesToBase64String(hexStringToBytes(inputTextArea.value));
-    inputEncode = ENCODING_BASE64;
-  });
-  querySelector("#plaintextKey").onClick.listen((e) {
-    if (keyEncode == ENCODING_HEX) keyTextArea.value =
-        hexStringToString(keyTextArea.value);
-    if (keyEncode == ENCODING_BASE64) keyTextArea.value =
-        bytesToString(base64StringToBytes(keyTextArea.value));
-    keyEncode = ENCODING_LATIN1;
-  });
-  querySelector("#hextextKey").onClick.listen((e) {
-    if (keyEncode == ENCODING_LATIN1) keyTextArea.value =
-        stringToHexString(keyTextArea.value);
-    if (keyEncode == ENCODING_BASE64) keyTextArea.value =
-        bytesToHexString(base64StringToBytes(keyTextArea.value));
-    keyEncode = ENCODING_HEX;
-  });
-  querySelector("#base64Key").onClick.listen((e) {
-    if (keyEncode == ENCODING_LATIN1) keyTextArea.value =
-        bytesToBase64String(stringToBytes(keyTextArea.value));
-
-    if (keyEncode == ENCODING_HEX) keyTextArea.value =
-        bytesToBase64String(hexStringToBytes(keyTextArea.value));
-    keyEncode = ENCODING_BASE64;
-  });
-  querySelector("#plaintextOutput").onClick.listen((e) {
-    if (outputEncode == ENCODING_HEX) outputTextArea.value =
-        hexStringToString(outputTextArea.value);
-    if (outputEncode == ENCODING_BASE64) outputTextArea.value =
-        bytesToString(base64StringToBytes(outputTextArea.value));
-    outputEncode = ENCODING_LATIN1;
-  });
-  querySelector("#hextextOutput").onClick.listen((e) {
-    if (outputEncode == ENCODING_LATIN1) outputTextArea.value =
-        stringToHexString(outputTextArea.value);
-    if (outputEncode == ENCODING_BASE64) outputTextArea.value =
-        bytesToHexString(base64StringToBytes(outputTextArea.value));
-    outputEncode = ENCODING_HEX;
-  });
-  querySelector("#base64Output").onClick.listen((e) {
-    if (outputEncode == ENCODING_LATIN1) outputTextArea.value =
-        bytesToBase64String(stringToBytes(outputTextArea.value));
-    if (outputEncode == ENCODING_HEX) outputTextArea.value =
-        bytesToBase64String(hexStringToBytes(outputTextArea.value));
-    outputEncode = ENCODING_BASE64;
-  });
+  encodings(inputTextArea, inputEncode, type: "Input");
+  encodings(keyTextArea, keyEncode, type: "Key");
+  encodings(outputTextArea, outputEncode, type: "Output");
 
   var cipher = null;
-  switch (type) {
-    case CIPHER_VIGENERE:
-      descriptionParagraph.appendHtml(TEXT_DESCRIPTION_VIGENERE,
-          validator: nodeValidator);
-      cipher = new VigenereCipher(256);
-      break;
-    case CIPHER_BEAUFORT:
-      descriptionParagraph.appendHtml(TEXT_DESCRIPTION_BEAUFORT,
-          validator: nodeValidator);
-      cipher = new BeaufortCipher(256);
-      break;
-    case CIPHER_OTP:
-      descriptionParagraph.appendHtml(TEXT_DESCRIPTION_OTP,
-          validator: nodeValidator);
-      cipher = new OTPCipher(256);
-      break;
+  if (type == CIPHER_VIGENERE) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_VIGENERE,
+        validator: nodeValidator);
+    cipher = new VigenereCipher(256);
+  } else if (type == CIPHER_BEAUFORT) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_BEAUFORT,
+        validator: nodeValidator);
+    cipher = new BeaufortCipher(256);
+  } else if (type == CIPHER_OTP) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_OTP,
+        validator: nodeValidator);
+    cipher = new OTPCipher(256);
   }
 
-  keyTextArea.onChange.listen((e) {
-    if (keyEncode == ENCODING_HEX) cipher.key =
-        hexStringToBytes(keyTextArea.value);
-    else if (keyEncode == ENCODING_LATIN1) {
-      cipher.key = stringToBytes(keyTextArea.value);
-    } else if (keyEncode == ENCODING_BASE64) {
-      if (keyTextArea.value.length % 4 != 0) {
-        toast('Incorrect key!');
-        cipher.key = null;
-        return;
-      } else cipher.key = base64StringToBytes(keyTextArea.value);
+  void checkKey(String key) {
+    try {
+      if (key == null) throw new Exception("Key is empty!");
+      if (keyEncode[0] == ENCODING_HEX) cipher.key = hexStringToBytes(key);
+      else if (keyEncode[0] == ENCODING_LATIN1) cipher.key = stringToBytes(key);
+      else if (keyEncode[0] == ENCODING_BASE64) cipher.key =
+          base64StringToBytes(key);
+    } catch (e) {
+      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
+      throw new Exception(e);
     }
-    String error = cipher.checkKey();
-    if (error != '') {
-      toast(error);
-      return;
-    }
-  });
+  }
+
+  keyTextArea.onChange.listen((e) => checkKey(keyTextArea.value));
   encryptButton.onClick.listen((e) {
     outputTextArea.value = '';
-    if (keyEncode == ENCODING_HEX) cipher.key =
-        hexStringToBytes(keyTextArea.value);
-    else if (keyEncode == ENCODING_LATIN1) {
-      cipher.key = stringToBytes(keyTextArea.value);
-    } else if (keyEncode == ENCODING_BASE64) {
-      if (keyTextArea.value.length % 4 != 0) {
-        toast('Incorrect key!');
-        cipher.key = null;
-        return;
-      } else cipher.key = base64StringToBytes(keyTextArea.value);
+    try {
+      checkKey(keyTextArea.value);
+      List list = null;
+      if (inputEncode[0] == ENCODING_HEX) list =
+          cipher.encrypt(hexStringToBytes(inputTextArea.value));
+      else if (inputEncode[0] == ENCODING_LATIN1) list =
+          cipher.encrypt(stringToBytes(inputTextArea.value));
+      else if (inputEncode[0] == ENCODING_BASE64) list =
+          cipher.encrypt(base64StringToBytes(inputTextArea.value));
+      if (list == null) throw new Exception('Incorrect message encoding!');
+      if (outputEncode[0] == ENCODING_HEX) outputTextArea.value =
+          bytesToHexString(list);
+      else if (outputEncode[0] == ENCODING_LATIN1) outputTextArea.value =
+          bytesToString(list);
+      else if (outputEncode[0] == ENCODING_BASE64) outputTextArea.value =
+          bytesToBase64String(list);
+    } catch (e) {
+      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
+      throw new Exception(e);
     }
-    String error = cipher.checkKey();
-    if (error != '') {
-      toast(error);
-      return;
-    }
-    List list = null;
-    if (inputEncode == ENCODING_HEX) list =
-        cipher.encrypt(hexStringToBytes(inputTextArea.value));
-    else if (inputEncode == ENCODING_LATIN1) list =
-        cipher.encrypt(stringToBytes(inputTextArea.value));
-    else if (inputEncode == ENCODING_BASE64) {
-      if (inputTextArea.value.length % 4 != 0) list = null;
-      else list = cipher.encrypt(base64StringToBytes(inputTextArea.value));
-    }
-    if (list == null) toast('Incorrect message!');
-    if (outputEncode == ENCODING_HEX) outputTextArea.value =
-        bytesToHexString(list);
-    else if (outputEncode == ENCODING_LATIN1) outputTextArea.value =
-        bytesToString(list);
-    else if (outputEncode == ENCODING_BASE64) outputTextArea.value =
-        bytesToBase64String(list);
-    if (keyEncode == ENCODING_HEX) keyTextArea.value =
-        bytesToHexString(cipher.key);
-    else if (keyEncode == ENCODING_LATIN1) keyTextArea.value =
-        bytesToString(cipher.key);
-    else if (keyEncode == ENCODING_BASE64) keyTextArea.value =
-        bytesToBase64String(cipher.key);
   });
   decryptButton.onClick.listen((e) {
     inputTextArea.value = '';
-    if (keyEncode == ENCODING_HEX) cipher.key =
-        hexStringToBytes(keyTextArea.value);
-    else if (keyEncode == ENCODING_LATIN1) {
-      cipher.key = stringToBytes(keyTextArea.value);
-    } else if (keyEncode == ENCODING_BASE64) {
-      if (keyTextArea.value.length % 4 != 0) {
-        toast('Incorrect key!');
-        cipher.key = null;
-        return;
-      } else cipher.key = base64StringToBytes(keyTextArea.value);
+    try {
+      checkKey(keyTextArea.value);
+      List list = null;
+      if (outputEncode[0] == ENCODING_HEX) list =
+          cipher.decrypt(hexStringToBytes(outputTextArea.value));
+      else if (outputEncode[0] == ENCODING_LATIN1) list =
+          cipher.decrypt(stringToBytes(outputTextArea.value));
+      else if (outputEncode[0] == ENCODING_BASE64) list =
+          cipher.decrypt(base64StringToBytes(outputTextArea.value));
+      if (list == null) throw new Exception('Incorrect message encoding!');
+      if (inputEncode[0] == ENCODING_HEX) inputTextArea.value =
+          bytesToHexString(list);
+      else if (inputEncode[0] == ENCODING_LATIN1) inputTextArea.value =
+          bytesToString(list);
+      else if (inputEncode[0] == ENCODING_BASE64) inputTextArea.value =
+          bytesToBase64String(list);
+    } catch (e) {
+      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
+      throw new Exception(e);
     }
-    String error = cipher.checkKey();
-    if (error != '') {
-      toast(error);
-      return;
-    }
-    List list = null;
-    if (outputEncode == ENCODING_HEX) list =
-        cipher.decrypt(hexStringToBytes(outputTextArea.value));
-    else if (outputEncode == ENCODING_LATIN1) list =
-        cipher.decrypt(stringToBytes(outputTextArea.value));
-    else if (outputEncode == ENCODING_BASE64) {
-      if (outputTextArea.value.length % 4 != 0) list = null;
-      else list = cipher.decrypt(base64StringToBytes(outputTextArea.value));
-    }
-    if (list == null) toast('Incorrect message!');
-    if (inputEncode == ENCODING_HEX) inputTextArea.value =
-        bytesToHexString(list);
-    else if (inputEncode == ENCODING_LATIN1) inputTextArea.value =
-        bytesToString(list);
-    else if (inputEncode == ENCODING_BASE64) inputTextArea.value =
-        bytesToBase64String(list);
-    if (keyEncode == ENCODING_HEX) keyTextArea.value =
-        bytesToHexString(cipher.key);
-    else if (keyEncode == ENCODING_LATIN1) keyTextArea.value =
-        bytesToString(cipher.key);
-    else if (keyEncode == ENCODING_BASE64) keyTextArea.value =
-        bytesToBase64String(cipher.key);
   });
 
   scrollTo(
@@ -742,14 +267,9 @@ void buildStandardCiphers(int type) {
 
 void buildBlockCiphers(int type) {
   SpanElement wrapper = querySelector('#dynamic');
-  wrapper.setInnerHtml('');
-  int inputEncode = ENCODING_LATIN1;
-  int keyEncode = ENCODING_LATIN1;
-  int outputEncode = ENCODING_HEX;
+  wrapper.setInnerHtml(HTML_CODE_BLOCK_CIPHERS, validator: nodeValidator);
 
   int mode = BLOCK_MODE_ECB;
-
-  wrapper.setInnerHtml(HTML_CODE_BLOCK_CIPHERS, validator: nodeValidator);
 
   TextAreaElement inputTextArea = querySelector("#inputTextArea");
   TextAreaElement keyTextArea = querySelector("#keyTextArea");
@@ -759,107 +279,10 @@ void buildBlockCiphers(int type) {
   DivElement decryptButton = querySelector("#decryptButton");
   ParagraphElement descriptionParagraph = querySelector('#description');
 
-  querySelector("#plaintextInput").onClick.listen((e) {
-    if (inputEncode == ENCODING_HEX) {
-      inputTextArea.value = hexStringToString(inputTextArea.value);
-    }
-    if (inputEncode == ENCODING_BASE64) {
-      inputTextArea.value =
-          bytesToString(base64StringToBytes(inputTextArea.value));
-    }
-    inputEncode = ENCODING_LATIN1;
-  });
-  querySelector("#hextextInput").onClick.listen((e) {
-    if (inputEncode == ENCODING_LATIN1) {
-      inputTextArea.value = stringToHexString(inputTextArea.value);
-    }
-    if (inputEncode == ENCODING_BASE64) {
-      inputTextArea.value =
-          bytesToHexString(base64StringToBytes(inputTextArea.value));
-    }
-    inputEncode = ENCODING_HEX;
-  });
-  querySelector("#base64Input").onClick.listen((e) {
-    if (inputEncode == ENCODING_LATIN1) {
-      inputTextArea.value =
-          bytesToBase64String(stringToBytes(inputTextArea.value));
-    }
-    if (inputEncode == ENCODING_HEX) {
-      inputTextArea.value =
-          bytesToBase64String(hexStringToBytes(inputTextArea.value));
-    }
-    inputEncode = ENCODING_BASE64;
-  });
-  querySelector("#plaintextKey").onClick.listen((e) {
-    if (keyEncode == ENCODING_HEX) {
-      keyTextArea.value = hexStringToString(keyTextArea.value);
-      initVectorTextArea.value = hexStringToString(initVectorTextArea.value);
-    }
-    if (keyEncode == ENCODING_BASE64) {
-      keyTextArea.value = bytesToString(base64StringToBytes(keyTextArea.value));
-      initVectorTextArea.value =
-          bytesToString(base64StringToBytes(initVectorTextArea.value));
-    }
-    keyEncode = ENCODING_LATIN1;
-  });
-  querySelector("#hextextKey").onClick.listen((e) {
-    if (keyEncode == ENCODING_LATIN1) {
-      keyTextArea.value = stringToHexString(keyTextArea.value);
-      initVectorTextArea.value = stringToHexString(initVectorTextArea.value);
-    }
-    if (keyEncode == ENCODING_BASE64) {
-      keyTextArea.value =
-          bytesToHexString(base64StringToBytes(keyTextArea.value));
-      initVectorTextArea.value =
-          bytesToHexString(base64StringToBytes(initVectorTextArea.value));
-    }
-    keyEncode = ENCODING_HEX;
-  });
-  querySelector("#base64Key").onClick.listen((e) {
-    if (keyEncode == ENCODING_LATIN1) {
-      keyTextArea.value = bytesToBase64String(stringToBytes(keyTextArea.value));
-      initVectorTextArea.value =
-          bytesToBase64String(stringToBytes(initVectorTextArea.value));
-    }
-    if (keyEncode == ENCODING_HEX) {
-      keyTextArea.value =
-          bytesToBase64String(hexStringToBytes(keyTextArea.value));
-      initVectorTextArea.value =
-          bytesToBase64String(hexStringToBytes(initVectorTextArea.value));
-    }
-    keyEncode = ENCODING_BASE64;
-  });
-  querySelector("#plaintextOutput").onClick.listen((e) {
-    if (outputEncode == ENCODING_HEX) {
-      outputTextArea.value = hexStringToString(outputTextArea.value);
-    }
-    if (outputEncode == ENCODING_BASE64) {
-      outputTextArea.value =
-          bytesToString(base64StringToBytes(outputTextArea.value));
-    }
-    outputEncode = ENCODING_LATIN1;
-  });
-  querySelector("#hextextOutput").onClick.listen((e) {
-    if (outputEncode == ENCODING_LATIN1) {
-      outputTextArea.value = stringToHexString(outputTextArea.value);
-    }
-    if (outputEncode == ENCODING_BASE64) {
-      outputTextArea.value =
-          bytesToHexString(base64StringToBytes(outputTextArea.value));
-    }
-    outputEncode = ENCODING_HEX;
-  });
-  querySelector("#base64Output").onClick.listen((e) {
-    if (outputEncode == ENCODING_LATIN1) {
-      outputTextArea.value =
-          bytesToBase64String(stringToBytes(outputTextArea.value));
-    }
-    if (outputEncode == ENCODING_HEX) {
-      outputTextArea.value =
-          bytesToBase64String(hexStringToBytes(outputTextArea.value));
-    }
-    outputEncode = ENCODING_BASE64;
-  });
+  encodings(inputTextArea, inputEncode, type: "Input");
+  encodings(keyTextArea, keyEncode, type: "Key", changeValue: false);
+  encodings(initVectorTextArea, keyEncode, type: "Key");
+  encodings(outputTextArea, outputEncode, type: "Output");
 
   String height = keyTextArea.style.height;
   querySelector("#ecbMode").onClick.listen((e) {
@@ -894,143 +317,94 @@ void buildBlockCiphers(int type) {
   });
 
   var cipher = null;
-  switch (type) {
-    case CIPHER_HILL:
-      descriptionParagraph.appendHtml(TEXT_DESCRIPTION_HILL,
-          validator: nodeValidator);
-      cipher = new HillCipher(256);
-      break;
+  if (type == CIPHER_HILL) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_HILL,
+        validator: nodeValidator);
+    cipher = new HillCipher(256);
   }
 
-  keyTextArea.onChange.listen((e) {
-    if (keyEncode == ENCODING_HEX) cipher.key =
-        hexStringToBytes(keyTextArea.value);
-    else if (keyEncode == ENCODING_LATIN1) {
-      cipher.key = stringToBytes(keyTextArea.value);
-    } else if (keyEncode == ENCODING_BASE64) {
-      if (keyTextArea.value.length % 4 != 0) {
-        toast('Incorrect key!');
-        cipher.key = null;
-        return;
-      } else cipher.key = base64StringToBytes(keyTextArea.value);
+  List initvector;
+
+  void checkKey(String key, String iv) {
+    try {
+      if (key == null) throw new Exception("Key is empty!");
+      if (keyEncode[0] == ENCODING_HEX) {
+        cipher.key = hexStringToBytes(key);
+        initvector = hexStringToBytes(iv);
+      } else if (keyEncode[0] == ENCODING_LATIN1) {
+        cipher.key = stringToBytes(key);
+        initvector = stringToBytes(iv);
+      } else if (keyEncode[0] == ENCODING_BASE64) {
+        cipher.key = base64StringToBytes(key);
+        initvector = base64StringToBytes(iv);
+      }
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
     }
-    String error = cipher.checkKey();
-    if (error != '') {
-      toast(error);
-      return;
-    }
-  });
+  }
+
+  keyTextArea.onChange.listen((e) => checkKey(keyTextArea.value, initVectorTextArea.value));
   encryptButton.onClick.listen((e) {
     outputTextArea.value = '';
-    List initvector = null;
-    if (keyEncode == ENCODING_HEX) {
-      cipher.key = hexStringToBytes(keyTextArea.value);
-      initvector = hexStringToBytes(initVectorTextArea.value);
-    } else if (keyEncode == ENCODING_LATIN1) {
-      cipher.key = stringToBytes(keyTextArea.value);
-      initvector = stringToBytes(initVectorTextArea.value);
-    } else if (keyEncode == ENCODING_BASE64) {
-      initvector = base64StringToBytes(initVectorTextArea.value);
-      if (keyTextArea.value.length % 4 != 0) {
-        toast('Incorrect key!');
-        cipher.key = null;
-        return;
-      } else cipher.key = base64StringToBytes(keyTextArea.value);
+    try {
+      checkKey(keyTextArea.value, initVectorTextArea.value);
+      List list = null;
+      if (inputEncode[0] == ENCODING_HEX) list = cipher.encrypt(
+          hexStringToBytes(inputTextArea.value),
+          mode: mode,
+          initVec: initvector);
+      else if (inputEncode[0] == ENCODING_LATIN1) list = cipher.encrypt(
+          stringToBytes(inputTextArea.value),
+          mode: mode,
+          initVec: initvector);
+      else if (inputEncode[0] == ENCODING_BASE64) list = cipher.encrypt(
+          base64StringToBytes(inputTextArea.value),
+          mode: mode,
+          initVec: initvector);
+      if (list == null) throw new Exception('Incorrect message or IV!');
+      if (outputEncode[0] == ENCODING_HEX) outputTextArea.value =
+          bytesToHexString(list);
+      else if (outputEncode[0] == ENCODING_LATIN1) outputTextArea.value =
+          bytesToString(list);
+      else if (outputEncode[0] == ENCODING_BASE64) outputTextArea.value =
+          bytesToBase64String(list);
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
     }
-    String error = cipher.checkKey();
-    if (error != '') {
-      toast(error);
-      return;
-    }
-    List list = null;
-    if (inputEncode == ENCODING_HEX) list = cipher.encrypt(
-        hexStringToBytes(inputTextArea.value),
-        mode: mode,
-        initVec: initvector);
-    else if (inputEncode == ENCODING_LATIN1) list = cipher.encrypt(
-        stringToBytes(inputTextArea.value),
-        mode: mode,
-        initVec: initvector);
-    else if (inputEncode == ENCODING_BASE64) {
-      if (inputTextArea.value.length % 4 != 0) {
-        list = null;
-        toast('Incorrect message!');
-        return;
-      } else list = cipher.encrypt(base64StringToBytes(inputTextArea.value),
-          mode: mode, initVec: initvector);
-    }
-    if (list == null) {
-      toast('Incorrect message or IV!');
-      return;
-    }
-    if (outputEncode == ENCODING_HEX) outputTextArea.value =
-        bytesToHexString(list);
-    else if (outputEncode == ENCODING_LATIN1) outputTextArea.value =
-        bytesToString(list);
-    else if (outputEncode == ENCODING_BASE64) outputTextArea.value =
-        bytesToBase64String(list);
-    if (keyEncode == ENCODING_HEX) keyTextArea.value =
-        bytesToHexString(cipher.key);
-    else if (keyEncode == ENCODING_LATIN1) keyTextArea.value =
-        bytesToString(cipher.key);
-    else if (keyEncode == ENCODING_BASE64) keyTextArea.value =
-        bytesToBase64String(cipher.key);
   });
   decryptButton.onClick.listen((e) {
     inputTextArea.value = '';
-    List initvector = null;
-    if (keyEncode == ENCODING_HEX) {
-      cipher.key = hexStringToBytes(keyTextArea.value);
-      initvector = hexStringToBytes(initVectorTextArea.value);
-    } else if (keyEncode == ENCODING_LATIN1) {
-      cipher.key = stringToBytes(keyTextArea.value);
-      initvector = stringToBytes(initVectorTextArea.value);
-    } else if (keyEncode == ENCODING_BASE64) {
-      initvector = base64StringToBytes(initVectorTextArea.value);
-      if (keyTextArea.value.length % 4 != 0) {
-        toast('Incorrect key!');
-        cipher.key = null;
-        return;
-      } else cipher.key = base64StringToBytes(keyTextArea.value);
+    try {
+      checkKey(keyTextArea.value, initVectorTextArea.value);
+      List list = null;
+      if (outputEncode[0] == ENCODING_HEX) list = cipher.decrypt(
+          hexStringToBytes(outputTextArea.value),
+          mode: mode,
+          initVec: initvector);
+      else if (outputEncode[0] == ENCODING_LATIN1) list = cipher.decrypt(
+          stringToBytes(outputTextArea.value),
+          mode: mode,
+          initVec: initvector);
+      else if (outputEncode[0] == ENCODING_BASE64) list = cipher.decrypt(
+          base64StringToBytes(outputTextArea.value),
+          mode: mode,
+          initVec: initvector);
+      if (list == null) throw new Exception('Incorrect message or IV!');
+      if (inputEncode[0] == ENCODING_HEX) inputTextArea.value =
+          bytesToHexString(list);
+      else if (inputEncode[0] == ENCODING_LATIN1) inputTextArea.value =
+          bytesToString(list);
+      else if (inputEncode[0] == ENCODING_BASE64) inputTextArea.value =
+          bytesToBase64String(list);
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
     }
-    String error = cipher.checkKey();
-    if (error != '') {
-      toast(error);
-      return;
-    }
-    List list = null;
-    if (outputEncode == ENCODING_HEX) list = cipher.decrypt(
-        hexStringToBytes(outputTextArea.value),
-        mode: mode,
-        initVec: initvector);
-    else if (outputEncode == ENCODING_LATIN1) list = cipher.decrypt(
-        stringToBytes(outputTextArea.value),
-        mode: mode,
-        initVec: initvector);
-    else if (outputEncode == ENCODING_BASE64) {
-      if (outputTextArea.value.length % 4 != 0) {
-        list = null;
-        toast('Incorrect message!');
-        return;
-      } else list = cipher.decrypt(base64StringToBytes(outputTextArea.value),
-          mode: mode, initVec: initvector);
-    }
-    if (list == null) {
-      toast('Incorrect message or IV!');
-      return;
-    }
-    if (inputEncode == ENCODING_HEX) inputTextArea.value =
-        bytesToHexString(list);
-    else if (inputEncode == ENCODING_LATIN1) inputTextArea.value =
-        bytesToString(list);
-    else if (inputEncode == ENCODING_BASE64) inputTextArea.value =
-        bytesToBase64String(list);
-    if (keyEncode == ENCODING_HEX) keyTextArea.value =
-        bytesToHexString(cipher.key);
-    else if (keyEncode == ENCODING_LATIN1) keyTextArea.value =
-        bytesToString(cipher.key);
-    else if (keyEncode == ENCODING_BASE64) keyTextArea.value =
-        bytesToBase64String(cipher.key);
   });
 
   scrollTo(
@@ -1039,69 +413,13 @@ void buildBlockCiphers(int type) {
 
 void buildEncoding() {
   SpanElement wrapper = querySelector('#dynamic');
-  wrapper.setInnerHtml('');
-  int inputEncode = ENCODING_LATIN1;
 
   wrapper.setInnerHtml(HTML_CODE_ENCODINGS, validator: nodeValidator);
 
   TextAreaElement inputTextArea = querySelector("#inputTextArea");
   ParagraphElement descriptionParagraph = querySelector('#description');
 
-  querySelector("#latin1Input").onClick.listen((e) {
-    if (inputEncode == ENCODING_HEX) inputTextArea.value =
-        LATIN1.decode(hexStringToBytes(inputTextArea.value));
-    if (inputEncode == ENCODING_BASE64) inputTextArea.value =
-        LATIN1.decode(base64StringToBytes(inputTextArea.value));
-    if (inputEncode == ENCODING_UTF8) inputTextArea.value =
-        LATIN1.decode(UTF8.encode(inputTextArea.value));
-    if (inputEncode == ENCODING_ASCII) inputTextArea.value =
-        LATIN1.decode(ASCII.encode(inputTextArea.value));
-    inputEncode = ENCODING_LATIN1;
-  });
-  querySelector("#hextextInput").onClick.listen((e) {
-    if (inputEncode == ENCODING_LATIN1) inputTextArea.value =
-        bytesToHexString(LATIN1.encode(inputTextArea.value));
-    if (inputEncode == ENCODING_BASE64) inputTextArea.value =
-        bytesToHexString(base64StringToBytes(inputTextArea.value));
-    if (inputEncode == ENCODING_UTF8) inputTextArea.value =
-        bytesToHexString(UTF8.encode(inputTextArea.value));
-    if (inputEncode == ENCODING_ASCII) inputTextArea.value =
-        bytesToHexString(ASCII.encode(inputTextArea.value));
-    inputEncode = ENCODING_HEX;
-  });
-  querySelector("#base64Input").onClick.listen((e) {
-    if (inputEncode == ENCODING_LATIN1) inputTextArea.value =
-        bytesToBase64String(LATIN1.encode(inputTextArea.value));
-    if (inputEncode == ENCODING_HEX) inputTextArea.value =
-        bytesToBase64String(hexStringToBytes(inputTextArea.value));
-    if (inputEncode == ENCODING_UTF8) inputTextArea.value =
-        bytesToBase64String(UTF8.encode(inputTextArea.value));
-    if (inputEncode == ENCODING_ASCII) inputTextArea.value =
-        bytesToBase64String(ASCII.encode(inputTextArea.value));
-    inputEncode = ENCODING_BASE64;
-  });
-  querySelector("#utf8Input").onClick.listen((e) {
-    if (inputEncode == ENCODING_LATIN1) inputTextArea.value =
-        UTF8.decode(LATIN1.encode(inputTextArea.value));
-    if (inputEncode == ENCODING_HEX) inputTextArea.value =
-        UTF8.decode(hexStringToBytes(inputTextArea.value));
-    if (inputEncode == ENCODING_BASE64) inputTextArea.value =
-        UTF8.decode(base64StringToBytes(inputTextArea.value));
-    if (inputEncode == ENCODING_ASCII) inputTextArea.value =
-        UTF8.decode(ASCII.encode(inputTextArea.value));
-    inputEncode = ENCODING_UTF8;
-  });
-  querySelector("#asciiInput").onClick.listen((e) {
-    if (inputEncode == ENCODING_LATIN1) inputTextArea.value =
-        ASCII.decode(LATIN1.encode(inputTextArea.value));
-    if (inputEncode == ENCODING_HEX) inputTextArea.value =
-        ASCII.decode(hexStringToBytes(inputTextArea.value));
-    if (inputEncode == ENCODING_UTF8) inputTextArea.value =
-        ASCII.decode(UTF8.encode(inputTextArea.value));
-    if (inputEncode == ENCODING_BASE64) inputTextArea.value =
-        ASCII.decode(base64StringToBytes(inputTextArea.value));
-    inputEncode = ENCODING_ASCII;
-  });
+  encodings(inputTextArea, inputEncode, type: "Input");
 
   descriptionParagraph.appendHtml(TEXT_DESCRIPTION_ENCODINGS,
       validator: nodeValidator);
@@ -1111,13 +429,6 @@ void buildEncoding() {
 }
 
 void buildRSA() {
-  SpanElement wrapper = querySelector('#dynamic');
-  wrapper.setInnerHtml('');
-  int inputEncode = ENCODING_LATIN1;
-  int keyEncode = ENCODING_LATIN1;
-  int outputEncode = ENCODING_HEX;
-
-  wrapper.setInnerHtml(HTML_CODE_RSA, validator: nodeValidator);
 /*
   TextAreaElement inputTextArea = querySelector("#inputTextArea");
   TextAreaElement keyTextArea = querySelector("#keyTextArea");
@@ -1132,6 +443,112 @@ void buildRSA() {
 
   /*scrollTo(
       inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);*/
+}
+
+void encodings(TextAreaElement field, List encode,
+    {String type: "Input", bool changeValue: true}) {
+  if (field == null) throw new ArgumentError.notNull('field');
+
+  querySelector("#latin1$type")?.onClick?.listen((e) {
+    try {
+      if (encode[0] == ENCODING_HEX) field.value =
+          LATIN1.decode(hexStringToBytes(field.value));
+      if (encode[0] == ENCODING_BASE64) field.value =
+          LATIN1.decode(base64StringToBytes(field.value));
+      if (encode[0] == ENCODING_UTF8) field.value =
+          LATIN1.decode(UTF8.encode(field.value));
+      if (encode[0] == ENCODING_ASCII) field.value =
+          LATIN1.decode(ASCII.encode(field.value));
+      changeValue ? encode[0] = ENCODING_LATIN1 : encode[0] = encode[0];
+    } catch (e) {
+      toast("Cannot convert to LATIN1!");
+      if (encode[0] == ENCODING_UTF8) querySelector("#utf8$type").click();
+      if (encode[0] == ENCODING_HEX) querySelector("#hextext$type").click();
+      if (encode[0] == ENCODING_BASE64) querySelector("#base64$type").click();
+      if (encode[0] == ENCODING_ASCII) querySelector("#ascii$type").click();
+      querySelector("#latin1$type").blur();
+    }
+  });
+  querySelector("#hextext$type")?.onClick?.listen((e) {
+    try {
+      if (encode[0] == ENCODING_LATIN1) field.value =
+          bytesToHexString(LATIN1.encode(field.value));
+      if (encode[0] == ENCODING_BASE64) field.value =
+          bytesToHexString(base64StringToBytes(field.value));
+      if (encode[0] == ENCODING_UTF8) field.value =
+          bytesToHexString(UTF8.encode(field.value));
+      if (encode[0] == ENCODING_ASCII) field.value =
+          bytesToHexString(ASCII.encode(field.value));
+      changeValue ? encode[0] = ENCODING_HEX : encode[0] = encode[0];
+    } catch (e) {
+      toast("Cannot convert to Hex!");
+      if (encode[0] == ENCODING_LATIN1) querySelector("#latin1$type")?.click();
+      if (encode[0] == ENCODING_UTF8) querySelector("#utf8$type").click();
+      if (encode[0] == ENCODING_BASE64) querySelector("#base64$type").click();
+      if (encode[0] == ENCODING_ASCII) querySelector("#ascii$type").click();
+      querySelector("#hextext$type").blur();
+    }
+  });
+  querySelector("#base64$type")?.onClick?.listen((e) {
+    try {
+      if (encode[0] == ENCODING_LATIN1) field.value =
+          bytesToBase64String(LATIN1.encode(field.value));
+      if (encode[0] == ENCODING_HEX) field.value =
+          bytesToBase64String(hexStringToBytes(field.value));
+      if (encode[0] == ENCODING_UTF8) field.value =
+          bytesToBase64String(UTF8.encode(field.value));
+      if (encode[0] == ENCODING_ASCII) field.value =
+          bytesToBase64String(ASCII.encode(field.value));
+      changeValue ? encode[0] = ENCODING_BASE64 : encode[0] = encode[0];
+    } catch (e) {
+      toast("Cannot convert to Base64!");
+      if (encode[0] == ENCODING_LATIN1) querySelector("#latin1$type").click();
+      if (encode[0] == ENCODING_HEX) querySelector("#hextext$type").click();
+      if (encode[0] == ENCODING_UTF8) querySelector("#utf8$type").click();
+      if (encode[0] == ENCODING_ASCII) querySelector("#ascii$type").click();
+      querySelector("#base64$type").blur();
+    }
+  });
+  querySelector("#utf8$type")?.onClick?.listen((e) {
+    try {
+      if (encode[0] == ENCODING_LATIN1) field.value =
+          UTF8.decode(LATIN1.encode(field.value));
+      if (encode[0] == ENCODING_HEX) field.value =
+          UTF8.decode(hexStringToBytes(field.value));
+      if (encode[0] == ENCODING_BASE64) field.value =
+          UTF8.decode(base64StringToBytes(field.value));
+      if (encode[0] == ENCODING_ASCII) field.value =
+          UTF8.decode(ASCII.encode(field.value));
+      changeValue ? encode[0] = ENCODING_UTF8 : encode[0] = encode[0];
+    } catch (e) {
+      toast("Cannot convert to UTF-8!");
+      if (encode[0] == ENCODING_LATIN1) querySelector("#latin1$type").click();
+      if (encode[0] == ENCODING_HEX) querySelector("#hextext$type").click();
+      if (encode[0] == ENCODING_BASE64) querySelector("#base64$type").click();
+      if (encode[0] == ENCODING_ASCII) querySelector("#ascii$type").click();
+      querySelector("#utf8$type").blur();
+    }
+  });
+  querySelector("#ascii$type")?.onClick?.listen((e) {
+    try {
+      if (encode[0] == ENCODING_LATIN1) field.value =
+          ASCII.decode(LATIN1.encode(field.value));
+      if (encode[0] == ENCODING_HEX) field.value =
+          ASCII.decode(hexStringToBytes(field.value));
+      if (encode[0] == ENCODING_UTF8) field.value =
+          ASCII.decode(UTF8.encode(field.value));
+      if (encode[0] == ENCODING_BASE64) field.value =
+          ASCII.decode(base64StringToBytes(field.value));
+      changeValue ? encode[0] = ENCODING_ASCII : encode[0] = encode[0];
+    } catch (e) {
+      toast("Cannot convert to ASCII!");
+      if (encode[0] == ENCODING_LATIN1) querySelector("#latin1$type").click();
+      if (encode[0] == ENCODING_HEX) querySelector("#hextext$type").click();
+      if (encode[0] == ENCODING_BASE64) querySelector("#base64$type").click();
+      if (encode[0] == ENCODING_UTF8) querySelector("#utf8$type").click();
+      querySelector("#ascii$type").blur();
+    }
+  });
 }
 
 class MyUriPolicy implements UriPolicy {

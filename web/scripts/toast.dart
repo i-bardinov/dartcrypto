@@ -7,7 +7,7 @@ Future toast(String msg, {int fadeIn: 500, int show: 3000, int fadeOut: 5000}) {
   var isCompleted = false, startTime = null, completer = new Completer();
   DivElement el = new DivElement()
     ..style.width = '200px'
-    ..style.height = '20px'
+    ..style.height = '40px'
     ..style.position = 'fixed'
     ..style.left = '50%'
     ..style.marginLeft = '-100px'

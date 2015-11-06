@@ -1,7 +1,6 @@
 library dartcrypto.ciphers.beaufort;
 
-import "dart:math";
-import 'package:dartcrypto/src/exceptions.dart';
+import "dart:math" as math;
 
 class BeaufortCipher {
   int modulo;
@@ -9,20 +8,18 @@ class BeaufortCipher {
 
   BeaufortCipher(this.modulo, [this.key]);
 
-  String checkKey([int key_length = 0]) {
-    if (key.isEmpty) return "Key is incorrect";
-    return '';
+  void checkKey([int key_length = 0]) {
+    if (key.isEmpty) throw new Exception("Key is incorrect");
   }
 
   void generateKey(int length) {
-    Random rand = new Random();
+    math.Random rand = new math.Random();
     key.clear();
     for (int i = 0; i < length; i++) key.add(rand.nextInt(modulo));
   }
 
   List encrypt(List message) {
-    String error = checkKey();
-    if (error != '') throw new PopUpError(error);
+    checkKey();
     int keySize = key.length;
     for (int i = 0;
         i < message.length;
@@ -31,8 +28,7 @@ class BeaufortCipher {
   }
 
   List decrypt(List message) {
-    String error = checkKey();
-    if (error != '') throw new PopUpError(error);
+    checkKey();
     int keySize = key.length;
     for (int i = 0;
         i < message.length;

@@ -9,9 +9,8 @@ class VigenereCipher {
 
   VigenereCipher(this.modulo, [this.key]);
 
-  String checkKey([int key_length = 0]) {
-    if (key.isEmpty) return "Key is incorrect";
-    return '';
+  void checkKey([int key_length = 0]) {
+    if (key.isEmpty) throw new Exception("Key is incorrect");
   }
 
   void generateKey(int length) {
@@ -21,8 +20,7 @@ class VigenereCipher {
   }
 
   List encrypt(List message) {
-    String error = checkKey();
-    if (error != '') throw new PopUpError(error);
+    checkKey();
     int keySize = key.length;
     for (int i = 0;
         i < message.length;
@@ -31,8 +29,7 @@ class VigenereCipher {
   }
 
   List decrypt(List message) {
-    String error = checkKey();
-    if (error != '') throw new PopUpError(error);
+    checkKey();
     int keySize = key.length;
     for (int i = 0;
         i < message.length;

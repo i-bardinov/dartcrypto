@@ -1,35 +1,29 @@
 library dartcrypto.ciphers.hill;
 
-import 'dart:math';
+import 'dart:math' as math;
 import 'package:dartcrypto/src/utils/matrix.dart';
-import "package:dartcrypto/src/exceptions.dart";
 import 'modes.dart';
 
 class HillCipher {
+  Matrix mkey = null;
   List key = null;
-  Matrix mKey = null;
   int dimension = 0;
   int modulo = 0;
 
-  HillCipher(this.modulo, [this.key]);
+  HillCipher(this.modulo, [this.mkey]);
 
-  String checkKey() {
-    if (key == null || key.isEmpty) return 'Key is null!';
-    if ((mKey == null && key != null) || (mKey.toList() != key)) {
-      int dim = sqrt(key.length).ceil();
-      dimension = dim;
-      List list = new List();
-      key.forEach((f) => list.add(f));
-      while (list.length < pow(dim, 2)) list.add(0x00);
-      key = list;
-      mKey = new Matrix(dimension, dimension, key, modulo);
-    }
-    if (pow(dimension, 2) != mKey.toList().length) return "Incorrect key size!";
-    int det = mKey.determinant();
+  void checkKey() {
+    if (key == null || key.isEmpty) throw new Exception('Key is empty!');
+    int tmp = key.length;
+    dimension = math.sqrt(tmp).floor();
+    if (math.pow(dimension, 2) !=
+        tmp) throw new Exception("Incorrect key size!");
+    mkey = new Matrix(dimension, dimension, key, modulo);
+    int det = mkey.determinant();
     if (det == 0 ||
         det.gcd(modulo) != 1 ||
-        det.modInverse(modulo) == null) return 'Determinant should be prime!';
-    return '';
+        det.modInverse(modulo) == null) throw new Exception(
+        'Determinant $det should be coprime with $modulo!');
   }
 
   void generateKey(int dim) {
@@ -39,7 +33,7 @@ class HillCipher {
       generateKey(dim);
       return;
     }
-    mKey = tkey;
+    mkey = tkey;
     dimension = dim;
   }
 
@@ -48,7 +42,7 @@ class HillCipher {
     for (int i = 0; i < dimension; i++) {
       int temp = 0;
       for (int j = 0; j < dimension; j++) {
-        temp = temp + mKey[i][j] * message[j];
+        temp = temp + mkey[i][j] * message[j];
       }
       list.add(temp % modulo);
     }
@@ -56,14 +50,11 @@ class HillCipher {
   }
 
   List encrypt(List message, {int mode: BLOCK_MODE_ECB, List initVec: null}) {
-    String error = checkKey();
-    if (error != '') throw new PopUpError(error);
+    checkKey();
     List list = new List();
     message.forEach((f) => list.add(f));
     while (list.length % dimension != 0) list.add(0x00);
     message = list;
-
-    if (initVec != null) print(initVec.toString());
 
     List encMessage = new List();
     switch (mode) {
@@ -103,14 +94,14 @@ class HillCipher {
         break;
       default:
         for (int i = 0; i < message.length; i += dimension) ECB_mode_encryption(
-            message.sublist(i, i + dimension), block_encrypt)
-        .forEach((f) => encMessage.add(f));
+                message.sublist(i, i + dimension), block_encrypt)
+            .forEach((f) => encMessage.add(f));
     }
     return encMessage;
   }
 
   List block_decrypt(List message) {
-    Matrix invKey = mKey.inverse();
+    Matrix invKey = mkey.inverse();
     List list = new List();
     for (int i = 0; i < dimension; i++) {
       int temp = 0;
@@ -123,8 +114,7 @@ class HillCipher {
   }
 
   List decrypt(List message, {int mode: BLOCK_MODE_ECB, List initVec: null}) {
-    String error = checkKey();
-    if (error != '') throw new PopUpError(error);
+    checkKey();
     List list = new List();
     message.forEach((f) => list.add(f));
     while (list.length % dimension != 0) list.add(0x00);
@@ -170,8 +160,8 @@ class HillCipher {
         break;
       default:
         for (int i = 0; i < message.length; i += dimension) ECB_mode_decryption(
-            message.sublist(i, i + dimension), block_decrypt)
-        .forEach((f) => decMessage.add(f));
+                message.sublist(i, i + dimension), block_decrypt)
+            .forEach((f) => decMessage.add(f));
     }
     return decMessage;
   }

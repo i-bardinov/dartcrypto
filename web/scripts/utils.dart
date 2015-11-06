@@ -25,7 +25,7 @@ In classical cryptography, the <a href=\'https://en.wikipedia.org/wiki/Hill_ciph
  is a polygraphic substitution cipher based on linear algebra.
 Invented by Lester S. Hill in 1929, it was the first polygraphic cipher in which it was practical (though barely)
 to operate on more than three symbols at once. <br><br> You can select <b>Message, key and encrypted message encoding</b>.
- <b>Key size</b> should be a <b>square</b> (i.e. 1, 4, 9, 16, ...) <b>or it will be fulled by 0x00</b>.
+ <b>Key size</b> should be a <b>square</b> (i.e. 1, 4, 9, 16, ...).
  You can also select <b>encryption mode</b>. You should point <b>initial vector</b> in field if mode is <b>CBC, CFB, PCBC</b>.
 ''';
 const String TEXT_DESCRIPTION_VIGENERE =
@@ -53,7 +53,7 @@ resulting ciphertext will be impossible to decrypt or break. It has also been pr
 the perfect secrecy property must use keys with effectively the same requirements as OTP keys. However, practical
 problems have prevented one-time pads from being widely used.
 <br><br> You can select <b>Message, key and encrypted message encoding</b>. <b>Key size</b> should be equal to
-message size <b>or it will be fulled by random chars</b>.
+message size.
 ''';
 const String TEXT_DESCRIPTION_AES =
 '''
@@ -96,59 +96,6 @@ In computing, a <a href=\'https://en.wikipedia.org/wiki/Character_encoding\' tar
   distinct meanings.
 ''';
 
-const String HTML_CODE_CAESAR =
-'''
-        <p id="description">
-        </p>
-        <div id="output">
-            <div id="outputField">
-                Message to Decrypt:
-            </div>
-              <label class="radio"><input id="plaintextOutput" type="radio" name="radiosOutput"><span class="outer"><span class="inner"></span></span>Latin1</label>
-              <label class="radio"><input id="hextextOutput" type="radio" name="radiosOutput" checked><span class="outer"><span class="inner"></span></span>Hex</label>
-              <label class="radio"><input id="base64Output" type="radio" name="radiosOutput"><span class="outer"><span class="inner"></span></span>Base64</label>
-            <div id="outputFieldContainer">
-                <textarea spellcheck="false" id="outputTextArea"></textarea>
-            </div>
-            <section>
-                <div class="button raised blue" id="decryptButton">
-                    <div align="center" fit>DECRYPT</div>
-                    <paper-ripple fit></paper-ripple>
-                </div>
-            </section>
-        </div>
-
-        <div id="key">
-            <div id="keyField">
-                Key:
-            </div>
-              <label class="radio"><input id="plaintextKey" type="radio" name="radiosKey" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
-              <label class="radio"><input id="hextextKey" type="radio" name="radiosKey"><span class="outer"><span class="inner"></span></span>Hex</label>
-              <label class="radio"><input id="base64Key" type="radio" name="radiosKey"><span class="outer"><span class="inner"></span></span>Base64</label>
-            <div id="keyFieldContainer">
-                <input type="text" spellcheck="false" id="keyInputB"></input>
-            </div>
-        </div>
-
-        <div id="input">
-            <div id="inputField">
-                Message to Encrypt:
-            </div>
-              <label class="radio"><input id="plaintextInput" type="radio" name="radiosInput" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
-              <label class="radio"><input id="hextextInput" type="radio" name="radiosInput"><span class="outer"><span class="inner"></span></span>Hex</label>
-              <label class="radio"><input id="base64Input" type="radio" name="radiosInput"><span class="outer"><span class="inner"></span></span>Base64</label>
-            <div id="inputFieldContainer">
-                <textarea spellcheck="false" id="inputTextArea"></textarea>
-            </div>
-            <section>
-                <div class="button raised blue" id="encryptButton">
-                    <div align="center" fit>ENCRYPT</div>
-                    <paper-ripple fit></paper-ripple>
-                </div>
-            </section>
-        </div>
-''';
-
 const String HTML_CODE_AFFINE =
 '''
         <p id="description">
@@ -157,11 +104,11 @@ const String HTML_CODE_AFFINE =
             <div id="outputField">
                 Message to Decrypt:
             </div>
-              <label class="radio"><input id="plaintextOutput" type="radio" name="radiosOutput"><span class="outer"><span class="inner"></span></span>Latin1</label>
+              <label class="radio"><input id="latin1Output" type="radio" name="radiosOutput"><span class="outer"><span class="inner"></span></span>Latin1</label>
               <label class="radio"><input id="hextextOutput" type="radio" name="radiosOutput" checked><span class="outer"><span class="inner"></span></span>Hex</label>
               <label class="radio"><input id="base64Output" type="radio" name="radiosOutput"><span class="outer"><span class="inner"></span></span>Base64</label>
             <div id="outputFieldContainer">
-                <textarea spellcheck="false" id="outputTextArea"></textarea>
+                <textarea spellcheck="false" id="outputTextArea"  tabindex='4'></textarea>
             </div>
             <section>
                 <div class="button raised blue" id="decryptButton">
@@ -175,14 +122,14 @@ const String HTML_CODE_AFFINE =
             <div id="keyField">
                 Key:
             </div>
-              <label class="radio"><input id="plaintextKey" type="radio" name="radiosKey" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
+              <label class="radio"><input id="latin1Key" type="radio" name="radiosKey" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
               <label class="radio"><input id="hextextKey" type="radio" name="radiosKey"><span class="outer"><span class="inner"></span></span>Hex</label>
               <label class="radio"><input id="base64Key" type="radio" name="radiosKey"><span class="outer"><span class="inner"></span></span>Base64</label>
             <div id="keyFieldContainer">
-                <input type="text" spellcheck="false" id="keyInputA"></input>
-            </div><br>
-             <div id="keyFieldContainer">
-                <input type="text" spellcheck="false" id="keyInputB"></input>
+                <textarea spellcheck="false" id="keyTextAreaA" style='height:22px' tabindex='2'></textarea>
+            </div><br id="BRelement">
+            <div id="initvectFieldContainer">
+                <textarea spellcheck="false" id="keyTextAreaB" style='height:22px'  tabindex='3'></textarea>
             </div>
         </div>
 
@@ -190,11 +137,11 @@ const String HTML_CODE_AFFINE =
             <div id="inputField">
                 Message to Encrypt:
             </div>
-              <label class="radio"><input id="plaintextInput" type="radio" name="radiosInput" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
+              <label class="radio"><input id="latin1Input" type="radio" name="radiosInput" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
               <label class="radio"><input id="hextextInput" type="radio" name="radiosInput"><span class="outer"><span class="inner"></span></span>Hex</label>
               <label class="radio"><input id="base64Input" type="radio" name="radiosInput"><span class="outer"><span class="inner"></span></span>Base64</label>
             <div id="inputFieldContainer">
-                <textarea spellcheck="false" id="inputTextArea"></textarea>
+                <textarea spellcheck="false" id="inputTextArea" tabindex='1'></textarea>
             </div>
             <section>
                 <div class="button raised blue" id="encryptButton">
@@ -213,11 +160,11 @@ const String HTML_CODE_STANDARD_CIPHERS =
             <div id="outputField">
                 Message to Decrypt:
             </div>
-              <label class="radio"><input id="plaintextOutput" type="radio" name="radiosOutput"><span class="outer"><span class="inner"></span></span>Latin1</label>
+              <label class="radio"><input id="latin1Output" type="radio" name="radiosOutput"><span class="outer"><span class="inner"></span></span>Latin1</label>
               <label class="radio"><input id="hextextOutput" type="radio" name="radiosOutput" checked><span class="outer"><span class="inner"></span></span>Hex</label>
               <label class="radio"><input id="base64Output" type="radio" name="radiosOutput"><span class="outer"><span class="inner"></span></span>Base64</label>
             <div id="outputFieldContainer">
-                <textarea spellcheck="false" id="outputTextArea"></textarea>
+                <textarea spellcheck="false" id="outputTextArea"  tabindex='3'></textarea>
             </div>
             <section>
                 <div class="button raised blue" id="decryptButton">
@@ -231,11 +178,11 @@ const String HTML_CODE_STANDARD_CIPHERS =
             <div id="keyField">
                 Key:
             </div>
-              <label class="radio"><input id="plaintextKey" type="radio" name="radiosKey" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
+              <label class="radio"><input id="latin1Key" type="radio" name="radiosKey" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
               <label class="radio"><input id="hextextKey" type="radio" name="radiosKey"><span class="outer"><span class="inner"></span></span>Hex</label>
               <label class="radio"><input id="base64Key" type="radio" name="radiosKey"><span class="outer"><span class="inner"></span></span>Base64</label>
             <div id="keyFieldContainer">
-                <textarea spellcheck="false" id="keyTextArea"></textarea>
+                <textarea spellcheck="false" id="keyTextArea" tabindex='2'></textarea>
             </div>
         </div>
 
@@ -243,11 +190,11 @@ const String HTML_CODE_STANDARD_CIPHERS =
             <div id="inputField">
                 Message to Encrypt:
             </div>
-              <label class="radio"><input id="plaintextInput" type="radio" name="radiosInput" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
+              <label class="radio"><input id="latin1Input" type="radio" name="radiosInput" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
               <label class="radio"><input id="hextextInput" type="radio" name="radiosInput"><span class="outer"><span class="inner"></span></span>Hex</label>
               <label class="radio"><input id="base64Input" type="radio" name="radiosInput"><span class="outer"><span class="inner"></span></span>Base64</label>
             <div id="inputFieldContainer">
-                <textarea spellcheck="false" id="inputTextArea"></textarea>
+                <textarea spellcheck="false" id="inputTextArea" tabindex='1'></textarea>
             </div>
             <section>
                 <div class="button raised blue" id="encryptButton">
@@ -266,11 +213,11 @@ const String HTML_CODE_BLOCK_CIPHERS =
             <div id="outputField">
                 Message to Decrypt:
             </div>
-              <label class="radio"><input id="plaintextOutput" type="radio" name="radiosOutput"><span class="outer"><span class="inner"></span></span>Latin1</label>
+              <label class="radio"><input id="latin1Output" type="radio" name="radiosOutput"><span class="outer"><span class="inner"></span></span>Latin1</label>
               <label class="radio"><input id="hextextOutput" type="radio" name="radiosOutput" checked><span class="outer"><span class="inner"></span></span>Hex</label>
               <label class="radio"><input id="base64Output" type="radio" name="radiosOutput"><span class="outer"><span class="inner"></span></span>Base64</label>
             <div id="outputFieldContainer">
-                <textarea spellcheck="false" id="outputTextArea" style="height:300px"></textarea>
+                <textarea spellcheck="false" id="outputTextArea" style="height:300px" tabindex='4'></textarea>
             </div>
             <section>
                 <div class="button raised blue" id="decryptButton">
@@ -284,12 +231,12 @@ const String HTML_CODE_BLOCK_CIPHERS =
             <div id="keyField">
                 Key:
             </div>
-              <label class="radio"><input id="plaintextKey" type="radio" name="radiosKey" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
+              <label class="radio"><input id="latin1Key" type="radio" name="radiosKey" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
               <label class="radio"><input id="hextextKey" type="radio" name="radiosKey"><span class="outer"><span class="inner"></span></span>Hex</label>
               <label class="radio"><input id="base64Key" type="radio" name="radiosKey"><span class="outer"><span class="inner"></span></span>Base64</label>
 
             <div id="keyFieldContainer">
-                <textarea spellcheck="false" id="keyTextArea" style="height:200px"></textarea>
+                <textarea spellcheck="false" id="keyTextArea" style="height:200px" tabindex='2'></textarea>
             </div>
               <label class="radio"><input id="ecbMode" type="radio" name="radiosMode" checked><span class="outer"><span class="inner"></span></span>ECB</label>
               <label class="radio"><input id="cbcMode" type="radio" name="radiosMode"><span class="outer"><span class="inner"></span></span>CBC</label>
@@ -298,7 +245,7 @@ const String HTML_CODE_BLOCK_CIPHERS =
               <label class="radio"><input id="ofbMode" type="radio" name="radiosMode"><span class="outer"><span class="inner"></span></span>OFC</label>
               <label class="radio"><input id="ctrMode" type="radio" name="radiosMode"><span class="outer"><span class="inner"></span></span>CTR</label>
             <div id="initvectFieldContainer">
-                <textarea spellcheck="false" id="initvectTextArea" style='height:48px; display:none'></textarea>
+                <textarea spellcheck="false" id="initvectTextArea" style='height:48px; display:none' tabindex='3'></textarea>
             </div>
         </div>
 
@@ -306,11 +253,11 @@ const String HTML_CODE_BLOCK_CIPHERS =
             <div id="inputField">
                 Message to Encrypt:
             </div>
-              <label class="radio"><input id="plaintextInput" type="radio" name="radiosInput" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
+              <label class="radio"><input id="latin1Input" type="radio" name="radiosInput" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
               <label class="radio"><input id="hextextInput" type="radio" name="radiosInput"><span class="outer"><span class="inner"></span></span>Hex</label>
               <label class="radio"><input id="base64Input" type="radio" name="radiosInput"><span class="outer"><span class="inner"></span></span>Base64</label>
             <div id="inputFieldContainer">
-                <textarea spellcheck="false" id="inputTextArea" style="height:300px"></textarea>
+                <textarea spellcheck="false" id="inputTextArea" style="height:300px" tabindex='1'></textarea>
             </div>
             <section>
                 <div class="button raised blue" id="encryptButton">
@@ -349,7 +296,7 @@ const String HTML_CODE_RSA =
             <div id="outputField">
                 Message to Decrypt:
             </div>
-              <label class="radio"><input id="plaintextOutput" type="radio" name="radiosOutput"><span class="outer"><span class="inner"></span></span>Latin1</label>
+              <label class="radio"><input id="latin1Output" type="radio" name="radiosOutput"><span class="outer"><span class="inner"></span></span>Latin1</label>
               <label class="radio"><input id="hextextOutput" type="radio" name="radiosOutput" checked><span class="outer"><span class="inner"></span></span>Hex</label>
               <label class="radio"><input id="base64Output" type="radio" name="radiosOutput"><span class="outer"><span class="inner"></span></span>Base64</label>
             <div id="outputFieldContainer">
@@ -367,7 +314,7 @@ const String HTML_CODE_RSA =
             <div id="keyField">
                 Key:
             </div>
-              <label class="radio"><input id="plaintextKey" type="radio" name="radiosKey" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
+              <label class="radio"><input id="latin1Key" type="radio" name="radiosKey" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
               <label class="radio"><input id="hextextKey" type="radio" name="radiosKey"><span class="outer"><span class="inner"></span></span>Hex</label>
               <label class="radio"><input id="base64Key" type="radio" name="radiosKey"><span class="outer"><span class="inner"></span></span>Base64</label>
 
@@ -389,7 +336,7 @@ const String HTML_CODE_RSA =
             <div id="inputField">
                 Message to Encrypt:
             </div>
-              <label class="radio"><input id="plaintextInput" type="radio" name="radiosInput" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
+              <label class="radio"><input id="latin1Input" type="radio" name="radiosInput" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
               <label class="radio"><input id="hextextInput" type="radio" name="radiosInput"><span class="outer"><span class="inner"></span></span>Hex</label>
               <label class="radio"><input id="base64Input" type="radio" name="radiosInput"><span class="outer"><span class="inner"></span></span>Base64</label>
             <div id="inputFieldContainer">

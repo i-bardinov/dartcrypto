@@ -1,7 +1,7 @@
 library dartcrypto.utils.convert;
 
 import 'package:cryptoutils/cryptoutils.dart';
-import 'dart:convert';
+import 'dart:convert' as convert show LATIN1;
 
 String bytesToStringByAlphabet(List list, [String alphabet]) {
   if (list == null) return null;
@@ -25,47 +25,18 @@ List stringToBytesByAlphabet(String str, [String alphabet]) {
   return list;
 }
 
-List hexStringToBytes(String str) {
-  if (str == null) return null;
-  return CryptoUtils.hexToBytes(str);
-}
+List hexStringToBytes(String str) => CryptoUtils.hexToBytes(str);
 
-String bytesToHexString(List list) {
-  if (list == null) return null;
-  return CryptoUtils.bytesToHex(list);
-}
+String bytesToHexString(List list) => CryptoUtils.bytesToHex(list);
 
-String hexStringToString(String str) {
-  if (str == null) return null;
-  List list = hexStringToBytes(str);
-  if (list == null) return null;
-  return bytesToString(list);
-}
+String hexStringToString(String str) => bytesToString(hexStringToBytes(str));
 
-String stringToHexString(String str) {
-  if (str == null) return null;
-  return bytesToHexString(stringToBytes(str));
-}
+String stringToHexString(String str) => bytesToHexString(stringToBytes(str));
 
-List stringToBytes(String str) {
-  if (str == null) return null;
-  //TODO: implement encoding
-  return LATIN1.encode(str);
-}
+List stringToBytes(String str) => convert.LATIN1.encode(str);
 
-String bytesToString(List list) {
-  if (list == null) return null;
-  //TODO: implement decoding
-  return LATIN1.decode(list);
-}
+String bytesToString(List list) => convert.LATIN1.decode(list);
 
-String bytesToBase64String(List list) {
-  if (list == null) return null;
-  return CryptoUtils.bytesToBase64(list);
-}
+String bytesToBase64String(List list) => CryptoUtils.bytesToBase64(list);
 
-List base64StringToBytes(String str) {
-  if (str == null) return null;
-  if (str.length % 4 != 0) return null;
-  return CryptoUtils.base64StringToBytes(str);
-}
+List base64StringToBytes(String str) => CryptoUtils.base64StringToBytes(str);
