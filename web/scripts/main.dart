@@ -74,6 +74,7 @@ void buildAffine(int type) {
   TextAreaElement keyTextAreaB = querySelector("#keyTextAreaB");
   TextAreaElement outputTextArea = querySelector("#outputTextArea");
   DivElement encryptButton = querySelector("#encryptButton");
+  DivElement keyGenerateButton = querySelector("#keyGenerateButton");
   DivElement decryptButton = querySelector("#decryptButton");
   ParagraphElement descriptionParagraph = querySelector('#description');
 
@@ -112,6 +113,29 @@ void buildAffine(int type) {
       throw new Exception(e);
     }
   }
+
+  keyGenerateButton.onClick.listen((e) {
+    keyTextAreaA.value = '';
+    keyTextAreaB.value = '';
+    try {
+      cipher.generateKey();
+      if (type == CIPHER_CAESAR)
+        cipher.key_A = 0x01;
+      if (keyEncode[0] == ENCODING_HEX) {
+        keyTextAreaA.value = bytesToHexString([cipher.key_A]);
+        keyTextAreaB.value = bytesToHexString([cipher.key_B]);
+      } else if (keyEncode[0] == ENCODING_LATIN1) {
+        keyTextAreaA.value = bytesToString([cipher.key_A]);
+        keyTextAreaB.value = bytesToString([cipher.key_B]);
+      } else if (keyEncode[0] == ENCODING_BASE64) {
+        keyTextAreaA.value = bytesToBase64String([cipher.key_A]);
+        keyTextAreaB.value = bytesToBase64String([cipher.key_B]);
+      }
+    } catch (e) {
+      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
+      throw new Exception(e);
+    }
+  });
 
   keyTextAreaA.onChange
       .listen((e) => checkKey(keyTextAreaA.value, keyNumber: 1));

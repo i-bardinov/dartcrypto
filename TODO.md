@@ -7,5 +7,5 @@
  * Magma cipher;
  * SHA-1 hash;
  * Generate Key button for Hill;
- * Generate Key button for stream ciphers;
- * ~~Print errors on bad encoding~~
+ * ~~Generate Key button for stream ciphers;~~
+ * ~~Print errors on bad encoding;~~

@@ -1,6 +1,6 @@
 library dartcrypto.ciphers.affine;
 
-import 'dart:math' as math;
+import 'dart:math' as math show Random;
 
 class AffineCipher {
   int key_A = 1;

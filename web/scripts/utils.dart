@@ -133,6 +133,12 @@ const String HTML_CODE_AFFINE =
             <div id="initvectFieldContainer">
                 <textarea spellcheck="false" id="keyTextAreaB" style='height:22px'  tabindex='3'></textarea>
             </div>
+            <section>
+                <div class="button raised blue" id="keyGenerateButton">
+                    <div align="center" fit>GENERATE</div>
+                    <paper-ripple fit></paper-ripple>
+                </div>
+            </section>
         </div>
 
         <div id="input">
