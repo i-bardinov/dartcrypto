@@ -1,14 +1,20 @@
-import 'package:dartcrypto/dartcrypto.dart';
-import 'utils.dart';
-import 'dart:html';
-import 'scrolling.dart';
-import 'toast.dart';
 import 'dart:convert';
+import 'dart:html';
 import 'dart:math' as math;
 
+import 'package:dartcrypto/dartcrypto.dart';
+
+import 'scrolling.dart';
+import 'toast.dart';
+import 'utils.dart';
+
+void main() {
+  ElementList menuList = querySelectorAll('.drop ul li a');
+  menuList
+      .forEach((f) => f.onClick.listen((e) => buildStructure(int.parse(f.id))));
+}
 List inputEncode = [ENCODING_LATIN1];
 List keyEncode = [ENCODING_LATIN1];
-List outputEncode = [ENCODING_HEX];
 
 NodeValidator nodeValidator = new NodeValidatorBuilder()
   ..allowTextElements()
@@ -20,50 +26,7 @@ NodeValidator nodeValidator = new NodeValidatorBuilder()
   ..allowElement('textarea', attributes: ['style', 'display'])
   ..allowNavigation(new MyUriPolicy());
 
-void main() {
-  ElementList menuList = querySelectorAll('.drop ul li a');
-  menuList
-      .forEach((f) => f.onClick.listen((e) => buildStructure(int.parse(f.id))));
-}
-
-void buildStructure(int type) {
-  if (type == null) {
-    toast("You didn\'t select anything!");
-    return;
-  }
-
-  SpanElement wrapper = querySelector('#dynamic');
-  ParagraphElement descriptionParagraph = querySelector('#description');
-  wrapper.setInnerHtml('');
-
-  switch (type) {
-    case CIPHER_CAESAR:
-    case CIPHER_AFFINE:
-      buildAffine(type);
-      break;
-    case CIPHER_HILL:
-      //case CIPHER_AES:
-      //case CIPHER_MAGMA:
-      buildBlockCiphers(type);
-      break;
-    case CIPHER_BEAUFORT:
-    case CIPHER_VIGENERE:
-    case CIPHER_OTP:
-      buildStandardCiphers(type);
-      break;
-    case CIPHER_RSA:
-      wrapper?.setInnerHtml(HTML_CODE_RSA, validator: nodeValidator);
-      descriptionParagraph?.appendHtml(TEXT_DESCRIPTION_RSA,
-          validator: nodeValidator);
-      //buildRSA();
-      break;
-    case CIPHER_RSA_GENERATOR:
-      break;
-    case ENCODINGS:
-      buildEncoding();
-      break;
-  }
-}
+List outputEncode = [ENCODING_HEX];
 
 void buildAffine(int type) {
   SpanElement wrapper = querySelector('#dynamic');
@@ -170,6 +133,178 @@ void buildAffine(int type) {
       encryptButton, getDuration(encryptButton, 2), TimingFunctions.easeInOut);
 }
 
+void buildBlockCiphers(int type) {
+  SpanElement wrapper = querySelector('#dynamic');
+  wrapper.setInnerHtml(HTML_CODE_BLOCK_CIPHERS, validator: nodeValidator);
+
+  int mode = BLOCK_MODE_ECB;
+
+  TextAreaElement inputTextArea = querySelector("#inputTextArea");
+  TextAreaElement keyTextArea = querySelector("#keyTextArea");
+  TextAreaElement outputTextArea = querySelector("#outputTextArea");
+  TextAreaElement initVectorTextArea = querySelector("#initvectTextArea");
+  DivElement encryptButton = querySelector("#encryptButton");
+  DivElement decryptButton = querySelector("#decryptButton");
+  ParagraphElement descriptionParagraph = querySelector('#description');
+
+  encodings(inputTextArea, inputEncode, type: "Input");
+  encodings(keyTextArea, keyEncode, type: "Key", changeValue: false);
+  encodings(initVectorTextArea, keyEncode, type: "Key");
+  encodings(outputTextArea, outputEncode, type: "Output");
+
+  String height = keyTextArea.style.height;
+  querySelector("#ecbMode").onClick.listen((e) {
+    mode = BLOCK_MODE_ECB;
+    initVectorTextArea.style.display = 'none';
+    keyTextArea.style.height = height;
+  });
+  querySelector("#cbcMode").onClick.listen((e) {
+    mode = BLOCK_MODE_CBC;
+    initVectorTextArea.style.display = 'block';
+    keyTextArea.style.height = '140px';
+  });
+  querySelector("#pcbcMode").onClick.listen((e) {
+    mode = BLOCK_MODE_PCBC;
+    initVectorTextArea.style.display = 'block';
+    keyTextArea.style.height = '140px';
+  });
+  querySelector("#cfbMode").onClick.listen((e) {
+    mode = BLOCK_MODE_CFB;
+    initVectorTextArea.style.display = 'block';
+    keyTextArea.style.height = '140px';
+  });
+  querySelector("#ofbMode").onClick.listen((e) {
+    mode = BLOCK_MODE_OFB;
+    initVectorTextArea.style.display = 'none';
+    keyTextArea.style.height = height;
+  });
+  querySelector("#ctrMode").onClick.listen((e) {
+    mode = BLOCK_MODE_CTR;
+    initVectorTextArea.style.display = 'none';
+    keyTextArea.style.height = height;
+  });
+
+  var cipher = null;
+  if (type == CIPHER_HILL) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_HILL,
+        validator: nodeValidator);
+    cipher = new HillCipher(256);
+  }
+
+  void checkKey(String key, String iv) {
+    try {
+      if (key == null) throw new Exception("Key is empty!");
+      if (keyEncode[0] == ENCODING_HEX) {
+        cipher.key = hexStringToBytes(key);
+        cipher.initVector = hexStringToBytes(iv);
+      } else if (keyEncode[0] == ENCODING_LATIN1) {
+        cipher.key = stringToBytes(key);
+        cipher.initVector = stringToBytes(iv);
+      } else if (keyEncode[0] == ENCODING_BASE64) {
+        cipher.key = base64StringToBytes(key);
+        cipher.initVector = base64StringToBytes(iv);
+      }
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
+    }
+  }
+
+  keyTextArea.onChange.listen((e) => checkKey(keyTextArea.value, initVectorTextArea.value));
+  encryptButton.onClick.listen((e) {
+    outputTextArea.value = '';
+    try {
+      checkKey(keyTextArea.value, initVectorTextArea.value);
+      List list = null;
+      if (inputEncode[0] == ENCODING_HEX) list = cipher.encrypt(
+          hexStringToBytes(inputTextArea.value),
+          mode: mode);
+      else if (inputEncode[0] == ENCODING_LATIN1) list = cipher.encrypt(
+          stringToBytes(inputTextArea.value),
+          mode: mode);
+      else if (inputEncode[0] == ENCODING_BASE64) list = cipher.encrypt(
+          base64StringToBytes(inputTextArea.value),
+          mode: mode);
+      if (list == null) throw new Exception('Incorrect Initial Vector!');
+      if (outputEncode[0] == ENCODING_HEX) outputTextArea.value =
+          bytesToHexString(list);
+      else if (outputEncode[0] == ENCODING_LATIN1) outputTextArea.value =
+          bytesToString(list);
+      else if (outputEncode[0] == ENCODING_BASE64) outputTextArea.value =
+          bytesToBase64String(list);
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
+    }
+  });
+  decryptButton.onClick.listen((e) {
+    inputTextArea.value = '';
+    try {
+      checkKey(keyTextArea.value, initVectorTextArea.value);
+      List list = null;
+      if (outputEncode[0] == ENCODING_HEX) list = cipher.decrypt(
+          hexStringToBytes(outputTextArea.value),
+          mode: mode);
+      else if (outputEncode[0] == ENCODING_LATIN1) list = cipher.decrypt(
+          stringToBytes(outputTextArea.value),
+          mode: mode);
+      else if (outputEncode[0] == ENCODING_BASE64) list = cipher.decrypt(
+          base64StringToBytes(outputTextArea.value),
+          mode: mode);
+      if (list == null) throw new Exception('Incorrect Initial Vector!');
+      if (inputEncode[0] == ENCODING_HEX) inputTextArea.value =
+          bytesToHexString(list);
+      else if (inputEncode[0] == ENCODING_LATIN1) inputTextArea.value =
+          bytesToString(list);
+      else if (inputEncode[0] == ENCODING_BASE64) inputTextArea.value =
+          bytesToBase64String(list);
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
+    }
+  });
+
+  scrollTo(
+      encryptButton, getDuration(encryptButton, 2), TimingFunctions.easeInOut);
+}
+
+void buildEncoding() {
+  SpanElement wrapper = querySelector('#dynamic');
+
+  wrapper.setInnerHtml(HTML_CODE_ENCODINGS, validator: nodeValidator);
+
+  TextAreaElement inputTextArea = querySelector("#inputTextArea");
+  ParagraphElement descriptionParagraph = querySelector('#description');
+
+  encodings(inputTextArea, inputEncode, type: "Input");
+
+  descriptionParagraph.appendHtml(TEXT_DESCRIPTION_ENCODINGS,
+      validator: nodeValidator);
+
+  scrollTo(
+      inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);
+}
+
+void buildRSA() {
+/*
+  TextAreaElement inputTextArea = querySelector("#inputTextArea");
+  TextAreaElement keyTextArea = querySelector("#keyTextArea");
+  TextAreaElement outputTextArea = querySelector("#outputTextArea");
+  TextAreaElement initVectorTextArea = querySelector("#initvectTextArea");
+  DivElement encryptButton = querySelector("#encryptButton");
+  DivElement decryptButton = querySelector("#decryptButton");
+  ParagraphElement descriptionParagraph = querySelector('#description');*/
+
+  /*descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RSA,
+  validator: nodeValidator);*/
+
+  /*scrollTo(
+      inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);*/
+}
+
 void buildStandardCiphers(int type) {
   SpanElement wrapper = querySelector('#dynamic');
   wrapper?.setInnerHtml(HTML_CODE_STANDARD_CIPHERS, validator: nodeValidator);
@@ -265,184 +400,43 @@ void buildStandardCiphers(int type) {
       encryptButton, getDuration(encryptButton, 2), TimingFunctions.easeInOut);
 }
 
-void buildBlockCiphers(int type) {
-  SpanElement wrapper = querySelector('#dynamic');
-  wrapper.setInnerHtml(HTML_CODE_BLOCK_CIPHERS, validator: nodeValidator);
-
-  int mode = BLOCK_MODE_ECB;
-
-  TextAreaElement inputTextArea = querySelector("#inputTextArea");
-  TextAreaElement keyTextArea = querySelector("#keyTextArea");
-  TextAreaElement outputTextArea = querySelector("#outputTextArea");
-  TextAreaElement initVectorTextArea = querySelector("#initvectTextArea");
-  DivElement encryptButton = querySelector("#encryptButton");
-  DivElement decryptButton = querySelector("#decryptButton");
-  ParagraphElement descriptionParagraph = querySelector('#description');
-
-  encodings(inputTextArea, inputEncode, type: "Input");
-  encodings(keyTextArea, keyEncode, type: "Key", changeValue: false);
-  encodings(initVectorTextArea, keyEncode, type: "Key");
-  encodings(outputTextArea, outputEncode, type: "Output");
-
-  String height = keyTextArea.style.height;
-  querySelector("#ecbMode").onClick.listen((e) {
-    mode = BLOCK_MODE_ECB;
-    initVectorTextArea.style.display = 'none';
-    keyTextArea.style.height = height;
-  });
-  querySelector("#cbcMode").onClick.listen((e) {
-    mode = BLOCK_MODE_CBC;
-    initVectorTextArea.style.display = 'block';
-    keyTextArea.style.height = '140px';
-  });
-  querySelector("#pcbcMode").onClick.listen((e) {
-    mode = BLOCK_MODE_PCBC;
-    initVectorTextArea.style.display = 'block';
-    keyTextArea.style.height = '140px';
-  });
-  querySelector("#cfbMode").onClick.listen((e) {
-    mode = BLOCK_MODE_CFB;
-    initVectorTextArea.style.display = 'block';
-    keyTextArea.style.height = '140px';
-  });
-  querySelector("#ofbMode").onClick.listen((e) {
-    mode = BLOCK_MODE_OFB;
-    initVectorTextArea.style.display = 'none';
-    keyTextArea.style.height = height;
-  });
-  querySelector("#ctrMode").onClick.listen((e) {
-    mode = BLOCK_MODE_CTR;
-    initVectorTextArea.style.display = 'none';
-    keyTextArea.style.height = height;
-  });
-
-  var cipher = null;
-  if (type == CIPHER_HILL) {
-    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_HILL,
-        validator: nodeValidator);
-    cipher = new HillCipher(256);
+void buildStructure(int type) {
+  if (type == null) {
+    toast("You didn\'t select anything!");
+    return;
   }
 
-  List initvector;
-
-  void checkKey(String key, String iv) {
-    try {
-      if (key == null) throw new Exception("Key is empty!");
-      if (keyEncode[0] == ENCODING_HEX) {
-        cipher.key = hexStringToBytes(key);
-        initvector = hexStringToBytes(iv);
-      } else if (keyEncode[0] == ENCODING_LATIN1) {
-        cipher.key = stringToBytes(key);
-        initvector = stringToBytes(iv);
-      } else if (keyEncode[0] == ENCODING_BASE64) {
-        cipher.key = base64StringToBytes(key);
-        initvector = base64StringToBytes(iv);
-      }
-    } catch (exception, stackTrace) {
-      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
-      print(exception);
-      throw new Exception(stackTrace);
-    }
-  }
-
-  keyTextArea.onChange.listen((e) => checkKey(keyTextArea.value, initVectorTextArea.value));
-  encryptButton.onClick.listen((e) {
-    outputTextArea.value = '';
-    try {
-      checkKey(keyTextArea.value, initVectorTextArea.value);
-      List list = null;
-      if (inputEncode[0] == ENCODING_HEX) list = cipher.encrypt(
-          hexStringToBytes(inputTextArea.value),
-          mode: mode,
-          initVec: initvector);
-      else if (inputEncode[0] == ENCODING_LATIN1) list = cipher.encrypt(
-          stringToBytes(inputTextArea.value),
-          mode: mode,
-          initVec: initvector);
-      else if (inputEncode[0] == ENCODING_BASE64) list = cipher.encrypt(
-          base64StringToBytes(inputTextArea.value),
-          mode: mode,
-          initVec: initvector);
-      if (list == null) throw new Exception('Incorrect message or IV!');
-      if (outputEncode[0] == ENCODING_HEX) outputTextArea.value =
-          bytesToHexString(list);
-      else if (outputEncode[0] == ENCODING_LATIN1) outputTextArea.value =
-          bytesToString(list);
-      else if (outputEncode[0] == ENCODING_BASE64) outputTextArea.value =
-          bytesToBase64String(list);
-    } catch (exception, stackTrace) {
-      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
-      print(exception);
-      throw new Exception(stackTrace);
-    }
-  });
-  decryptButton.onClick.listen((e) {
-    inputTextArea.value = '';
-    try {
-      checkKey(keyTextArea.value, initVectorTextArea.value);
-      List list = null;
-      if (outputEncode[0] == ENCODING_HEX) list = cipher.decrypt(
-          hexStringToBytes(outputTextArea.value),
-          mode: mode,
-          initVec: initvector);
-      else if (outputEncode[0] == ENCODING_LATIN1) list = cipher.decrypt(
-          stringToBytes(outputTextArea.value),
-          mode: mode,
-          initVec: initvector);
-      else if (outputEncode[0] == ENCODING_BASE64) list = cipher.decrypt(
-          base64StringToBytes(outputTextArea.value),
-          mode: mode,
-          initVec: initvector);
-      if (list == null) throw new Exception('Incorrect message or IV!');
-      if (inputEncode[0] == ENCODING_HEX) inputTextArea.value =
-          bytesToHexString(list);
-      else if (inputEncode[0] == ENCODING_LATIN1) inputTextArea.value =
-          bytesToString(list);
-      else if (inputEncode[0] == ENCODING_BASE64) inputTextArea.value =
-          bytesToBase64String(list);
-    } catch (exception, stackTrace) {
-      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
-      print(exception);
-      throw new Exception(stackTrace);
-    }
-  });
-
-  scrollTo(
-      encryptButton, getDuration(encryptButton, 2), TimingFunctions.easeInOut);
-}
-
-void buildEncoding() {
   SpanElement wrapper = querySelector('#dynamic');
-
-  wrapper.setInnerHtml(HTML_CODE_ENCODINGS, validator: nodeValidator);
-
-  TextAreaElement inputTextArea = querySelector("#inputTextArea");
   ParagraphElement descriptionParagraph = querySelector('#description');
+  wrapper.setInnerHtml('');
 
-  encodings(inputTextArea, inputEncode, type: "Input");
-
-  descriptionParagraph.appendHtml(TEXT_DESCRIPTION_ENCODINGS,
-      validator: nodeValidator);
-
-  scrollTo(
-      inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);
-}
-
-void buildRSA() {
-/*
-  TextAreaElement inputTextArea = querySelector("#inputTextArea");
-  TextAreaElement keyTextArea = querySelector("#keyTextArea");
-  TextAreaElement outputTextArea = querySelector("#outputTextArea");
-  TextAreaElement initVectorTextArea = querySelector("#initvectTextArea");
-  DivElement encryptButton = querySelector("#encryptButton");
-  DivElement decryptButton = querySelector("#decryptButton");
-  ParagraphElement descriptionParagraph = querySelector('#description');*/
-
-  /*descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RSA,
-  validator: nodeValidator);*/
-
-  /*scrollTo(
-      inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);*/
+  switch (type) {
+    case CIPHER_CAESAR:
+    case CIPHER_AFFINE:
+      buildAffine(type);
+      break;
+    case CIPHER_HILL:
+      //case CIPHER_AES:
+      //case CIPHER_MAGMA:
+      buildBlockCiphers(type);
+      break;
+    case CIPHER_BEAUFORT:
+    case CIPHER_VIGENERE:
+    case CIPHER_OTP:
+      buildStandardCiphers(type);
+      break;
+    case CIPHER_RSA:
+      wrapper?.setInnerHtml(HTML_CODE_RSA, validator: nodeValidator);
+      descriptionParagraph?.appendHtml(TEXT_DESCRIPTION_RSA,
+          validator: nodeValidator);
+      //buildRSA();
+      break;
+    case CIPHER_RSA_GENERATOR:
+      break;
+    case ENCODINGS:
+      buildEncoding();
+      break;
+  }
 }
 
 void encodings(TextAreaElement field, List encode,

@@ -9,6 +9,7 @@ class HillCipher {
   List key = null;
   int dimension = 0;
   int modulo = 0;
+  List initVector = null;
 
   HillCipher(this.modulo, [this.mkey]);
 
@@ -49,12 +50,13 @@ class HillCipher {
     return list;
   }
 
-  List encrypt(List message, {int mode: BLOCK_MODE_ECB, List initVec: null}) {
+  List encrypt(List message, {int mode: BLOCK_MODE_ECB}) {
     checkKey();
     List list = new List();
     message.forEach((f) => list.add(f));
     while (list.length % dimension != 0) list.add(0x00);
     message = list;
+    List initVec = initVector;
 
     List encMessage = new List();
     switch (mode) {
@@ -113,12 +115,13 @@ class HillCipher {
     return list;
   }
 
-  List decrypt(List message, {int mode: BLOCK_MODE_ECB, List initVec: null}) {
+  List decrypt(List message, {int mode: BLOCK_MODE_ECB}) {
     checkKey();
     List list = new List();
     message.forEach((f) => list.add(f));
     while (list.length % dimension != 0) list.add(0x00);
     message = list;
+    List initVec = initVector;
 
     List decMessage = new List();
     switch (mode) {
