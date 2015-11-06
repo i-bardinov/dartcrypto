@@ -1,15 +1,15 @@
 library dartcrypto.ciphers.otp;
 
-import 'dart:math' as math;
+import 'dart:math' as math show Random;
 
 class OTPCipher {
-  List key = [0];
+  List key = null;
   int modulo;
 
   OTPCipher(this.modulo, [this.key]);
 
   void checkKey([int mess_length = 0]) {
-    if (key.isEmpty) throw new Exception("Key is incorrect");
+    if (key == null || key.isEmpty) throw new Exception("Key is empty");
     if (key.length != mess_length) throw new Exception('Key size is less than message!');
   }
 

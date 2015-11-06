@@ -1,21 +1,22 @@
 library dartcrypto.ciphers.vigenere;
 
-import "dart:math";
-import 'package:dartcrypto/src/exceptions.dart';
+import "dart:math" as math show Random;
 
 class VigenereCipher {
   int modulo;
-  List key = [0];
+  List key = null;
+  static int KEY_MAX_SIZE_VIGENERE = 100;
 
   VigenereCipher(this.modulo, [this.key]);
 
   void checkKey([int key_length = 0]) {
-    if (key.isEmpty) throw new Exception("Key is incorrect");
+    if (key == null || key.isEmpty) throw new Exception("Key is empty");
   }
 
-  void generateKey(int length) {
-    Random rand = new Random();
-    key.clear();
+  void generateKey([int length]) {
+    math.Random rand = new math.Random();
+    if (length == null) length = rand.nextInt(KEY_MAX_SIZE_VIGENERE);
+    key = new List();
     for (int i = 0; i < length; i++) key.add(rand.nextInt(modulo));
   }
 

@@ -7,15 +7,6 @@ import 'scrolling.dart';
 import 'toast.dart';
 import 'utils.dart';
 
-void main() {
-  ElementList menuList = querySelectorAll('.drop ul li a');
-  menuList
-      .forEach((f) => f.onClick.listen((e) => buildStructure(int.parse(f.id))));
-}
-
-List inputEncode = [ENCODING_LATIN1];
-List keyEncode = [ENCODING_LATIN1];
-
 NodeValidator nodeValidator = new NodeValidatorBuilder()
   ..allowTextElements()
   ..allowHtml5()
@@ -26,9 +17,55 @@ NodeValidator nodeValidator = new NodeValidatorBuilder()
   ..allowElement('textarea', attributes: ['style', 'display'])
   ..allowNavigation(new MyUriPolicy());
 
-List outputEncode = [ENCODING_HEX];
+void main() {
+  ElementList menuList = querySelectorAll('.drop ul li a');
+  menuList
+      .forEach((f) => f.onClick.listen((e) => buildStructure(int.parse(f.id))));
+}
+
+void buildStructure(int type) {
+  if (type == null) {
+    toast("You didn\'t select anything!");
+    return;
+  }
+
+  SpanElement wrapper = querySelector('#dynamic');
+  ParagraphElement descriptionParagraph = querySelector('#description');
+  wrapper.setInnerHtml('');
+
+  switch (type) {
+    case CIPHER_CAESAR:
+    case CIPHER_AFFINE:
+      buildAffine(type);
+      break;
+    case CIPHER_HILL:
+      //case CIPHER_AES:
+      //case CIPHER_MAGMA:
+      buildBlockCiphers(type);
+      break;
+    case CIPHER_BEAUFORT:
+    case CIPHER_VIGENERE:
+    case CIPHER_OTP:
+      buildStandardCiphers(type);
+      break;
+    case CIPHER_RSA:
+      wrapper?.setInnerHtml(HTML_CODE_RSA, validator: nodeValidator);
+      descriptionParagraph?.appendHtml(TEXT_DESCRIPTION_RSA,
+          validator: nodeValidator);
+      //buildRSA();
+      break;
+    case CIPHER_RSA_GENERATOR:
+      break;
+    case ENCODINGS:
+      buildEncoding();
+      break;
+  }
+}
 
 void buildAffine(int type) {
+  List inputEncode = [ENCODING_LATIN1];
+  List keyEncode = [ENCODING_LATIN1];
+  List outputEncode = [ENCODING_HEX];
   SpanElement wrapper = querySelector('#dynamic');
   wrapper?.setInnerHtml(HTML_CODE_AFFINE, validator: nodeValidator);
 
@@ -134,6 +171,9 @@ void buildAffine(int type) {
 }
 
 void buildBlockCiphers(int type) {
+  List inputEncode = [ENCODING_LATIN1];
+  List keyEncode = [ENCODING_LATIN1];
+  List outputEncode = [ENCODING_HEX];
   SpanElement wrapper = querySelector('#dynamic');
   wrapper.setInnerHtml(HTML_CODE_BLOCK_CIPHERS, validator: nodeValidator);
 
@@ -266,41 +306,10 @@ void buildBlockCiphers(int type) {
       encryptButton, getDuration(encryptButton, 2), TimingFunctions.easeInOut);
 }
 
-void buildEncoding() {
-  SpanElement wrapper = querySelector('#dynamic');
-
-  wrapper.setInnerHtml(HTML_CODE_ENCODINGS, validator: nodeValidator);
-
-  TextAreaElement inputTextArea = querySelector("#inputTextArea");
-  ParagraphElement descriptionParagraph = querySelector('#description');
-
-  encodings(inputTextArea, inputEncode, type: "Input");
-
-  descriptionParagraph.appendHtml(TEXT_DESCRIPTION_ENCODINGS,
-      validator: nodeValidator);
-
-  scrollTo(
-      inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);
-}
-
-void buildRSA() {
-/*
-  TextAreaElement inputTextArea = querySelector("#inputTextArea");
-  TextAreaElement keyTextArea = querySelector("#keyTextArea");
-  TextAreaElement outputTextArea = querySelector("#outputTextArea");
-  TextAreaElement initVectorTextArea = querySelector("#initvectTextArea");
-  DivElement encryptButton = querySelector("#encryptButton");
-  DivElement decryptButton = querySelector("#decryptButton");
-  ParagraphElement descriptionParagraph = querySelector('#description');*/
-
-  /*descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RSA,
-  validator: nodeValidator);*/
-
-  /*scrollTo(
-      inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);*/
-}
-
 void buildStandardCiphers(int type) {
+  List inputEncode = [ENCODING_LATIN1];
+  List keyEncode = [ENCODING_LATIN1];
+  List outputEncode = [ENCODING_HEX];
   SpanElement wrapper = querySelector('#dynamic');
   wrapper?.setInnerHtml(HTML_CODE_STANDARD_CIPHERS, validator: nodeValidator);
 
@@ -308,6 +317,7 @@ void buildStandardCiphers(int type) {
   TextAreaElement keyTextArea = querySelector("#keyTextArea");
   TextAreaElement outputTextArea = querySelector("#outputTextArea");
   DivElement encryptButton = querySelector("#encryptButton");
+  DivElement keyGenerateButton = querySelector("#keyGenerateButton");
   DivElement decryptButton = querySelector("#decryptButton");
   ParagraphElement descriptionParagraph = querySelector('#description');
 
@@ -342,6 +352,26 @@ void buildStandardCiphers(int type) {
       throw new Exception(e);
     }
   }
+
+  keyGenerateButton.onClick.listen((e) {
+    keyTextArea.value = '';
+    try {
+      if (type == CIPHER_OTP) {
+        if (inputTextArea.value.length != 0) cipher
+            .generateKey(inputTextArea.value.length);
+        else cipher.generateKey(outputTextArea.value.length);
+      } else cipher.generateKey();
+      if (keyEncode[0] == ENCODING_HEX) keyTextArea.value =
+          bytesToHexString(cipher.key);
+      else if (keyEncode[0] == ENCODING_LATIN1) keyTextArea.value =
+          bytesToString(cipher.key);
+      else if (keyEncode[0] == ENCODING_BASE64) keyTextArea.value =
+          bytesToBase64String(cipher.key);
+    } catch (e) {
+      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
+      throw new Exception(e);
+    }
+  });
 
   keyTextArea.onChange.listen((e) => checkKey(keyTextArea.value));
   encryptButton.onClick.listen((e) {
@@ -395,43 +425,39 @@ void buildStandardCiphers(int type) {
       encryptButton, getDuration(encryptButton, 2), TimingFunctions.easeInOut);
 }
 
-void buildStructure(int type) {
-  if (type == null) {
-    toast("You didn\'t select anything!");
-    return;
-  }
-
+void buildEncoding() {
+  List inputEncode = [ENCODING_LATIN1];
   SpanElement wrapper = querySelector('#dynamic');
-  ParagraphElement descriptionParagraph = querySelector('#description');
-  wrapper.setInnerHtml('');
 
-  switch (type) {
-    case CIPHER_CAESAR:
-    case CIPHER_AFFINE:
-      buildAffine(type);
-      break;
-    case CIPHER_HILL:
-      //case CIPHER_AES:
-      //case CIPHER_MAGMA:
-      buildBlockCiphers(type);
-      break;
-    case CIPHER_BEAUFORT:
-    case CIPHER_VIGENERE:
-    case CIPHER_OTP:
-      buildStandardCiphers(type);
-      break;
-    case CIPHER_RSA:
-      wrapper?.setInnerHtml(HTML_CODE_RSA, validator: nodeValidator);
-      descriptionParagraph?.appendHtml(TEXT_DESCRIPTION_RSA,
-          validator: nodeValidator);
-      //buildRSA();
-      break;
-    case CIPHER_RSA_GENERATOR:
-      break;
-    case ENCODINGS:
-      buildEncoding();
-      break;
-  }
+  wrapper.setInnerHtml(HTML_CODE_ENCODINGS, validator: nodeValidator);
+
+  TextAreaElement inputTextArea = querySelector("#inputTextArea");
+  ParagraphElement descriptionParagraph = querySelector('#description');
+
+  encodings(inputTextArea, inputEncode, type: "Input");
+
+  descriptionParagraph.appendHtml(TEXT_DESCRIPTION_ENCODINGS,
+      validator: nodeValidator);
+
+  scrollTo(
+      inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);
+}
+
+void buildRSA() {
+/*
+  TextAreaElement inputTextArea = querySelector("#inputTextArea");
+  TextAreaElement keyTextArea = querySelector("#keyTextArea");
+  TextAreaElement outputTextArea = querySelector("#outputTextArea");
+  TextAreaElement initVectorTextArea = querySelector("#initvectTextArea");
+  DivElement encryptButton = querySelector("#encryptButton");
+  DivElement decryptButton = querySelector("#decryptButton");
+  ParagraphElement descriptionParagraph = querySelector('#description');*/
+
+  /*descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RSA,
+  validator: nodeValidator);*/
+
+  /*scrollTo(
+      inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);*/
 }
 
 void encodings(TextAreaElement field, List encode,

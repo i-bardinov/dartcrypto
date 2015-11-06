@@ -186,6 +186,12 @@ const String HTML_CODE_STANDARD_CIPHERS =
             <div id="keyFieldContainer">
                 <textarea spellcheck="false" id="keyTextArea" tabindex='2'></textarea>
             </div>
+            <section>
+                <div class="button raised blue" id="keyGenerateButton">
+                    <div align="center" fit>GENERATE</div>
+                    <paper-ripple fit></paper-ripple>
+                </div>
+            </section>
         </div>
 
         <div id="input">
@@ -247,7 +253,7 @@ const String HTML_CODE_BLOCK_CIPHERS =
               <label class="radio"><input id="ofbMode" type="radio" name="radiosMode"><span class="outer"><span class="inner"></span></span>OFC</label>
               <label class="radio"><input id="ctrMode" type="radio" name="radiosMode"><span class="outer"><span class="inner"></span></span>CTR</label>
             <div id="initvectFieldContainer">
-                <textarea spellcheck="false" id="initvectTextArea" style='height:48px; display:none' tabindex='3'></textarea>
+                <textarea spellcheck="false" id="initvectTextArea" style='height:46px; display:none' tabindex='3'></textarea>
             </div>
         </div>
 
@@ -375,8 +381,6 @@ const int CIPHER_RSA = 3002;
 
 const int HASH_SHA_1 = 4001;
 
-const int KEY_MAX_SIZE_VIGENERE = 20;
-const int KEY_MAX_SIZE_BEAUFORT = 20;
 const int KEY_MAX_DIM_HILL = 4;
 
 
