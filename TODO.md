@@ -8,4 +8,4 @@
  * SHA-1 hash;
  * Generate Key button for Hill;
  * Generate Key button for stream ciphers;
- ~~* Print errors on bad encoding~~
+ * ~~Print errors on bad encoding~~
