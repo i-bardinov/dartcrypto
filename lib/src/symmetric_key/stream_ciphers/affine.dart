@@ -26,13 +26,13 @@ class AffineCipher {
 
   List encrypt(List message) {
     checkKey();
-    if (message == null) return null;
+    if (message == null) throw new Exception('Message is null!');
     return message.map((f) => (key_A * f + key_B) % modulo).toList();
   }
 
   List decrypt(List message) {
     checkKey();
-    if (message == null) return null;
+    if (message == null) throw new Exception('Message is null!');
     int invKey_A = key_A.modInverse(modulo);
     return message.map((f) => (invKey_A * (f - key_B)) % modulo).toList();
   }

@@ -21,12 +21,14 @@ class OTPCipher {
 
   List encrypt(List message) {
     checkKey(message.length);
+    if (message == null) throw new Exception('Message is null!');
     for (int i = 0; i < message.length; i++) message[i] = message[i] ^ key[i];
     return message;
   }
 
   List decrypt(List message) {
     checkKey(message.length);
+    if (message == null) throw new Exception('Message is null!');
     for (int i = 0; i < message.length; i++) message[i] = message[i] ^ key[i];
     return message;
   }

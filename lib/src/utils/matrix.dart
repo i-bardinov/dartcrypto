@@ -1,6 +1,6 @@
 library dartcrypto.utils.matrix;
 
-import 'dart:math';
+import 'dart:math' as math;
 
 class Matrix {
   int rows;
@@ -13,7 +13,7 @@ class Matrix {
     this.rows = rows;
     this.columns = columns;
     if (modulo != null && modulo != 0) this.modulo = modulo;
-    Random rand = new Random();
+    math.Random rand = new math.Random();
     if (modulo != null && modulo != 0) matrix = new List.generate(
         rows, (i) => new List.generate(columns, (i) => rand.nextInt(modulo)));
     else matrix = new List.generate(
@@ -60,7 +60,7 @@ class Matrix {
     } else {
       for (int i = 0; i < columns; i++) {
         determinant = determinant +
-        matrix[0][i] * pow(-1, 1 + 1 + i) * minor(0, i).determinant();
+        matrix[0][i] * math.pow(-1, 1 + 1 + i) * minor(0, i).determinant();
       }
     }
 
@@ -95,7 +95,7 @@ class Matrix {
     List list = new List();
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < columns; j++) {
-        var el = detm * pow(-1, 1 + j + 1 + i) * minor(i, j).determinant();
+        var el = detm * math.pow(-1, 1 + j + 1 + i) * minor(i, j).determinant();
         if (modulo != null && modulo != 0) el = el % modulo;
         list.add(el);
       }

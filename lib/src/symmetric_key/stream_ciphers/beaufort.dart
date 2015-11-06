@@ -20,6 +20,7 @@ class BeaufortCipher {
 
   List encrypt(List message) {
     checkKey();
+    if (message == null) throw new Exception('Message is null!');
     int keySize = key.length;
     for (int i = 0;
         i < message.length;
@@ -29,6 +30,7 @@ class BeaufortCipher {
 
   List decrypt(List message) {
     checkKey();
+    if (message == null) throw new Exception('Message is null!');
     int keySize = key.length;
     for (int i = 0;
         i < message.length;

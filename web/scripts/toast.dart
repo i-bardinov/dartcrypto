@@ -1,10 +1,10 @@
 library toast;
 
 import 'dart:html';
-import 'dart:async';
+import 'dart:async' as async show Future, Completer;
 
-Future toast(String msg, {int fadeIn: 500, int show: 3000, int fadeOut: 5000}) {
-  var isCompleted = false, startTime = null, completer = new Completer();
+async.Future toast(String msg, {int fadeIn: 500, int show: 3000, int fadeOut: 5000}) {
+  var isCompleted = false, startTime = null, completer = new async.Completer();
   DivElement el = new DivElement()
     ..style.width = '200px'
     ..style.height = '40px'

@@ -1,3 +1,5 @@
+library utils;
+
 const String TEXT_DESCRIPTION_CAESAR =
 '''
 In cryptography, a <a href=\'https://en.wikipedia.org/wiki/Caesar_cipher\' target=\'_blank\'>Caesar cipher</a>,

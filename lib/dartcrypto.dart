@@ -4,7 +4,6 @@ library dartcrypto;
 export 'package:dartcrypto/src/symmetric_key/block_ciphers/aes.dart';
 export 'package:dartcrypto/src/symmetric_key/block_ciphers/hill.dart';
 export 'package:dartcrypto/src/symmetric_key/block_ciphers/gost_28147_89.dart';
-
 export 'package:dartcrypto/src/symmetric_key/block_ciphers/modes.dart';
 
 export 'package:dartcrypto/src/symmetric_key/stream_ciphers/affine.dart';

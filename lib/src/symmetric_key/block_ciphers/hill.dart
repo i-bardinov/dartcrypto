@@ -18,7 +18,7 @@ class HillCipher {
     int tmp = key.length;
     dimension = math.sqrt(tmp).floor();
     if (math.pow(dimension, 2) !=
-        tmp) throw new Exception("Incorrect key size!");
+        tmp) throw new Exception("Incorrect key size! Should be square!");
     mkey = new Matrix(dimension, dimension, key, modulo);
     int det = mkey.determinant();
     if (det == 0 ||
@@ -66,7 +66,8 @@ class HillCipher {
             .forEach((f) => encMessage.add(f));
         break;
       case BLOCK_MODE_CBC:
-        if (initVec == null || initVec.length != dimension) return null;
+        if (initVec == null || initVec.length != dimension) throw new Exception(
+            'Initial vector is null!');
         List temp = initVec;
         for (int i = 0; i < message.length; i += dimension) {
           temp = CBC_mode_encryption(
@@ -75,7 +76,8 @@ class HillCipher {
         }
         break;
       case BLOCK_MODE_PCBC:
-        if (initVec == null || initVec.length != dimension) return null;
+        if (initVec == null || initVec.length != dimension) throw new Exception(
+            'Initial vector is null!');
         List prevEnc = initVec;
         List prev = new List.generate(dimension, (f) => 0);
         for (int i = 0; i < message.length; i += dimension) {
@@ -86,7 +88,8 @@ class HillCipher {
         }
         break;
       case BLOCK_MODE_CFB:
-        if (initVec == null || initVec.length != dimension) return null;
+        if (initVec == null || initVec.length != dimension) throw new Exception(
+            'Initial vector is null!');
         List temp = initVec;
         for (int i = 0; i < message.length; i += dimension) {
           temp = CFB_mode_encryption(
@@ -131,7 +134,8 @@ class HillCipher {
             .forEach((f) => decMessage.add(f));
         break;
       case BLOCK_MODE_CBC:
-        if (initVec == null || initVec.length != dimension) return null;
+        if (initVec == null || initVec.length != dimension) throw new Exception(
+            'Initial vector is null!');
         List temp = initVec;
         for (int i = 0; i < message.length; i += dimension) {
           CBC_mode_decryption(
@@ -141,7 +145,8 @@ class HillCipher {
         }
         break;
       case BLOCK_MODE_PCBC:
-        if (initVec == null || initVec.length != dimension) return null;
+        if (initVec == null || initVec.length != dimension) throw new Exception(
+            'Initial vector is null!');
         List prevEnc = initVec;
         List prev = new List.generate(dimension, (f) => 0);
         for (int i = 0; i < message.length; i += dimension) {
@@ -152,7 +157,8 @@ class HillCipher {
         }
         break;
       case BLOCK_MODE_CFB:
-        if (initVec == null || initVec.length != dimension) return null;
+        if (initVec == null || initVec.length != dimension) throw new Exception(
+            'Initial vector is null!');
         List temp = initVec;
         for (int i = 0; i < message.length; i += dimension) {
           CFB_mode_decryption(

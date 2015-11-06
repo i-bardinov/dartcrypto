@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:html';
-import 'dart:math' as math;
 
 import 'package:dartcrypto/dartcrypto.dart';
 
@@ -13,6 +12,7 @@ void main() {
   menuList
       .forEach((f) => f.onClick.listen((e) => buildStructure(int.parse(f.id))));
 }
+
 List inputEncode = [ENCODING_LATIN1];
 List keyEncode = [ENCODING_LATIN1];
 
@@ -211,21 +211,19 @@ void buildBlockCiphers(int type) {
     }
   }
 
-  keyTextArea.onChange.listen((e) => checkKey(keyTextArea.value, initVectorTextArea.value));
+  keyTextArea.onChange
+      .listen((e) => checkKey(keyTextArea.value, initVectorTextArea.value));
   encryptButton.onClick.listen((e) {
     outputTextArea.value = '';
     try {
       checkKey(keyTextArea.value, initVectorTextArea.value);
       List list = null;
-      if (inputEncode[0] == ENCODING_HEX) list = cipher.encrypt(
-          hexStringToBytes(inputTextArea.value),
-          mode: mode);
-      else if (inputEncode[0] == ENCODING_LATIN1) list = cipher.encrypt(
-          stringToBytes(inputTextArea.value),
-          mode: mode);
-      else if (inputEncode[0] == ENCODING_BASE64) list = cipher.encrypt(
-          base64StringToBytes(inputTextArea.value),
-          mode: mode);
+      if (inputEncode[0] == ENCODING_HEX) list =
+          cipher.encrypt(hexStringToBytes(inputTextArea.value), mode: mode);
+      else if (inputEncode[0] == ENCODING_LATIN1) list =
+          cipher.encrypt(stringToBytes(inputTextArea.value), mode: mode);
+      else if (inputEncode[0] == ENCODING_BASE64) list =
+          cipher.encrypt(base64StringToBytes(inputTextArea.value), mode: mode);
       if (list == null) throw new Exception('Incorrect Initial Vector!');
       if (outputEncode[0] == ENCODING_HEX) outputTextArea.value =
           bytesToHexString(list);
@@ -244,15 +242,12 @@ void buildBlockCiphers(int type) {
     try {
       checkKey(keyTextArea.value, initVectorTextArea.value);
       List list = null;
-      if (outputEncode[0] == ENCODING_HEX) list = cipher.decrypt(
-          hexStringToBytes(outputTextArea.value),
-          mode: mode);
-      else if (outputEncode[0] == ENCODING_LATIN1) list = cipher.decrypt(
-          stringToBytes(outputTextArea.value),
-          mode: mode);
-      else if (outputEncode[0] == ENCODING_BASE64) list = cipher.decrypt(
-          base64StringToBytes(outputTextArea.value),
-          mode: mode);
+      if (outputEncode[0] == ENCODING_HEX) list =
+          cipher.decrypt(hexStringToBytes(outputTextArea.value), mode: mode);
+      else if (outputEncode[0] == ENCODING_LATIN1) list =
+          cipher.decrypt(stringToBytes(outputTextArea.value), mode: mode);
+      else if (outputEncode[0] == ENCODING_BASE64) list =
+          cipher.decrypt(base64StringToBytes(outputTextArea.value), mode: mode);
       if (list == null) throw new Exception('Incorrect Initial Vector!');
       if (inputEncode[0] == ENCODING_HEX) inputTextArea.value =
           bytesToHexString(list);

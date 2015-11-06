@@ -1,26 +1,26 @@
 library scrolling;
 
-import 'dart:async';
-import 'dart:html';
-import 'dart:math';
+import 'dart:async' as async show Completer, Future;
+import 'dart:html' as html show Element, window, document;
+import 'dart:math' as math show max;
 
-double fullOffsetTop(Element element) => element.getBoundingClientRect().top +
-    window.pageYOffset -
-    document.documentElement.clientTop;
+double fullOffsetTop(html.Element element) => element.getBoundingClientRect().top +
+    html.window.pageYOffset -
+    html.document.documentElement.clientTop;
 
-Duration getDuration(Element targetElement, num speed) {
-  var distance = (window.pageYOffset - fullOffsetTop(targetElement)).abs();
+Duration getDuration(html.Element targetElement, num speed) {
+  var distance = (html.window.pageYOffset - fullOffsetTop(targetElement)).abs();
   return new Duration(milliseconds: distance ~/ speed);
 }
 
-Future scrollTo(Element el, Duration duration, TimingFunction tf) {
+async.Future scrollTo(html.Element el, Duration duration, TimingFunction tf) {
   var isCompleted = false,
       isInterrupted = false,
-      completer = new Completer(),
-      startPos = window.pageYOffset,
+      completer = new async.Completer(),
+      startPos = html.window.pageYOffset,
       targetPos = fullOffsetTop(el),
       overScroll =
-      max(targetPos + window.innerHeight - document.body.scrollHeight, 0),
+      math.max(targetPos + html.window.innerHeight - html.document.body.scrollHeight, 0),
       startTime = null,
       direction = (targetPos - startPos).sign;
 
@@ -37,20 +37,20 @@ Future scrollTo(Element el, Duration duration, TimingFunction tf) {
       "user-select: none;"
       "pointer-events: none;";
 
-  String oldBodyStyle = document.body.getAttribute("style") != null
-      ? document.body.getAttribute("style")
+  String oldBodyStyle = html.document.body.getAttribute("style") != null
+      ? html.document.body.getAttribute("style")
       : "";
 
   //return control to the user if he/she tries to interact with the page.
-  window.onMouseWheel.first.then((_) => isInterrupted = isCompleted = true);
-  window.onKeyDown.first.then((_) => isInterrupted = isCompleted = true);
+  html.window.onMouseWheel.first.then((_) => isInterrupted = isCompleted = true);
+  html.window.onKeyDown.first.then((_) => isInterrupted = isCompleted = true);
 
-  document.body.setAttribute("style", disable + oldBodyStyle);
+  html.document.body.setAttribute("style", disable + oldBodyStyle);
 
   iter() {
-    window.animationFrame.then((_) {
-      if (startTime == null) startTime = window.performance.now();
-      var deltaTime = window.performance.now() - startTime,
+    html.window.animationFrame.then((_) {
+      if (startTime == null) startTime = html.window.performance.now();
+      var deltaTime = html.window.performance.now() - startTime,
           progress = deltaTime / duration.inMilliseconds,
           precision = (1000 / 60 / duration.inMilliseconds) / 4,
           dist = totalDistance * tf(progress, precision);
@@ -59,11 +59,11 @@ Future scrollTo(Element el, Duration duration, TimingFunction tf) {
       if (progress >= 1.0) isCompleted = true;
 
       if (!isCompleted) {
-        window.scrollTo(0, curPos.toInt());
+        html.window.scrollTo(0, curPos.toInt());
         iter();
       } else {
-        document.body.setAttribute("style",
-            document.body.getAttribute("style").replaceFirst(disable, ""));
+        html.document.body.setAttribute("style",
+            html.document.body.getAttribute("style").replaceFirst(disable, ""));
         isInterrupted
             ? completer.completeError("Interrupted by the user")
             : completer.complete("completed");

@@ -21,6 +21,7 @@ class VigenereCipher {
 
   List encrypt(List message) {
     checkKey();
+    if (message == null) throw new Exception('Message is null!');
     int keySize = key.length;
     for (int i = 0;
         i < message.length;
@@ -30,6 +31,7 @@ class VigenereCipher {
 
   List decrypt(List message) {
     checkKey();
+    if (message == null) throw new Exception('Message is null!');
     int keySize = key.length;
     for (int i = 0;
         i < message.length;
