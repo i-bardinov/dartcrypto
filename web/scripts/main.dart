@@ -61,6 +61,8 @@ void buildStructure(int type) {
       buildEncoding();
       break;
     case HASH_SHA_1:
+    case HASH_SHA_2:
+    case HASH_MD5:
       buildStandardHash(type);
       break;
   }
@@ -517,10 +519,20 @@ void buildStandardHash(int type) {
 
   encodings(inputTextArea, inputEncode, type: "Input");
 
-  if (type == HASH_SHA_1) descriptionParagraph
-      .appendHtml(TEXT_DESCRIPTION_SHA_1, validator: nodeValidator);
-
-  crypto.SHA1 hash = new crypto.SHA1();
+  var hash;
+  if (type == HASH_SHA_1) {
+    descriptionParagraph
+        .appendHtml(TEXT_DESCRIPTION_SHA_1, validator: nodeValidator);
+    hash = new crypto.SHA1();
+  } else if (type == HASH_SHA_2) {
+    descriptionParagraph
+        .appendHtml(TEXT_DESCRIPTION_SHA_2, validator: nodeValidator);
+    hash = new crypto.SHA256();
+  } else if (type == HASH_MD5) {
+    descriptionParagraph
+        .appendHtml(TEXT_DESCRIPTION_MD5, validator: nodeValidator);
+    hash = new crypto.MD5();
+  }
 
   void calc_hash() {
     outputTextArea.value = '';
@@ -540,8 +552,7 @@ void buildStandardHash(int type) {
   }
 
   inputTextArea.onChange.listen((e) => calc_hash());
-
-  inputTextArea.onChange.listen((e) => calc_hash());
+  hashButton.onClick.listen((e) => calc_hash());
 
   scrollTo(
       inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);

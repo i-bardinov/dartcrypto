@@ -67,7 +67,8 @@ const String TEXT_DESCRIPTION_MAGMA =
 ''';
 const String TEXT_DESCRIPTION_RSA =
 '''
-<a href=\'https://en.wikipedia.org/wiki/RSA_(cryptosystem)\' target=\'_blank\'>RSA</a> is one of the first practical public-key cryptosystems and is widely used for secure data transmission.
+<a href=\'https://en.wikipedia.org/wiki/RSA_(cryptosystem)\' target=\'_blank\'>RSA</a> is one of the first
+ practical public-key cryptosystems and is widely used for secure data transmission.
 In such a cryptosystem, the encryption key is public and differs from the decryption key which is kept secret.
 In RSA, this asymmetry is based on the practical difficulty of factoring the product of two large prime numbers,
 the factoring problem. RSA is made of the initial letters of the surnames of Ron Rivest, Adi Shamir, and Leonard
@@ -86,6 +87,31 @@ United States NIST. SHA-1 is considered insecure against well-funded opponents, 
  to use SHA-2 or SHA-3 instead.
 SHA-1 produces a 160-bit (20-byte) hash value known as a message digest. A SHA-1 hash value is
 typically rendered as a hexadecimal number, 40 digits long.
+''';
+const String TEXT_DESCRIPTION_SHA_2 =
+'''
+<a href=\'https://en.wikipedia.org/wiki/SHA-2\' target=\'_blank\'>SHA-2 (Secure Hash Algorithm 2)</a> is
+ a set of cryptographic hash functions designed by the NSA. SHA stands for Secure Hash Algorithm.
+ Cryptographic hash functions are mathematical operations run on digital data; by comparing
+ the computed "hash" (the output from execution of the algorithm) to a known and expected
+ hash value, a person can determine the data's integrity. For example, computing the hash
+ of a downloaded file and comparing the result to a previously published hash result can
+ show whether the download has been modified or tampered with. A key aspect of
+ cryptographic hash functions is their collision resistance: nobody should be able to find two
+  different input values that result in the same hash output.
+<br>
+SHA-2 includes significant changes from its predecessor, SHA-1. The SHA-2 family consists of six hash
+functions with digests (hash values) that are 224, 256, 384 or 512 bits: SHA-224,
+SHA-256, SHA-384, SHA-512, SHA-512/224, SHA-512/256.
+''';
+const String TEXT_DESCRIPTION_MD5 =
+'''
+The <a href=\'https://en.wikipedia.org/wiki/MD5\' target=\'_blank\'>MD5 message-digest algorithm</a>
+ is a widely used cryptographic hash function producing
+a 128-bit (16-byte) hash value, typically expressed in text format as a 32 digit
+hexadecimal number. MD5 has been utilized in a wide variety of cryptographic applications,
+and is also commonly used to verify data integrity.
+MD5 was designed by Ronald Rivest in 1991 to replace an earlier hash function, MD4.
 ''';
 const String TEXT_DESCRIPTION_ENCODINGS =
 '''
@@ -426,3 +452,5 @@ const int CIPHER_RSA_GENERATOR = 3001;
 const int CIPHER_RSA = 3002;
 
 const int HASH_SHA_1 = 4001;
+const int HASH_SHA_2 = 4002;
+const int HASH_MD5 = 4003;
