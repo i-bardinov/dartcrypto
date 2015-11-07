@@ -6,6 +6,9 @@
  * AES cipher;
  * Magma cipher;
  * SHA-1 hash;
+ * SHA-256 hash;
+ * MD5 hash;
+ * HMAC hash;
  * ~~Generate Key button for Hill;~~
  * ~~Generate Key button for stream ciphers;~~
  * ~~Print errors on bad encoding;~~

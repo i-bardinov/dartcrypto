@@ -373,6 +373,38 @@ const String HTML_CODE_RSA =
         </div>
 ''';
 
+const String HTML_CODE_STANDARD_HASH =
+'''
+        <p id="description">
+        </p>
+        <div id="output" style="width:48%">
+            <div id="outputField">
+                Hash:
+            </div>
+            <div id="outputFieldContainer" style="margin-top:55px">
+                <textarea spellcheck="false" id="outputTextArea"  tabindex='3'></textarea>
+            </div>
+        </div>
+
+        <div id="input" style="width:48%">
+            <div id="inputField">
+                Message to Hash:
+            </div>
+              <label class="radio"><input id="latin1Input" type="radio" name="radiosInput" checked><span class="outer"><span class="inner"></span></span>Latin1</label>
+              <label class="radio"><input id="hextextInput" type="radio" name="radiosInput"><span class="outer"><span class="inner"></span></span>Hex</label>
+              <label class="radio"><input id="base64Input" type="radio" name="radiosInput"><span class="outer"><span class="inner"></span></span>Base64</label>
+            <div id="inputFieldContainer">
+                <textarea spellcheck="false" id="inputTextArea" tabindex='1'></textarea>
+            </div>
+            <section>
+                <div class="button raised blue" id="hashButton">
+                    <div align="center" fit>HASH</div>
+                    <paper-ripple fit></paper-ripple>
+                </div>
+            </section>
+        </div>
+''';
+
 const int ENCODINGS = 100;
 const int ENCODING_LATIN1 = 101;
 const int ENCODING_HEX = 102;

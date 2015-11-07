@@ -4,3 +4,4 @@ author: Ilya Bardinov <ilya.bardinov@gmail.com>
 description: A Dart web application implementing cryptographic algorithms.
 dependencies:
   cryptoutils: "^0.1.10"
+  crypto: "^0.9.1"

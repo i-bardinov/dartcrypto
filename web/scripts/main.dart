@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:html';
 
 import 'package:dartcrypto/dartcrypto.dart';
+import 'package:crypto/crypto.dart' as crypto;
 
 import 'scrolling.dart';
 import 'toast.dart';
@@ -11,7 +12,7 @@ NodeValidator nodeValidator = new NodeValidatorBuilder()
   ..allowTextElements()
   ..allowHtml5()
   ..allowElement('a', attributes: ['href', 'target'])
-  ..allowElement('div', attributes: ['fit', 'display'])
+  ..allowElement('div', attributes: ['fit', 'display', 'style'])
   ..allowElement('paper-ripple', attributes: ['fit'])
   ..allowElement('input', attributes: ['pattern', 'style', 'display'])
   ..allowElement('textarea', attributes: ['style', 'display'])
@@ -58,6 +59,9 @@ void buildStructure(int type) {
       break;
     case ENCODINGS:
       buildEncoding();
+      break;
+    case HASH_SHA_1:
+      buildStandardHash(type);
       break;
   }
 }
@@ -119,8 +123,7 @@ void buildAffine(int type) {
     keyTextAreaB.value = '';
     try {
       cipher.generateKey();
-      if (type == CIPHER_CAESAR)
-        cipher.key_A = 0x01;
+      if (type == CIPHER_CAESAR) cipher.key_A = 0x01;
       if (keyEncode[0] == ENCODING_HEX) {
         keyTextAreaA.value = bytesToHexString([cipher.key_A]);
         keyTextAreaB.value = bytesToHexString([cipher.key_B]);
@@ -499,6 +502,49 @@ void buildRSA() {
 
   /*scrollTo(
       inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);*/
+}
+
+void buildStandardHash(int type) {
+  List inputEncode = [ENCODING_LATIN1];
+  SpanElement wrapper = querySelector('#dynamic');
+
+  wrapper.setInnerHtml(HTML_CODE_STANDARD_HASH, validator: nodeValidator);
+
+  TextAreaElement inputTextArea = querySelector("#inputTextArea");
+  TextAreaElement outputTextArea = querySelector("#outputTextArea");
+  DivElement hashButton = querySelector("#hashButton");
+  ParagraphElement descriptionParagraph = querySelector('#description');
+
+  encodings(inputTextArea, inputEncode, type: "Input");
+
+  if (type == HASH_SHA_1) descriptionParagraph
+      .appendHtml(TEXT_DESCRIPTION_SHA_1, validator: nodeValidator);
+
+  crypto.SHA1 hash = new crypto.SHA1();
+
+  void calc_hash() {
+    outputTextArea.value = '';
+    try {
+      if (inputEncode[0] == ENCODING_HEX) hash
+          .add(hexStringToBytes(inputTextArea.value));
+      else if (inputEncode[0] == ENCODING_LATIN1) hash
+          .add(stringToBytes(inputTextArea.value));
+      else if (inputEncode[0] == ENCODING_BASE64) hash
+          .add(base64StringToBytes(inputTextArea.value));
+      outputTextArea.value = bytesToHexString(hash.close());
+      hash = hash.newInstance();
+    } catch (e) {
+      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
+      throw new Exception(e);
+    }
+  }
+
+  inputTextArea.onChange.listen((e) => calc_hash());
+
+  inputTextArea.onChange.listen((e) => calc_hash());
+
+  scrollTo(
+      inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);
 }
 
 void encodings(TextAreaElement field, List encode,
