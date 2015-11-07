@@ -164,9 +164,7 @@ h1 a {
 #input textarea,
 #output textarea,
 #key textarea,
-#bigInput textarea,
-#key #keyInputA,
-#key #keyInputB {
+#bigInput textarea  {
     border: none;
     background: #e0e0e0;
     outline: none;
@@ -183,12 +181,7 @@ h1 a {
 #bigInput textarea {
     width: 90%;
     padding: 1% 5% 1% 5%;
-
-}
-
-#key #keyInputA,
-#key #keyInputB {
-    height: 30px;
+    height: 300px;
 }
 
 /* --- BUTTONS --- */
@@ -232,23 +225,6 @@ section > * {
 .button.raised:active {
     box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2);
     transition-delay: 0s;
-}
-
-/* --- SELECT --- */
-
-select {
-    font-family: "Source Sans Pro", sans-serif;
-    background-color: transparent;
-    width: 100%;
-    padding: 4px 0;
-    font-size: 16px;
-    color: #009688;
-    border: none;
-    border-bottom: 1px solid #009688;
-}
-
-select:focus {
-    outline: none
 }
 
 /* --- DROPDOWN --- */

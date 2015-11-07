@@ -11,6 +11,8 @@ class HillCipher {
   int modulo = 0;
   List initVector = null;
 
+  static int KEY_MAX_DIM_HILL = 5;
+
   HillCipher(this.modulo, [this.mkey]);
 
   void checkKey() {
@@ -27,14 +29,16 @@ class HillCipher {
         'Determinant $det should be coprime with $modulo!');
   }
 
-  void generateKey(int dim) {
+  void generateKey([int dim]) {
+    if (dim == null) dim = (new math.Random()).nextInt(KEY_MAX_DIM_HILL) + 1;
     Matrix tkey = new Matrix.Random(dim, dim, modulo);
     int det = tkey.determinant();
-    if (det == 0 || det.modInverse(modulo) == null) {
+    if (det == 0 || det.gcd(modulo) != 1 || det.modInverse(modulo) == null) {
       generateKey(dim);
       return;
     }
     mkey = tkey;
+    key = tkey.toList();
     dimension = dim;
   }
 

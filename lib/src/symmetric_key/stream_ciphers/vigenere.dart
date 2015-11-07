@@ -15,7 +15,7 @@ class VigenereCipher {
 
   void generateKey([int length]) {
     math.Random rand = new math.Random();
-    if (length == null) length = rand.nextInt(KEY_MAX_SIZE_VIGENERE);
+    if (length == null) length = rand.nextInt(KEY_MAX_SIZE_VIGENERE)+1;
     key = new List();
     for (int i = 0; i < length; i++) key.add(rand.nextInt(modulo));
   }

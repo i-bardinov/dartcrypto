@@ -208,6 +208,7 @@ void buildBlockCiphers(int type) {
   TextAreaElement outputTextArea = querySelector("#outputTextArea");
   TextAreaElement initVectorTextArea = querySelector("#initvectTextArea");
   DivElement encryptButton = querySelector("#encryptButton");
+  DivElement keyGenerateButton = querySelector("#keyGenerateButton");
   DivElement decryptButton = querySelector("#decryptButton");
   ParagraphElement descriptionParagraph = querySelector('#description');
 
@@ -254,6 +255,22 @@ void buildBlockCiphers(int type) {
         validator: nodeValidator);
     cipher = new HillCipher(256);
   }
+
+  keyGenerateButton.onClick.listen((e) {
+    keyTextArea.value = '';
+    try {
+      cipher.generateKey();
+      if (keyEncode[0] == ENCODING_HEX) keyTextArea.value =
+          bytesToHexString(cipher.key);
+      else if (keyEncode[0] == ENCODING_LATIN1) keyTextArea.value =
+          bytesToString(cipher.key);
+      else if (keyEncode[0] == ENCODING_BASE64) keyTextArea.value =
+          bytesToBase64String(cipher.key);
+    } catch (e) {
+      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
+      throw new Exception(e);
+    }
+  });
 
   void checkKey(String key, String iv) {
     try {

@@ -1,6 +1,6 @@
 library dartcrypto.ciphers.magma;
 
-import 'dart:math';
+import 'dart:math' as math;
 
 class MagmaCipher {
   MagmaCipher();

@@ -252,15 +252,23 @@ const String HTML_CODE_BLOCK_CIPHERS =
             <div id="keyFieldContainer">
                 <textarea spellcheck="false" id="keyTextArea" style="height:200px" tabindex='2'></textarea>
             </div>
+            <span>
               <label class="radio"><input id="ecbMode" type="radio" name="radiosMode" checked><span class="outer"><span class="inner"></span></span>ECB</label>
               <label class="radio"><input id="cbcMode" type="radio" name="radiosMode"><span class="outer"><span class="inner"></span></span>CBC</label>
               <label class="radio"><input id="pcbcMode" type="radio" name="radiosMode"><span class="outer"><span class="inner"></span></span>PCBC</label>
               <label class="radio"><input id="cfbMode" type="radio" name="radiosMode"><span class="outer"><span class="inner"></span></span>CFB</label>
               <label class="radio"><input id="ofbMode" type="radio" name="radiosMode"><span class="outer"><span class="inner"></span></span>OFC</label>
               <label class="radio"><input id="ctrMode" type="radio" name="radiosMode"><span class="outer"><span class="inner"></span></span>CTR</label>
+            </span>
             <div id="initvectFieldContainer">
-                <textarea spellcheck="false" id="initvectTextArea" style='height:46px; display:none' tabindex='3'></textarea>
+                <textarea spellcheck="false" id="initvectTextArea" tabindex = '3' style="height:46px; display:none"></textarea>
             </div>
+            <section>
+                <div class="button raised blue" id="keyGenerateButton">
+                    <div align="center" fit>GENERATE</div>
+                    <paper-ripple fit></paper-ripple>
+                </div>
+            </section>
         </div>
 
         <div id="input">
@@ -386,7 +394,3 @@ const int CIPHER_RSA_GENERATOR = 3001;
 const int CIPHER_RSA = 3002;
 
 const int HASH_SHA_1 = 4001;
-
-const int KEY_MAX_DIM_HILL = 4;
-
-

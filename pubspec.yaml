@@ -1,5 +1,5 @@
 name: dartcrypto
-version: 0.1.2
+version: 0.1.3
 author: Ilya Bardinov <ilya.bardinov@gmail.com>
 description: A Dart web application implementing cryptographic algorithms.
 dependencies:

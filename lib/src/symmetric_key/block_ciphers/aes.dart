@@ -1,6 +1,6 @@
 library dartcrypto.ciphers.aes;
 
-import 'dart:math';
+import 'dart:math' as math;
 
 class AESCipher {
 
