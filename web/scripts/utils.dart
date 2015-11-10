@@ -464,6 +464,7 @@ const int CIPHER_RC4 = 1201;
 const int CIPHER_RC4A = 1202;
 const int CIPHER_RC4PLUS = 1203;
 const int CIPHER_SPRITZ = 1204;
+const int CIPHER_VMPC = 1205;
 
 const int CIPHER_MAGMA = 2001;
 const int CIPHER_AES = 2002;

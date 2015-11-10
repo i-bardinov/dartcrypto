@@ -31,7 +31,6 @@ void buildStructure(int type) {
   }
 
   SpanElement wrapper = querySelector('#dynamic');
-  ParagraphElement descriptionParagraph = querySelector('#description');
   wrapper.setInnerHtml('');
 
   switch (type) {
@@ -49,6 +48,7 @@ void buildStructure(int type) {
     case CIPHER_RC4A:
     case CIPHER_RC4PLUS:
     case CIPHER_SPRITZ:
+    case CIPHER_VMPC:
       buildStandardCiphers(type);
       break;
     /*case CIPHER_RSA:
@@ -402,6 +402,10 @@ void buildStandardCiphers(int type) {
     descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RC4,
         validator: nodeValidator);
     cipher = new SpritzCipher();
+  } else if (type == CIPHER_VMPC) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RC4,
+        validator: nodeValidator);
+    cipher = new VMPCCipher();
   }
 
   void checkKey(String key) {

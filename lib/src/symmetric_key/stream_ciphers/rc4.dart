@@ -200,3 +200,32 @@ class RC4ACipher extends RC4Cipher {
     return message;
   }
 }
+
+class VMPCCipher extends RC4Cipher {
+  VMPCCipher([int blockSize = 8, List key]) : super(blockSize, key);
+
+  void init() {
+    parI = 0;
+    parJ = 0;
+    if (key == null) throw new Exception("Key is null!");
+    s_box = new List.generate(n, (int k) => k);
+    int i = 0, keySize = key.length;
+    for (int j = 0; j < 3*n; j++) {
+      i = j % n;
+      parJ = s_box[(parJ+s_box[i]+key[j % keySize]) % n];
+      int temp = s_box[i];
+      s_box[i] = s_box[parJ];
+      s_box[parJ] = temp;
+    }
+  }
+
+  int generateRandomByte() {
+    parJ = s_box[(parJ + s_box[parI]) % n];
+    int output = s_box[(s_box[s_box[parJ]] + 1) % n];
+    int temp = s_box[parI];
+    s_box[parI] = s_box[parJ];
+    s_box[parJ] = temp;
+    parI = (parI + 1) % n;
+    return output;
+  }
+}
