@@ -445,6 +445,11 @@ const int CIPHER_VIGENERE = 1003;
 const int CIPHER_BEAUFORT = 1004;
 const int CIPHER_OTP = 1005;
 const int CIPHER_HILL = 1101;
+
+const int CIPHER_RC4 = 1201;
+const int CIPHER_RC4A = 1202;
+const int CIPHER_RC4PLUS = 1203;
+
 const int CIPHER_MAGMA = 2001;
 const int CIPHER_AES = 2002;
 
@@ -452,5 +457,6 @@ const int CIPHER_RSA_GENERATOR = 3001;
 const int CIPHER_RSA = 3002;
 
 const int HASH_SHA_1 = 4001;
-const int HASH_SHA_2 = 4002;
+const int HASH_SHA_256 = 4002;
 const int HASH_MD5 = 4003;
+const int HASH_SHA_512 = 4004;

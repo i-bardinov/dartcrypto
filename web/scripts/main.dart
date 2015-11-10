@@ -40,8 +40,6 @@ void buildStructure(int type) {
       buildAffine(type);
       break;
     case CIPHER_HILL:
-      //case CIPHER_AES:
-      //case CIPHER_MAGMA:
       buildBlockCiphers(type);
       break;
     case CIPHER_BEAUFORT:
@@ -49,19 +47,19 @@ void buildStructure(int type) {
     case CIPHER_OTP:
       buildStandardCiphers(type);
       break;
-    case CIPHER_RSA:
+    /*case CIPHER_RSA:
       wrapper?.setInnerHtml(HTML_CODE_RSA, validator: nodeValidator);
       descriptionParagraph?.appendHtml(TEXT_DESCRIPTION_RSA,
           validator: nodeValidator);
       //buildRSA();
       break;
     case CIPHER_RSA_GENERATOR:
-      break;
+      break;*/
     case ENCODINGS:
       buildEncoding();
       break;
     case HASH_SHA_1:
-    case HASH_SHA_2:
+    case HASH_SHA_256:
     case HASH_MD5:
       buildStandardHash(type);
       break;
@@ -524,7 +522,7 @@ void buildStandardHash(int type) {
     descriptionParagraph
         .appendHtml(TEXT_DESCRIPTION_SHA_1, validator: nodeValidator);
     hash = new crypto.SHA1();
-  } else if (type == HASH_SHA_2) {
+  } else if (type == HASH_SHA_256) {
     descriptionParagraph
         .appendHtml(TEXT_DESCRIPTION_SHA_2, validator: nodeValidator);
     hash = new crypto.SHA256();
