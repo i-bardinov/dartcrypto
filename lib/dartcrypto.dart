@@ -9,6 +9,7 @@ export 'package:dartcrypto/src/symmetric_key/stream_ciphers/affine.dart';
 export 'package:dartcrypto/src/symmetric_key/stream_ciphers/beaufort.dart';
 export 'package:dartcrypto/src/symmetric_key/stream_ciphers/vigenere.dart';
 export 'package:dartcrypto/src/symmetric_key/stream_ciphers/one-time_pad.dart';
+export 'package:dartcrypto/src/symmetric_key/stream_ciphers/rc4.dart';
 
 export 'package:dartcrypto/src/public_key/rsa.dart';
 
