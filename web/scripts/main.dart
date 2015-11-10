@@ -46,6 +46,9 @@ void buildStructure(int type) {
     case CIPHER_VIGENERE:
     case CIPHER_OTP:
     case CIPHER_RC4:
+    case CIPHER_RC4A:
+    case CIPHER_RC4PLUS:
+    case CIPHER_SPRITZ:
       buildStandardCiphers(type);
       break;
     /*case CIPHER_RSA:
@@ -386,7 +389,19 @@ void buildStandardCiphers(int type) {
   } else if (type == CIPHER_RC4) {
     descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RC4,
         validator: nodeValidator);
-    cipher = new RC4Cipher(16);
+    cipher = new RC4Cipher();
+  } else if (type == CIPHER_RC4A) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RC4,
+        validator: nodeValidator);
+    cipher = new RC4ACipher();
+  } else if (type == CIPHER_RC4PLUS) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RC4,
+        validator: nodeValidator);
+    cipher = new RC4PlusCipher();
+  } else if (type == CIPHER_SPRITZ) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RC4,
+        validator: nodeValidator);
+    cipher = new SpritzCipher();
   }
 
   void checkKey(String key) {
