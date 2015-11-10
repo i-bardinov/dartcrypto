@@ -265,14 +265,19 @@ void buildBlockCiphers(int type) {
 
   keyGenerateButton.onClick.listen((e) {
     keyTextArea.value = '';
+    initVectorTextArea.value = '';
     try {
       cipher.generateKey();
-      if (keyEncode[0] == ENCODING_HEX) keyTextArea.value =
-          bytesToHexString(cipher.key);
-      else if (keyEncode[0] == ENCODING_LATIN1) keyTextArea.value =
-          bytesToString(cipher.key);
-      else if (keyEncode[0] == ENCODING_BASE64) keyTextArea.value =
-          bytesToBase64String(cipher.key);
+      if (keyEncode[0] == ENCODING_HEX) {
+        keyTextArea.value = bytesToHexString(cipher.key);
+        initVectorTextArea.value = bytesToHexString(cipher.initVector);
+      } else if (keyEncode[0] == ENCODING_LATIN1) {
+        keyTextArea.value = bytesToString(cipher.key);
+        initVectorTextArea.value = bytesToString(cipher.initVector);
+      } else if (keyEncode[0] == ENCODING_BASE64) {
+        keyTextArea.value = bytesToBase64String(cipher.key);
+        initVectorTextArea.value = bytesToBase64String(cipher.initVector);
+      }
     } catch (e) {
       toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
       throw new Exception(e);
@@ -300,6 +305,8 @@ void buildBlockCiphers(int type) {
   }
 
   keyTextArea.onChange
+      .listen((e) => checkKey(keyTextArea.value, initVectorTextArea.value));
+  initVectorTextArea.onChange
       .listen((e) => checkKey(keyTextArea.value, initVectorTextArea.value));
   encryptButton.onClick.listen((e) {
     outputTextArea.value = '';

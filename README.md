@@ -11,10 +11,11 @@ DartCrypto is an OpenSource web application under the
             Any feedback appreciated, just leave me a tweet, message or contribute.
             
 # What's inside:
- * Hill cipher
- * Caesar, Affine, Vigenere, Beaufort, One-time pad ciphers
- * Encoding tool
- * SHA-1, SHA-256, MD5 Hash functions
+ * Hill cipher;
+ * Caesar, Affine, Vigenere, Beaufort, One-time pad ciphers;
+ * RC4 (RC4A, RC4+, VMPC, Spritz) Stream cipher family;
+ * Encoding tool;
+ * SHA-1, SHA-256, MD5 Hash functions;
            
 License
 ----

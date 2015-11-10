@@ -30,13 +30,15 @@ class HillCipher {
   }
 
   void generateKey([int dim]) {
-    if (dim == null) dim = (new math.Random()).nextInt(KEY_MAX_DIM_HILL) + 1;
+    math.Random rand = new math.Random();
+    if (dim == null) dim = rand.nextInt(KEY_MAX_DIM_HILL) + 1;
     Matrix tkey = new Matrix.Random(dim, dim, modulo);
     int det = tkey.determinant();
     if (det == 0 || det.gcd(modulo) != 1 || det.modInverse(modulo) == null) {
       generateKey(dim);
       return;
     }
+    initVector = new List.generate(dim, (i) => rand.nextInt(modulo));
     mkey = tkey;
     key = tkey.toList();
     dimension = dim;

@@ -183,7 +183,7 @@ class RC4ACipher extends RC4Cipher {
     for (int i = 0; i < messageSize; i += 2) {
       List temp = generateRandomByte();
       message[i] = message[i] ^ temp[0];
-      if (i+1 < messageSize) message[i + 1] = message[i+1] ^ temp[1];
+      if (i + 1 < messageSize) message[i + 1] = message[i + 1] ^ temp[1];
     }
     return message;
   }
@@ -195,7 +195,7 @@ class RC4ACipher extends RC4Cipher {
     for (int i = 0; i < messageSize; i += 2) {
       List temp = generateRandomByte();
       message[i] = message[i] ^ temp[0];
-      if (i+1 < messageSize) message[i + 1] = message[i+1] ^ temp[1];
+      if (i + 1 < messageSize) message[i + 1] = message[i + 1] ^ temp[1];
     }
     return message;
   }
@@ -210,9 +210,9 @@ class VMPCCipher extends RC4Cipher {
     if (key == null) throw new Exception("Key is null!");
     s_box = new List.generate(n, (int k) => k);
     int i = 0, keySize = key.length;
-    for (int j = 0; j < 3*n; j++) {
+    for (int j = 0; j < 3 * n; j++) {
       i = j % n;
-      parJ = s_box[(parJ+s_box[i]+key[j % keySize]) % n];
+      parJ = s_box[(parJ + s_box[i] + key[j % keySize]) % n];
       int temp = s_box[i];
       s_box[i] = s_box[parJ];
       s_box[parJ] = temp;
