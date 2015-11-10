@@ -123,6 +123,20 @@ In computing, a <a href=\'https://en.wikipedia.org/wiki/Character_encoding\' tar
   codeset or code page are sometimes used as near synonyms; however, these terms have related but
   distinct meanings.
 ''';
+const String TEXT_DESCRIPTION_RC4 =
+'''
+In cryptography, <a href=\'https://en.wikipedia.org/wiki/RC4\' target=\'_blank\'>RC4</a>
+ (Rivest Cipher 4 also known as ARC4 or ARCFOUR meaning Alleged RC4, see below) is a
+stream cipher. While remarkable for its simplicity and speed in software, multiple vulnerabilities have
+been discovered in RC4, rendering it insecure. It is especially vulnerable when the beginning of the
+output keystream is not discarded, or when nonrandom or related keys are used. Particularly problematic
+uses of RC4 have led to very insecure protocols such as WEP
+As of 2015, there is speculation that some state cryptologic agencies may possess the capability to
+break RC4 when used in the TLS protocol. IETF has published RFC 7465 to prohibit the use of RC4 in
+TLS; Mozilla and Microsoft have issued similar recommendations.
+In 2014, Ronald Rivest gave a talk and published a paper on an updated redesign called Spritz.
+<br><br> You can select <b>Message, key and encrypted message encoding</b>. <b>Key</b> can be any size but preferable 256 bit.
+''';
 
 const String HTML_CODE_AFFINE =
 '''

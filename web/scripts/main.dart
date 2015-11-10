@@ -45,6 +45,7 @@ void buildStructure(int type) {
     case CIPHER_BEAUFORT:
     case CIPHER_VIGENERE:
     case CIPHER_OTP:
+    case CIPHER_RC4:
       buildStandardCiphers(type);
       break;
     /*case CIPHER_RSA:
@@ -382,6 +383,10 @@ void buildStandardCiphers(int type) {
     descriptionParagraph.appendHtml(TEXT_DESCRIPTION_OTP,
         validator: nodeValidator);
     cipher = new OTPCipher(256);
+  } else if (type == CIPHER_RC4) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RC4,
+        validator: nodeValidator);
+    cipher = new RC4Cipher(16);
   }
 
   void checkKey(String key) {
@@ -391,9 +396,10 @@ void buildStandardCiphers(int type) {
       else if (keyEncode[0] == ENCODING_LATIN1) cipher.key = stringToBytes(key);
       else if (keyEncode[0] == ENCODING_BASE64) cipher.key =
           base64StringToBytes(key);
-    } catch (e) {
-      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
-      throw new Exception(e);
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
     }
   }
 
@@ -411,9 +417,10 @@ void buildStandardCiphers(int type) {
           bytesToString(cipher.key);
       else if (keyEncode[0] == ENCODING_BASE64) keyTextArea.value =
           bytesToBase64String(cipher.key);
-    } catch (e) {
-      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
-      throw new Exception(e);
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
     }
   });
 
@@ -436,9 +443,10 @@ void buildStandardCiphers(int type) {
           bytesToString(list);
       else if (outputEncode[0] == ENCODING_BASE64) outputTextArea.value =
           bytesToBase64String(list);
-    } catch (e) {
-      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
-      throw new Exception(e);
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
     }
   });
   decryptButton.onClick.listen((e) {
@@ -459,9 +467,10 @@ void buildStandardCiphers(int type) {
           bytesToString(list);
       else if (inputEncode[0] == ENCODING_BASE64) inputTextArea.value =
           bytesToBase64String(list);
-    } catch (e) {
-      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
-      throw new Exception(e);
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
     }
   });
 
@@ -519,16 +528,16 @@ void buildStandardHash(int type) {
 
   var hash;
   if (type == HASH_SHA_1) {
-    descriptionParagraph
-        .appendHtml(TEXT_DESCRIPTION_SHA_1, validator: nodeValidator);
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_SHA_1,
+        validator: nodeValidator);
     hash = new crypto.SHA1();
   } else if (type == HASH_SHA_256) {
-    descriptionParagraph
-        .appendHtml(TEXT_DESCRIPTION_SHA_2, validator: nodeValidator);
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_SHA_2,
+        validator: nodeValidator);
     hash = new crypto.SHA256();
   } else if (type == HASH_MD5) {
-    descriptionParagraph
-        .appendHtml(TEXT_DESCRIPTION_MD5, validator: nodeValidator);
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_MD5,
+        validator: nodeValidator);
     hash = new crypto.MD5();
   }
 
