@@ -445,6 +445,7 @@ const String HTML_CODE_STANDARD_HASH =
         </div>
 ''';
 
+/* ENCODING */
 const int ENCODINGS = 100;
 const int ENCODING_LATIN1 = 101;
 const int ENCODING_HEX = 102;
@@ -453,6 +454,7 @@ const int ENCODING_BASE58 = 104;
 const int ENCODING_UTF8 = 105;
 const int ENCODING_ASCII = 106;
 
+/* TRIVIAL CIPHERS */
 const int CIPHER_CAESAR = 1001;
 const int CIPHER_AFFINE = 1002;
 const int CIPHER_VIGENERE = 1003;
@@ -460,18 +462,22 @@ const int CIPHER_BEAUFORT = 1004;
 const int CIPHER_OTP = 1005;
 const int CIPHER_HILL = 1101;
 
+/* STREAM CIPHERS */
 const int CIPHER_RC4 = 1201;
 const int CIPHER_RC4A = 1202;
 const int CIPHER_RC4PLUS = 1203;
 const int CIPHER_SPRITZ = 1204;
 const int CIPHER_VMPC = 1205;
 
+/* BLOCK CIPHERS */
 const int CIPHER_MAGMA = 2001;
 const int CIPHER_AES = 2002;
 
+/* PUBLIC KEY */
 const int CIPHER_RSA_GENERATOR = 3001;
 const int CIPHER_RSA = 3002;
 
+/* HASH ALGORITHMS */
 const int HASH_SHA_1 = 4001;
 const int HASH_SHA_256 = 4002;
 const int HASH_MD5 = 4003;

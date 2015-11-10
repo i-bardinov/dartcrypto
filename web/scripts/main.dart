@@ -27,7 +27,7 @@ void main() {
 void buildStructure(int type) {
   if (type == null) {
     toast("You didn\'t select anything!");
-    return;
+    throw new Exception("You didn\'t select anything!");
   }
 
   SpanElement wrapper = querySelector('#dynamic');
