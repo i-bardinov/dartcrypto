@@ -398,19 +398,19 @@ void buildStandardCiphers(int type) {
         validator: nodeValidator);
     cipher = new RC4Cipher();
   } else if (type == CIPHER_RC4A) {
-    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RC4,
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RC4A,
         validator: nodeValidator);
     cipher = new RC4ACipher();
   } else if (type == CIPHER_RC4PLUS) {
-    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RC4,
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RC4PLUS,
         validator: nodeValidator);
     cipher = new RC4PlusCipher();
   } else if (type == CIPHER_SPRITZ) {
-    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RC4,
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_SPRITZ,
         validator: nodeValidator);
     cipher = new SpritzCipher();
   } else if (type == CIPHER_VMPC) {
-    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RC4,
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_VMPC,
         validator: nodeValidator);
     cipher = new VMPCCipher();
   }

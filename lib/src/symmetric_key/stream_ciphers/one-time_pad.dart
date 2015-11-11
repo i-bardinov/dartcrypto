@@ -15,8 +15,7 @@ class OTPCipher {
 
   void generateKey(int length) {
     math.Random rand = new math.Random();
-    key = new List();
-    for (int i = 0; i < length; i++) key.add(rand.nextInt(modulo));
+    key = new List.generate(length, (i) => rand.nextInt(modulo));
   }
 
   List encrypt(List message) {

@@ -9,8 +9,6 @@ class RC4Cipher {
 
   int n = 256;
 
-  static int KEY_MAX_SIZE = 256;
-
   RC4Cipher([int blockSize = 8, this.key]) {
     this.n = math.pow(2, blockSize);
   }
@@ -40,7 +38,6 @@ class RC4Cipher {
 
   void generateKey([int length = 32]) {
     math.Random rand = new math.Random();
-    if (length == null) length = rand.nextInt(KEY_MAX_SIZE) + 1;
     key = new List.generate(length, (i) => rand.nextInt(256));
   }
 

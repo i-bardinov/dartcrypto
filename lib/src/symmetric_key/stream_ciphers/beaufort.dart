@@ -5,7 +5,6 @@ import "dart:math" as math show Random;
 class BeaufortCipher {
   int modulo;
   List key = null;
-  static int KEY_MAX_SIZE_BEAUFORT = 100;
 
   BeaufortCipher(this.modulo, [this.key]);
 
@@ -15,7 +14,6 @@ class BeaufortCipher {
 
   void generateKey([int length = 32]) {
     math.Random rand = new math.Random();
-    if (length == null) length = rand.nextInt(KEY_MAX_SIZE_BEAUFORT)+1;
     key = new List.generate(length, (i) => rand.nextInt(modulo));
   }
 

@@ -5,7 +5,6 @@ import "dart:math" as math show Random;
 class VigenereCipher {
   int modulo;
   List key = null;
-  static int KEY_MAX_SIZE_VIGENERE = 100;
 
   VigenereCipher(this.modulo, [this.key]);
 
@@ -15,7 +14,6 @@ class VigenereCipher {
 
   void generateKey([int length = 32]) {
     math.Random rand = new math.Random();
-    if (length == null) length = rand.nextInt(KEY_MAX_SIZE_VIGENERE)+1;
     key = new List.generate(length, (i) => rand.nextInt(modulo));
   }
 

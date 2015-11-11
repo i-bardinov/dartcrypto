@@ -137,6 +137,70 @@ TLS; Mozilla and Microsoft have issued similar recommendations.
 In 2014, Ronald Rivest gave a talk and published a paper on an updated redesign called Spritz.
 <br><br> You can select <b>Message, key and encrypted message encoding</b>. <b>Key</b> can be any size but preferable 256 bit.
 ''';
+const String TEXT_DESCRIPTION_RC4A =
+'''
+In cryptography, <a href=\'https://en.wikipedia.org/wiki/RC4\' target=\'_blank\'>RC4</a>
+ (Rivest Cipher 4 also known as ARC4 or ARCFOUR meaning Alleged RC4, see below) is a
+stream cipher. While remarkable for its simplicity and speed in software, multiple vulnerabilities have
+been discovered in RC4, rendering it insecure. It is especially vulnerable when the beginning of the
+output keystream is not discarded, or when nonrandom or related keys are used. Particularly problematic
+uses of RC4 have led to very insecure protocols such as WEP
+As of 2015, there is speculation that some state cryptologic agencies may possess the capability to
+break RC4 when used in the TLS protocol. IETF has published RFC 7465 to prohibit the use of RC4 in
+TLS; Mozilla and Microsoft have issued similar recommendations.
+In 2014, Ronald Rivest gave a talk and published a paper on an updated redesign called Spritz.
+<br>Souradyuti Paul and Bart Preneel have proposed an RC4 variant, which they call RC4A.
+<br><br> You can select <b>Message, key and encrypted message encoding</b>. <b>Key</b> can be any size but preferable 256 bit.
+''';
+const String TEXT_DESCRIPTION_RC4PLUS =
+'''
+In cryptography, <a href=\'https://en.wikipedia.org/wiki/RC4\' target=\'_blank\'>RC4</a>
+ (Rivest Cipher 4 also known as ARC4 or ARCFOUR meaning Alleged RC4, see below) is a
+stream cipher. While remarkable for its simplicity and speed in software, multiple vulnerabilities have
+been discovered in RC4, rendering it insecure. It is especially vulnerable when the beginning of the
+output keystream is not discarded, or when nonrandom or related keys are used. Particularly problematic
+uses of RC4 have led to very insecure protocols such as WEP
+As of 2015, there is speculation that some state cryptologic agencies may possess the capability to
+break RC4 when used in the TLS protocol. IETF has published RFC 7465 to prohibit the use of RC4 in
+TLS; Mozilla and Microsoft have issued similar recommendations.
+In 2014, Ronald Rivest gave a talk and published a paper on an updated redesign called Spritz.
+<br>RC4+ is a modified version of RC4 with a more complex three-phase key schedule (taking about 3x as long
+as RC4, or the same as RC4-drop512), and a more complex output function which performs four additional
+lookups in the S array for each byte output, taking approximately 1.7x as long as basic RC4.
+<br><br> You can select <b>Message, key and encrypted message encoding</b>. <b>Key</b> can be any size but preferable 256 bit.
+''';
+const String TEXT_DESCRIPTION_SPRITZ =
+'''
+In cryptography, <a href=\'https://en.wikipedia.org/wiki/RC4\' target=\'_blank\'>RC4</a>
+ (Rivest Cipher 4 also known as ARC4 or ARCFOUR meaning Alleged RC4, see below) is a
+stream cipher. While remarkable for its simplicity and speed in software, multiple vulnerabilities have
+been discovered in RC4, rendering it insecure. It is especially vulnerable when the beginning of the
+output keystream is not discarded, or when nonrandom or related keys are used. Particularly problematic
+uses of RC4 have led to very insecure protocols such as WEP
+As of 2015, there is speculation that some state cryptologic agencies may possess the capability to
+break RC4 when used in the TLS protocol. IETF has published RFC 7465 to prohibit the use of RC4 in
+TLS; Mozilla and Microsoft have issued similar recommendations.
+In 2014, Ronald Rivest gave a talk and published a paper on an updated redesign called Spritz.
+<br>Ron Rivest and Jacob Schuldt have proposed replacing RC4 with an improved and slightly modified version.
+<br><br> You can select <b>Message, key and encrypted message encoding</b>. <b>Key</b> can be any size but preferable 256 bit.
+''';
+const String TEXT_DESCRIPTION_VMPC =
+'''
+In cryptography, <a href=\'https://en.wikipedia.org/wiki/RC4\' target=\'_blank\'>RC4</a>
+ (Rivest Cipher 4 also known as ARC4 or ARCFOUR meaning Alleged RC4, see below) is a
+stream cipher. While remarkable for its simplicity and speed in software, multiple vulnerabilities have
+been discovered in RC4, rendering it insecure. It is especially vulnerable when the beginning of the
+output keystream is not discarded, or when nonrandom or related keys are used. Particularly problematic
+uses of RC4 have led to very insecure protocols such as WEP
+As of 2015, there is speculation that some state cryptologic agencies may possess the capability to
+break RC4 when used in the TLS protocol. IETF has published RFC 7465 to prohibit the use of RC4 in
+TLS; Mozilla and Microsoft have issued similar recommendations.
+In 2014, Ronald Rivest gave a talk and published a paper on an updated redesign called Spritz.
+<br>"Variably Modified Permutation Composition" is another RC4 variant. It uses similar key schedule as RC4,
+with j := S[(j + S[i] + key[i mod keylength]) mod 256] iterating 3 x 256 = 768 times rather than 256.
+<br><br> You can select <b>Message, key and encrypted message encoding</b>. <b>Key</b> can be any size but preferable 256 bit.
+''';
+
 
 const String HTML_CODE_AFFINE =
 '''
