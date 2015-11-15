@@ -108,17 +108,15 @@ void buildAffine(int type) {
     List tempKey = null;
     try {
       if (key == null) throw new Exception("Key $keyNumber is empty!");
-      if (keyEncode[0] == ENCODING_HEX) tempKey = hexStringToBytes(key);
-      else if (keyEncode[0] == ENCODING_LATIN1) tempKey = stringToBytes(key);
-      else if (keyEncode[0] == ENCODING_BASE64) tempKey =
-          base64StringToBytes(key);
+      tempKey = getBytesFromString(key, keyEncode);
       if (tempKey == null || tempKey.length != 1) throw new Exception(
           "Incorrect encoding key $keyNumber!");
       if (keyNumber == 1) cipher.key_A = tempKey[0];
       else if (keyNumber == 2) cipher.key_B = tempKey[0];
-    } catch (e) {
-      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
-      throw new Exception(e);
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
     }
   }
 
@@ -128,19 +126,12 @@ void buildAffine(int type) {
     try {
       cipher.generateKey();
       if (type == CIPHER_CAESAR) cipher.key_A = 0x01;
-      if (keyEncode[0] == ENCODING_HEX) {
-        keyTextAreaA.value = bytesToHexString([cipher.key_A]);
-        keyTextAreaB.value = bytesToHexString([cipher.key_B]);
-      } else if (keyEncode[0] == ENCODING_LATIN1) {
-        keyTextAreaA.value = bytesToString([cipher.key_A]);
-        keyTextAreaB.value = bytesToString([cipher.key_B]);
-      } else if (keyEncode[0] == ENCODING_BASE64) {
-        keyTextAreaA.value = bytesToBase64String([cipher.key_A]);
-        keyTextAreaB.value = bytesToBase64String([cipher.key_B]);
-      }
-    } catch (e) {
-      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
-      throw new Exception(e);
+      keyTextAreaA.value = getStringFromBytes([cipher.key_A], keyEncode);
+      keyTextAreaB.value = getStringFromBytes([cipher.key_B], keyEncode);
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
     }
   });
 
@@ -153,23 +144,13 @@ void buildAffine(int type) {
     try {
       checkKey(keyTextAreaA.value, keyNumber: 1);
       checkKey(keyTextAreaB.value, keyNumber: 2);
-      List list = null;
-      if (inputEncode[0] == ENCODING_HEX) list =
-          cipher.encrypt(hexStringToBytes(inputTextArea.value));
-      else if (inputEncode[0] == ENCODING_LATIN1) list =
-          cipher.encrypt(stringToBytes(inputTextArea.value));
-      else if (inputEncode[0] == ENCODING_BASE64) list =
-          cipher.encrypt(base64StringToBytes(inputTextArea.value));
+      List list = cipher.encrypt(getBytesFromString(inputTextArea.value, inputEncode));
       if (list == null) throw new Exception('Incorrect message encoding!');
-      if (outputEncode[0] == ENCODING_HEX) outputTextArea.value =
-          bytesToHexString(list);
-      else if (outputEncode[0] == ENCODING_LATIN1) outputTextArea.value =
-          bytesToString(list);
-      else if (outputEncode[0] == ENCODING_BASE64) outputTextArea.value =
-          bytesToBase64String(list);
-    } catch (e) {
-      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
-      throw new Exception(e);
+      outputTextArea.value = getStringFromBytes(list, outputEncode);
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
     }
   });
   decryptButton.onClick.listen((e) {
@@ -177,23 +158,13 @@ void buildAffine(int type) {
     try {
       checkKey(keyTextAreaA.value, keyNumber: 1);
       checkKey(keyTextAreaB.value, keyNumber: 2);
-      List list = null;
-      if (outputEncode[0] == ENCODING_HEX) list =
-          cipher.decrypt(hexStringToBytes(outputTextArea.value));
-      else if (outputEncode[0] == ENCODING_LATIN1) list =
-          cipher.decrypt(stringToBytes(outputTextArea.value));
-      else if (outputEncode[0] == ENCODING_BASE64) list =
-          cipher.decrypt(base64StringToBytes(outputTextArea.value));
+      List list = cipher.decrypt(getBytesFromString(outputTextArea.value, outputEncode));
       if (list == null) throw new Exception('Incorrect message encoding!');
-      if (inputEncode[0] == ENCODING_HEX) inputTextArea.value =
-          bytesToHexString(list);
-      else if (inputEncode[0] == ENCODING_LATIN1) inputTextArea.value =
-          bytesToString(list);
-      else if (inputEncode[0] == ENCODING_BASE64) inputTextArea.value =
-          bytesToBase64String(list);
-    } catch (e) {
-      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
-      throw new Exception(e);
+      inputTextArea.value = getStringFromBytes(list, inputEncode);
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
     }
   });
 
@@ -268,35 +239,21 @@ void buildBlockCiphers(int type) {
     initVectorTextArea.value = '';
     try {
       cipher.generateKey();
-      if (keyEncode[0] == ENCODING_HEX) {
-        keyTextArea.value = bytesToHexString(cipher.key);
-        initVectorTextArea.value = bytesToHexString(cipher.initVector);
-      } else if (keyEncode[0] == ENCODING_LATIN1) {
-        keyTextArea.value = bytesToString(cipher.key);
-        initVectorTextArea.value = bytesToString(cipher.initVector);
-      } else if (keyEncode[0] == ENCODING_BASE64) {
-        keyTextArea.value = bytesToBase64String(cipher.key);
-        initVectorTextArea.value = bytesToBase64String(cipher.initVector);
-      }
-    } catch (e) {
-      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
-      throw new Exception(e);
+      keyTextArea.value = getStringFromBytes(cipher.key, keyEncode);
+      initVectorTextArea.value =
+          getStringFromBytes(cipher.initVector, keyEncode);
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
     }
   });
 
   void checkKey(String key, String iv) {
     try {
       if (key == null) throw new Exception("Key is empty!");
-      if (keyEncode[0] == ENCODING_HEX) {
-        cipher.key = hexStringToBytes(key);
-        cipher.initVector = hexStringToBytes(iv);
-      } else if (keyEncode[0] == ENCODING_LATIN1) {
-        cipher.key = stringToBytes(key);
-        cipher.initVector = stringToBytes(iv);
-      } else if (keyEncode[0] == ENCODING_BASE64) {
-        cipher.key = base64StringToBytes(key);
-        cipher.initVector = base64StringToBytes(iv);
-      }
+      cipher.key = getBytesFromString(key, keyEncode);
+      cipher.initVector = getBytesFromString(iv, keyEncode);
     } catch (exception, stackTrace) {
       toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
       print(exception);
@@ -312,20 +269,11 @@ void buildBlockCiphers(int type) {
     outputTextArea.value = '';
     try {
       checkKey(keyTextArea.value, initVectorTextArea.value);
-      List list = null;
-      if (inputEncode[0] == ENCODING_HEX) list =
-          cipher.encrypt(hexStringToBytes(inputTextArea.value), mode: mode);
-      else if (inputEncode[0] == ENCODING_LATIN1) list =
-          cipher.encrypt(stringToBytes(inputTextArea.value), mode: mode);
-      else if (inputEncode[0] == ENCODING_BASE64) list =
-          cipher.encrypt(base64StringToBytes(inputTextArea.value), mode: mode);
+      List list = cipher.decrypt(
+          getBytesFromString(inputTextArea.value, inputEncode),
+          mode: mode);
       if (list == null) throw new Exception('Incorrect Initial Vector!');
-      if (outputEncode[0] == ENCODING_HEX) outputTextArea.value =
-          bytesToHexString(list);
-      else if (outputEncode[0] == ENCODING_LATIN1) outputTextArea.value =
-          bytesToString(list);
-      else if (outputEncode[0] == ENCODING_BASE64) outputTextArea.value =
-          bytesToBase64String(list);
+      outputTextArea.value = getStringFromBytes(list, outputEncode);
     } catch (exception, stackTrace) {
       toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
       print(exception);
@@ -336,20 +284,11 @@ void buildBlockCiphers(int type) {
     inputTextArea.value = '';
     try {
       checkKey(keyTextArea.value, initVectorTextArea.value);
-      List list = null;
-      if (outputEncode[0] == ENCODING_HEX) list =
-          cipher.decrypt(hexStringToBytes(outputTextArea.value), mode: mode);
-      else if (outputEncode[0] == ENCODING_LATIN1) list =
-          cipher.decrypt(stringToBytes(outputTextArea.value), mode: mode);
-      else if (outputEncode[0] == ENCODING_BASE64) list =
-          cipher.decrypt(base64StringToBytes(outputTextArea.value), mode: mode);
+      List list = cipher.decrypt(
+          getBytesFromString(outputTextArea.value, outputEncode),
+          mode: mode);
       if (list == null) throw new Exception('Incorrect Initial Vector!');
-      if (inputEncode[0] == ENCODING_HEX) inputTextArea.value =
-          bytesToHexString(list);
-      else if (inputEncode[0] == ENCODING_LATIN1) inputTextArea.value =
-          bytesToString(list);
-      else if (inputEncode[0] == ENCODING_BASE64) inputTextArea.value =
-          bytesToBase64String(list);
+      inputTextArea.value = getStringFromBytes(list, inputEncode);
     } catch (exception, stackTrace) {
       toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
       print(exception);
@@ -418,10 +357,7 @@ void buildStandardCiphers(int type) {
   void checkKey(String key) {
     try {
       if (key == null) throw new Exception("Key is empty!");
-      if (keyEncode[0] == ENCODING_HEX) cipher.key = hexStringToBytes(key);
-      else if (keyEncode[0] == ENCODING_LATIN1) cipher.key = stringToBytes(key);
-      else if (keyEncode[0] == ENCODING_BASE64) cipher.key =
-          base64StringToBytes(key);
+      cipher.key = getBytesFromString(key, keyEncode);
     } catch (exception, stackTrace) {
       toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
       print(exception);
@@ -433,16 +369,13 @@ void buildStandardCiphers(int type) {
     keyTextArea.value = '';
     try {
       if (type == CIPHER_OTP) {
-        if (inputTextArea.value.length != 0) cipher
-            .generateKey(inputTextArea.value.length);
-        else cipher.generateKey(outputTextArea.value.length);
+        String str;
+        if (inputTextArea.value.length != 0) str = inputTextArea.value;
+        else str = outputTextArea.value;
+        int len = getBytesFromString(str, inputEncode).length;
+        cipher.generateKey(len);
       } else cipher.generateKey();
-      if (keyEncode[0] == ENCODING_HEX) keyTextArea.value =
-          bytesToHexString(cipher.key);
-      else if (keyEncode[0] == ENCODING_LATIN1) keyTextArea.value =
-          bytesToString(cipher.key);
-      else if (keyEncode[0] == ENCODING_BASE64) keyTextArea.value =
-          bytesToBase64String(cipher.key);
+      keyTextArea.value = getStringFromBytes(cipher.key, keyEncode);
     } catch (exception, stackTrace) {
       toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
       print(exception);
@@ -455,20 +388,10 @@ void buildStandardCiphers(int type) {
     outputTextArea.value = '';
     try {
       checkKey(keyTextArea.value);
-      List list = null;
-      if (inputEncode[0] == ENCODING_HEX) list =
-          cipher.encrypt(hexStringToBytes(inputTextArea.value));
-      else if (inputEncode[0] == ENCODING_LATIN1) list =
-          cipher.encrypt(stringToBytes(inputTextArea.value));
-      else if (inputEncode[0] == ENCODING_BASE64) list =
-          cipher.encrypt(base64StringToBytes(inputTextArea.value));
+      List list =
+          cipher.encrypt(getBytesFromString(inputTextArea.value, inputEncode));
       if (list == null) throw new Exception('Incorrect message encoding!');
-      if (outputEncode[0] == ENCODING_HEX) outputTextArea.value =
-          bytesToHexString(list);
-      else if (outputEncode[0] == ENCODING_LATIN1) outputTextArea.value =
-          bytesToString(list);
-      else if (outputEncode[0] == ENCODING_BASE64) outputTextArea.value =
-          bytesToBase64String(list);
+      outputTextArea.value = getStringFromBytes(list, outputEncode);
     } catch (exception, stackTrace) {
       toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
       print(exception);
@@ -479,20 +402,10 @@ void buildStandardCiphers(int type) {
     inputTextArea.value = '';
     try {
       checkKey(keyTextArea.value);
-      List list = null;
-      if (outputEncode[0] == ENCODING_HEX) list =
-          cipher.decrypt(hexStringToBytes(outputTextArea.value));
-      else if (outputEncode[0] == ENCODING_LATIN1) list =
-          cipher.decrypt(stringToBytes(outputTextArea.value));
-      else if (outputEncode[0] == ENCODING_BASE64) list =
-          cipher.decrypt(base64StringToBytes(outputTextArea.value));
+      List list = cipher
+          .decrypt(getBytesFromString(outputTextArea.value, outputEncode));
       if (list == null) throw new Exception('Incorrect message encoding!');
-      if (inputEncode[0] == ENCODING_HEX) inputTextArea.value =
-          bytesToHexString(list);
-      else if (inputEncode[0] == ENCODING_LATIN1) inputTextArea.value =
-          bytesToString(list);
-      else if (inputEncode[0] == ENCODING_BASE64) inputTextArea.value =
-          bytesToBase64String(list);
+      inputTextArea.value = getStringFromBytes(list, inputEncode);
     } catch (exception, stackTrace) {
       toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
       print(exception);
@@ -570,17 +483,13 @@ void buildStandardHash(int type) {
   void calc_hash() {
     outputTextArea.value = '';
     try {
-      if (inputEncode[0] == ENCODING_HEX) hash
-          .add(hexStringToBytes(inputTextArea.value));
-      else if (inputEncode[0] == ENCODING_LATIN1) hash
-          .add(stringToBytes(inputTextArea.value));
-      else if (inputEncode[0] == ENCODING_BASE64) hash
-          .add(base64StringToBytes(inputTextArea.value));
+      hash.add(getBytesFromString(inputTextArea.value, inputEncode));
       outputTextArea.value = bytesToHexString(hash.close());
       hash = hash.newInstance();
-    } catch (e) {
-      toast(e.toString().replaceAll(new RegExp('Exception: '), ''));
-      throw new Exception(e);
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
     }
   }
 
@@ -595,106 +504,83 @@ void encodings(TextAreaElement field, List encode,
     {String type: "Input", bool changeValue: true}) {
   if (field == null) throw new ArgumentError.notNull('field');
 
+  void clickBack() {
+    if (encode[0] == ENCODING_LATIN1) querySelector("#latin1$type").click();
+    if (encode[0] == ENCODING_HEX) querySelector("#hextext$type").click();
+    if (encode[0] == ENCODING_BASE64) querySelector("#base64$type").click();
+    if (encode[0] == ENCODING_UTF8) querySelector("#utf8$type").click();
+    if (encode[0] == ENCODING_ASCII) querySelector("#ascii$type").click();
+  }
+
   querySelector("#latin1$type")?.onClick?.listen((e) {
     try {
-      if (encode[0] == ENCODING_HEX) field.value =
-          LATIN1.decode(hexStringToBytes(field.value));
-      if (encode[0] == ENCODING_BASE64) field.value =
-          LATIN1.decode(base64StringToBytes(field.value));
-      if (encode[0] == ENCODING_UTF8) field.value =
-          LATIN1.decode(UTF8.encode(field.value));
-      if (encode[0] == ENCODING_ASCII) field.value =
-          LATIN1.decode(ASCII.encode(field.value));
+      field.value = LATIN1.decode(getBytesFromString(field.value, encode));
       changeValue ? encode[0] = ENCODING_LATIN1 : encode[0] = encode[0];
     } catch (e) {
       toast("Cannot convert to LATIN1!");
-      if (encode[0] == ENCODING_UTF8) querySelector("#utf8$type").click();
-      if (encode[0] == ENCODING_HEX) querySelector("#hextext$type").click();
-      if (encode[0] == ENCODING_BASE64) querySelector("#base64$type").click();
-      if (encode[0] == ENCODING_ASCII) querySelector("#ascii$type").click();
+      clickBack();
       querySelector("#latin1$type").blur();
     }
   });
   querySelector("#hextext$type")?.onClick?.listen((e) {
     try {
-      if (encode[0] == ENCODING_LATIN1) field.value =
-          bytesToHexString(LATIN1.encode(field.value));
-      if (encode[0] == ENCODING_BASE64) field.value =
-          bytesToHexString(base64StringToBytes(field.value));
-      if (encode[0] == ENCODING_UTF8) field.value =
-          bytesToHexString(UTF8.encode(field.value));
-      if (encode[0] == ENCODING_ASCII) field.value =
-          bytesToHexString(ASCII.encode(field.value));
+      field.value = bytesToHexString(getBytesFromString(field.value, encode));
       changeValue ? encode[0] = ENCODING_HEX : encode[0] = encode[0];
     } catch (e) {
       toast("Cannot convert to Hex!");
-      if (encode[0] == ENCODING_LATIN1) querySelector("#latin1$type")?.click();
-      if (encode[0] == ENCODING_UTF8) querySelector("#utf8$type").click();
-      if (encode[0] == ENCODING_BASE64) querySelector("#base64$type").click();
-      if (encode[0] == ENCODING_ASCII) querySelector("#ascii$type").click();
+      clickBack();
       querySelector("#hextext$type").blur();
     }
   });
   querySelector("#base64$type")?.onClick?.listen((e) {
     try {
-      if (encode[0] == ENCODING_LATIN1) field.value =
-          bytesToBase64String(LATIN1.encode(field.value));
-      if (encode[0] == ENCODING_HEX) field.value =
-          bytesToBase64String(hexStringToBytes(field.value));
-      if (encode[0] == ENCODING_UTF8) field.value =
-          bytesToBase64String(UTF8.encode(field.value));
-      if (encode[0] == ENCODING_ASCII) field.value =
-          bytesToBase64String(ASCII.encode(field.value));
+      field.value =
+          bytesToBase64String(getBytesFromString(field.value, encode));
       changeValue ? encode[0] = ENCODING_BASE64 : encode[0] = encode[0];
     } catch (e) {
       toast("Cannot convert to Base64!");
-      if (encode[0] == ENCODING_LATIN1) querySelector("#latin1$type").click();
-      if (encode[0] == ENCODING_HEX) querySelector("#hextext$type").click();
-      if (encode[0] == ENCODING_UTF8) querySelector("#utf8$type").click();
-      if (encode[0] == ENCODING_ASCII) querySelector("#ascii$type").click();
+      clickBack();
       querySelector("#base64$type").blur();
     }
   });
   querySelector("#utf8$type")?.onClick?.listen((e) {
     try {
-      if (encode[0] == ENCODING_LATIN1) field.value =
-          UTF8.decode(LATIN1.encode(field.value));
-      if (encode[0] == ENCODING_HEX) field.value =
-          UTF8.decode(hexStringToBytes(field.value));
-      if (encode[0] == ENCODING_BASE64) field.value =
-          UTF8.decode(base64StringToBytes(field.value));
-      if (encode[0] == ENCODING_ASCII) field.value =
-          UTF8.decode(ASCII.encode(field.value));
+      field.value = UTF8.decode(getBytesFromString(field.value, encode));
       changeValue ? encode[0] = ENCODING_UTF8 : encode[0] = encode[0];
     } catch (e) {
       toast("Cannot convert to UTF-8!");
-      if (encode[0] == ENCODING_LATIN1) querySelector("#latin1$type").click();
-      if (encode[0] == ENCODING_HEX) querySelector("#hextext$type").click();
-      if (encode[0] == ENCODING_BASE64) querySelector("#base64$type").click();
-      if (encode[0] == ENCODING_ASCII) querySelector("#ascii$type").click();
+      clickBack();
       querySelector("#utf8$type").blur();
     }
   });
   querySelector("#ascii$type")?.onClick?.listen((e) {
     try {
-      if (encode[0] == ENCODING_LATIN1) field.value =
-          ASCII.decode(LATIN1.encode(field.value));
-      if (encode[0] == ENCODING_HEX) field.value =
-          ASCII.decode(hexStringToBytes(field.value));
-      if (encode[0] == ENCODING_UTF8) field.value =
-          ASCII.decode(UTF8.encode(field.value));
-      if (encode[0] == ENCODING_BASE64) field.value =
-          ASCII.decode(base64StringToBytes(field.value));
+      field.value = ASCII.decode(getBytesFromString(field.value, encode));
       changeValue ? encode[0] = ENCODING_ASCII : encode[0] = encode[0];
     } catch (e) {
       toast("Cannot convert to ASCII!");
-      if (encode[0] == ENCODING_LATIN1) querySelector("#latin1$type").click();
-      if (encode[0] == ENCODING_HEX) querySelector("#hextext$type").click();
-      if (encode[0] == ENCODING_BASE64) querySelector("#base64$type").click();
-      if (encode[0] == ENCODING_UTF8) querySelector("#utf8$type").click();
+      clickBack();
       querySelector("#ascii$type").blur();
     }
   });
+}
+
+List getBytesFromString(String field, List encode) {
+  if (encode[0] == ENCODING_HEX) return hexStringToBytes(field);
+  if (encode[0] == ENCODING_LATIN1) return LATIN1.encode(field);
+  if (encode[0] == ENCODING_BASE64) return base64StringToBytes(field);
+  if (encode[0] == ENCODING_UTF8) return UTF8.encode(field);
+  if (encode[0] == ENCODING_ASCII) return ASCII.encode(field);
+  return null;
+}
+
+String getStringFromBytes(List field, List encode) {
+  if (encode[0] == ENCODING_HEX) return bytesToHexString(field);
+  if (encode[0] == ENCODING_LATIN1) return LATIN1.decode(field);
+  if (encode[0] == ENCODING_BASE64) return bytesToBase64String(field);
+  if (encode[0] == ENCODING_UTF8) return UTF8.decode(field);
+  if (encode[0] == ENCODING_ASCII) return ASCII.decode(field);
+  return null;
 }
 
 class MyUriPolicy implements UriPolicy {
