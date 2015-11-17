@@ -5,7 +5,7 @@
  * AES cipher;
  * Magma cipher;
  * HMAC hash;
- * All SHA-2 Family (SHA-224, SHA-512, ...);
+ * ~~All SHA-2 Family (SHA-224, SHA-512, ...);~~
  * ~~RC4 family ciphers;~~
  * ~~Generate Key button for Hill;~~
  * ~~Generate Key button for stream ciphers;~~

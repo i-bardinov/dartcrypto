@@ -14,7 +14,7 @@ DartCrypto is an OpenSource web application under the
  * Trivial ciphers: Hill cipher, Caesar, Affine, Vigenere, Beaufort, One-time pad ciphers;
  * RC4 (RC4A, RC4+, VMPC, Spritz) Stream cipher family;
  * Encoding tool;
- * SHA-1, SHA-256, MD5 Hash functions;
+ * SHA-1, SHA-2, SHA-3, MD2, MD4, MD5, RIPEMD, Tiger, Whirlpool digests;
            
 License
 ----

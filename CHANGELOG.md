@@ -1,5 +1,6 @@
 # Version 0.1.4:
  * Added RC4 stream cipher family;
+ * Added MD2, MD4, RIPEMD family, SHA-2 family, SHA-3 family, Tiger, Whirlpool digests;
  * clean ups;
  * rewrite key generation;
  

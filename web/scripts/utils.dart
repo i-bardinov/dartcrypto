@@ -104,6 +104,15 @@ SHA-2 includes significant changes from its predecessor, SHA-1. The SHA-2 family
 functions with digests (hash values) that are 224, 256, 384 or 512 bits: SHA-224,
 SHA-256, SHA-384, SHA-512, SHA-512/224, SHA-512/256.
 ''';
+const String TEXT_DESCRIPTION_SHA_3 =
+'''
+<a href=\'https://en.wikipedia.org/wiki/SHA-3\' target=\'_blank\'>SHA-3 (Secure Hash Algorithm 3)</a>
+ a subset of the cryptographic primitive family Keccak (/ˈkætʃæk/, or /kɛtʃɑːk/),
+  is a cryptographic hash function designed by Guido Bertoni, Joan Daemen, Michaël
+  Peeters, and Gilles Van Assche, building upon RadioGatún. SHA-3 is a member of
+  the Secure Hash Algorithm family. The SHA-3 standard was released by NIST on
+  August 5, 2015.
+''';
 const String TEXT_DESCRIPTION_MD5 =
 '''
 The <a href=\'https://en.wikipedia.org/wiki/MD5\' target=\'_blank\'>MD5 message-digest algorithm</a>
@@ -112,6 +121,51 @@ a 128-bit (16-byte) hash value, typically expressed in text format as a 32 digit
 hexadecimal number. MD5 has been utilized in a wide variety of cryptographic applications,
 and is also commonly used to verify data integrity.
 MD5 was designed by Ronald Rivest in 1991 to replace an earlier hash function, MD4.
+''';
+const String TEXT_DESCRIPTION_MD2 =
+'''
+The <a href=\'https://en.wikipedia.org/wiki/MD2_(cryptography)\' target=\'_blank\'>MD2 message-digest algorithm</a>
+is a cryptographic hash function developed by Ronald Rivest in 1989.
+ The algorithm is optimized for 8-bit computers. MD2 is specified in RFC 1319. Although MD2 is no
+ longer considered secure, even as of 2014, it remains in use in public key infrastructures
+ as part of certificates generated with MD2 and RSA.
+''';
+const String TEXT_DESCRIPTION_MD4 =
+'''
+The <a href=\'https://en.wikipedia.org/wiki/MD4\' target=\'_blank\'>MD4 message-digest algorithm</a>
+is a cryptographic hash function developed by Ronald Rivest in 1990.
+ The digest length is 128 bits. The algorithm has influenced later designs, such as the MD5, SHA-1 and RIPEMD algorithms.
+ The security of MD4 has been severely compromised. The first full collision attack against MD4
+ was published in 1995 and several newer attacks have been published since then. As of 2007,
+ an attack can generate collisions in less than 2 MD4 hash operations. A theoretical preimage attack also exists.
+''';
+const String TEXT_DESCRIPTION_TIGER =
+'''
+In cryptography, <a href=\'https://en.wikipedia.org/wiki/Tiger_(cryptography)\' target=\'_blank\'>Tiger</a>
+ is a cryptographic hash function designed by Ross Anderson and Eli Biham in
+1995 for efficiency on 64-bit platforms. The size of a Tiger hash value is 192 bits. Truncated
+versions (known as Tiger/128 and Tiger/160) can be used for compatibility with protocols assuming
+a particular hash size. Unlike the SHA-2 family, no distinguishing initialization
+values are defined; they are simply prefixes of the full Tiger/192 hash value.
+''';
+const String TEXT_DESCRIPTION_WHIRLPOOL =
+'''
+In computer science and cryptography, <a href=\'https://en.wikipedia.org/wiki/Whirlpool_(cryptography)\' target=\'_blank\'>Whirlpool</a>
+ (sometimes styled WHIRLPOOL) is a cryptographic
+hash function. It was designed by Vincent Rijmen (co-creator of the Advanced Encryption
+Standard) and Paulo S. L. M. Barreto, who first described it in 2000. The hash has been
+recommended by the NESSIE project. It has also been adopted by the International
+Organization for Standardization (ISO) and the International Electrotechnical Commission
+(IEC) as part of the joint ISO/IEC 10118-3 international standard.
+''';
+const String TEXT_DESCRIPTION_RIPEMD =
+'''
+<a href=\'https://en.wikipedia.org/wiki/RIPEMD\' target=\'_blank\'>RIPEMD</a>
+ (RACE Integrity Primitives Evaluation Message Digest) is a family of cryptographic
+hash functions developed in Leuven, Belgium, by Hans Dobbertin, Antoon Bosselaers and Bart
+Preneel at the COSIC research group at the Katholieke Universiteit Leuven, and first
+published in 1996. RIPEMD was based upon the design principles used in MD4,
+and is similar in performance to the more popular SHA-1.
 ''';
 const String TEXT_DESCRIPTION_ENCODINGS =
 '''
@@ -200,7 +254,10 @@ In 2014, Ronald Rivest gave a talk and published a paper on an updated redesign 
 with j := S[(j + S[i] + key[i mod keylength]) mod 256] iterating 3 x 256 = 768 times rather than 256.
 <br><br> You can select <b>Message, key and encrypted message encoding</b>. <b>Key</b> can be any size but preferable 256 bit.
 ''';
-
+const String TEXT_DESCRIPTION_RSA_PEM_GENERATOR =
+'''
+RSA PEM Generator
+''';
 
 const String HTML_CODE_AFFINE =
 '''
@@ -509,6 +566,41 @@ const String HTML_CODE_STANDARD_HASH =
         </div>
 ''';
 
+const String HTML_CODE_RSA_PEM_GENERATOR =
+'''
+        <p id="description">
+        </p>
+        <div id="output" style="width:48%">
+            <div id="outputField">
+                Hash:
+            </div>
+            <div id="outputFieldContainer" style="margin-top:55px">
+                <textarea spellcheck="false" id="outputTextArea"  tabindex='3'></textarea>
+            </div>
+            <section>
+                <div class="button raised blue" id="generatePEMButton">
+                    <div align="center" fit>GENERATE PEM</div>
+                    <paper-ripple fit></paper-ripple>
+                </div>
+            </section>
+        </div>
+
+        <div id="input" style="width:48%">
+            <div id="inputField">
+                Message to Hash:
+            </div>
+            <div id="inputFieldContainer">
+                <textarea spellcheck="false" id="inputTextArea" tabindex='1'></textarea>
+            </div>
+            <section>
+                <div class="button raised blue" id="generateCoefButton">
+                    <div align="center" fit>HASH</div>
+                    <paper-ripple fit></paper-ripple>
+                </div>
+            </section>
+        </div>
+''';
+
 /* ENCODING */
 const int ENCODINGS = 100;
 const int ENCODING_LATIN1 = 101;
@@ -544,5 +636,23 @@ const int CIPHER_RSA = 3002;
 /* HASH ALGORITHMS */
 const int HASH_SHA_1 = 4001;
 const int HASH_SHA_256 = 4002;
-const int HASH_MD5 = 4003;
 const int HASH_SHA_512 = 4004;
+const int HASH_SHA_224 = 4005;
+const int HASH_SHA_384 = 4006;
+const int HASH_SHA_512_224 = 4007;
+const int HASH_SHA_512_256 = 4008;
+const int HASH_SHA_3_224 = 4009;
+const int HASH_SHA_3_256 = 4010;
+const int HASH_SHA_3_384 = 4011;
+const int HASH_SHA_3_512 = 4012;
+const int HASH_MD5 = 4003;
+const int HASH_MD2 = 4013;
+const int HASH_MD4 = 4014;
+const int HASH_TIGER = 4015;
+const int HASH_WHIRLPOOL = 4016;
+const int HASH_RIPEMD_128 = 4017;
+const int HASH_RIPEMD_160 = 4018;
+const int HASH_RIPEMD_256 = 4019;
+const int HASH_RIPEMD_320 = 4020;
+
+

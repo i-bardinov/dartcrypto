@@ -3,6 +3,9 @@ import 'dart:html';
 
 import 'package:dartcrypto/dartcrypto.dart';
 import 'package:crypto/crypto.dart' as crypto;
+import 'package:rsa/rsa.dart' as rsa;
+import 'package:cipher/cipher.dart' as cipher;
+import "package:cipher/impl/client.dart" as client_cipher;
 
 import 'scrolling.dart';
 import 'toast.dart';
@@ -56,15 +59,33 @@ void buildStructure(int type) {
       descriptionParagraph?.appendHtml(TEXT_DESCRIPTION_RSA,
           validator: nodeValidator);
       //buildRSA();
-      break;
-    case CIPHER_RSA_GENERATOR:
       break;*/
+    case CIPHER_RSA_GENERATOR:
+      buildRSAPEMGenerator();
+      break;
     case ENCODINGS:
       buildEncoding();
       break;
     case HASH_SHA_1:
+    case HASH_SHA_224:
     case HASH_SHA_256:
+    case HASH_SHA_384:
+    case HASH_SHA_512:
+    case HASH_SHA_512_224:
+    case HASH_SHA_512_256:
+    case HASH_SHA_3_224:
+    case HASH_SHA_3_256:
+    case HASH_SHA_3_384:
+    case HASH_SHA_3_512:
+    case HASH_MD2:
+    case HASH_MD4:
     case HASH_MD5:
+    case HASH_TIGER:
+    case HASH_WHIRLPOOL:
+    case HASH_RIPEMD_128:
+    case HASH_RIPEMD_160:
+    case HASH_RIPEMD_256:
+    case HASH_RIPEMD_320:
       buildStandardHash(type);
       break;
   }
@@ -144,7 +165,8 @@ void buildAffine(int type) {
     try {
       checkKey(keyTextAreaA.value, keyNumber: 1);
       checkKey(keyTextAreaB.value, keyNumber: 2);
-      List list = cipher.encrypt(getBytesFromString(inputTextArea.value, inputEncode));
+      List list =
+          cipher.encrypt(getBytesFromString(inputTextArea.value, inputEncode));
       if (list == null) throw new Exception('Incorrect message encoding!');
       outputTextArea.value = getStringFromBytes(list, outputEncode);
     } catch (exception, stackTrace) {
@@ -158,7 +180,8 @@ void buildAffine(int type) {
     try {
       checkKey(keyTextAreaA.value, keyNumber: 1);
       checkKey(keyTextAreaB.value, keyNumber: 2);
-      List list = cipher.decrypt(getBytesFromString(outputTextArea.value, outputEncode));
+      List list = cipher
+          .decrypt(getBytesFromString(outputTextArea.value, outputEncode));
       if (list == null) throw new Exception('Incorrect message encoding!');
       inputTextArea.value = getStringFromBytes(list, inputEncode);
     } catch (exception, stackTrace) {
@@ -420,7 +443,6 @@ void buildStandardCiphers(int type) {
 void buildEncoding() {
   List inputEncode = [ENCODING_LATIN1];
   SpanElement wrapper = querySelector('#dynamic');
-
   wrapper.setInnerHtml(HTML_CODE_ENCODINGS, validator: nodeValidator);
 
   TextAreaElement inputTextArea = querySelector("#inputTextArea");
@@ -452,6 +474,26 @@ void buildRSA() {
       inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);*/
 }
 
+void buildRSAPEMGenerator() {
+  List inputEncode = [ENCODING_LATIN1];
+  SpanElement wrapper = querySelector('#dynamic');
+  wrapper.setInnerHtml(HTML_CODE_RSA_PEM_GENERATOR, validator: nodeValidator);
+
+  TextAreaElement inputTextArea = querySelector("#inputTextArea");
+  TextAreaElement outputTextArea = querySelector("#outputTextArea");
+  DivElement generatePEMButton = querySelector("#generatePEMButton");
+  DivElement generateCoefButton = querySelector("#generateCoefButton");
+  ParagraphElement descriptionParagraph = querySelector('#description');
+
+  encodings(inputTextArea, inputEncode, type: "Input");
+
+  descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RSA_PEM_GENERATOR,
+      validator: nodeValidator);
+
+  scrollTo(
+      inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);
+}
+
 void buildStandardHash(int type) {
   List inputEncode = [ENCODING_LATIN1];
   SpanElement wrapper = querySelector('#dynamic');
@@ -465,27 +507,100 @@ void buildStandardHash(int type) {
 
   encodings(inputTextArea, inputEncode, type: "Input");
 
-  var hash;
+  String digestName;
+  client_cipher.initCipher();
   if (type == HASH_SHA_1) {
     descriptionParagraph.appendHtml(TEXT_DESCRIPTION_SHA_1,
         validator: nodeValidator);
-    hash = new crypto.SHA1();
+    digestName = "SHA-1";
+  } else if (type == HASH_SHA_224) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_SHA_2,
+        validator: nodeValidator);
+    digestName = "SHA-224";
   } else if (type == HASH_SHA_256) {
     descriptionParagraph.appendHtml(TEXT_DESCRIPTION_SHA_2,
         validator: nodeValidator);
-    hash = new crypto.SHA256();
+    digestName = "SHA-256";
+  } else if (type == HASH_SHA_384) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_SHA_2,
+        validator: nodeValidator);
+    digestName = "SHA-384";
+  } else if (type == HASH_SHA_512) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_SHA_2,
+        validator: nodeValidator);
+    digestName = "SHA-512";
+  } else if (type == HASH_SHA_512_224) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_SHA_2,
+        validator: nodeValidator);
+    digestName = "SHA-512/224";
+  } else if (type == HASH_SHA_512_256) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_SHA_2,
+        validator: nodeValidator);
+    digestName = "SHA-512/256";
+  } else if (type == HASH_SHA_3_224) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_SHA_3,
+        validator: nodeValidator);
+    digestName = "SHA-3/224";
+  } else if (type == HASH_SHA_3_256) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_SHA_3,
+        validator: nodeValidator);
+    digestName = "SHA-3/256";
+  } else if (type == HASH_SHA_3_384) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_SHA_3,
+        validator: nodeValidator);
+    digestName = "SHA-3/384";
+  } else if (type == HASH_SHA_3_512) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_SHA_3,
+        validator: nodeValidator);
+    digestName = "SHA-3/512";
   } else if (type == HASH_MD5) {
     descriptionParagraph.appendHtml(TEXT_DESCRIPTION_MD5,
         validator: nodeValidator);
-    hash = new crypto.MD5();
+    digestName = "MD5";
+  } else if (type == HASH_MD2) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_MD2,
+        validator: nodeValidator);
+    digestName = "MD2";
+  } else if (type == HASH_MD4) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_MD4,
+        validator: nodeValidator);
+    digestName = "MD4";
+  } else if (type == HASH_MD4) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_MD4,
+        validator: nodeValidator);
+    digestName = "MD4";
+  } else if (type == HASH_TIGER) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_TIGER,
+        validator: nodeValidator);
+    digestName = "Tiger";
+  } else if (type == HASH_WHIRLPOOL) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_WHIRLPOOL,
+        validator: nodeValidator);
+    digestName = "Whirlpool";
+  } else if (type == HASH_RIPEMD_128) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RIPEMD,
+        validator: nodeValidator);
+    digestName = "RIPEMD-128";
+  } else if (type == HASH_RIPEMD_160) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RIPEMD,
+        validator: nodeValidator);
+    digestName = "RIPEMD-160";
+  } else if (type == HASH_RIPEMD_256) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RIPEMD,
+        validator: nodeValidator);
+    digestName = "RIPEMD-256";
+  } else if (type == HASH_RIPEMD_320) {
+    descriptionParagraph.appendHtml(TEXT_DESCRIPTION_RIPEMD,
+        validator: nodeValidator);
+    digestName = "RIPEMD-320";
   }
+  var digest = new cipher.Digest(digestName);
 
   void calc_hash() {
     outputTextArea.value = '';
     try {
-      hash.add(getBytesFromString(inputTextArea.value, inputEncode));
-      outputTextArea.value = bytesToHexString(hash.close());
-      hash = hash.newInstance();
+      digest.reset();
+      outputTextArea.value = bytesToHexString(digest.process(getBytesFromString(inputTextArea.value, inputEncode)));
     } catch (exception, stackTrace) {
       toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
       print(exception);
