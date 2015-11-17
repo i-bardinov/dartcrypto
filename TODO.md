@@ -1,7 +1,7 @@
 # TODO:
  * OFB, CTR encryption modes for block ciphers;
  * RSA algorithm;
- * RSA key generator in PEM;
+ * RSA PEM generator;
  * AES cipher;
  * Magma cipher;
  * HMAC hash;

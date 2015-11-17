@@ -1,3 +1,8 @@
+# Version 0.1.4:
+ * Added RC4 stream cipher family;
+ * clean ups;
+ * rewrite key generation;
+ 
 # Version 0.1.3:
  * Generation key button to Caesar, Affine, Vigerene, Beaufort, One-Time pad, Hill ciphers;
  * clean up css;
