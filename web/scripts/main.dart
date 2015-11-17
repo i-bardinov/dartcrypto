@@ -762,20 +762,30 @@ void encodings(TextAreaElement field, List encode,
 }
 
 List getBytesFromString(String field, List encode) {
-  if (encode[0] == ENCODING_HEX) return hexStringToBytes(field);
-  if (encode[0] == ENCODING_LATIN1) return LATIN1.encode(field);
-  if (encode[0] == ENCODING_BASE64) return base64StringToBytes(field);
-  if (encode[0] == ENCODING_UTF8) return UTF8.encode(field);
-  if (encode[0] == ENCODING_ASCII) return ASCII.encode(field);
+  try {
+    if (encode[0] == ENCODING_HEX) return hexStringToBytes(field);
+    if (encode[0] == ENCODING_LATIN1) return LATIN1.encode(field);
+    if (encode[0] == ENCODING_BASE64) return base64StringToBytes(field);
+    if (encode[0] == ENCODING_UTF8) return UTF8.encode(field);
+    if (encode[0] == ENCODING_ASCII) return ASCII.encode(field);
+  } catch (exception, stackTrace) {
+    toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+    throw new Exception(stackTrace);
+  }
   return null;
 }
 
 String getStringFromBytes(List field, List encode) {
-  if (encode[0] == ENCODING_HEX) return bytesToHexString(field);
-  if (encode[0] == ENCODING_LATIN1) return LATIN1.decode(field);
-  if (encode[0] == ENCODING_BASE64) return bytesToBase64String(field);
-  if (encode[0] == ENCODING_UTF8) return UTF8.decode(field);
-  if (encode[0] == ENCODING_ASCII) return ASCII.decode(field);
+  try {
+    if (encode[0] == ENCODING_HEX) return bytesToHexString(field);
+    if (encode[0] == ENCODING_LATIN1) return LATIN1.decode(field);
+    if (encode[0] == ENCODING_BASE64) return bytesToBase64String(field);
+    if (encode[0] == ENCODING_UTF8) return UTF8.decode(field);
+    if (encode[0] == ENCODING_ASCII) return ASCII.decode(field);
+  } catch (exception, stackTrace) {
+    toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+    throw new Exception(stackTrace);
+  }
   return null;
 }
 
