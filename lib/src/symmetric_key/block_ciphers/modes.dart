@@ -6,6 +6,7 @@ const int BLOCK_MODE_PCBC = 2;
 const int BLOCK_MODE_CFB = 3;
 const int BLOCK_MODE_OFB = 4;
 const int BLOCK_MODE_CTR = 5;
+const int BLOCK_MODE_GCTR = 6;
 
 List ECB_mode_encryption(List message, enc) {
   return enc(message);

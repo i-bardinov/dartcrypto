@@ -59,7 +59,16 @@ message size.
 ''';
 const String TEXT_DESCRIPTION_AES =
 '''
+<a href=\'https://en.wikipedia.org/wiki/Advanced_Encryption_Standard\' target=\'_blank\'>The Advanced Encryption Standard (AES)</a>, also known as Rijndael (its original name),
+ is a specification for the encryption of electronic data established by the U.S. National
+ Institute of Standards and Technology (NIST) in 2001.
 
+AES is based on the Rijndael cipher developed by two Belgian cryptographers, Joan Daemen
+ and Vincent Rijmen, who submitted a proposal to NIST during the AES selection process.
+ Rijndael is a family of ciphers with different key and block sizes.
+
+For AES, NIST selected three members of the Rijndael family, each with a block size of 128
+bits, but three different key lengths: 128, 192 and 256 bits.
 ''';
 const String TEXT_DESCRIPTION_MAGMA =
 '''
@@ -609,6 +618,8 @@ const int ENCODING_BASE64 = 103;
 const int ENCODING_BASE58 = 104;
 const int ENCODING_UTF8 = 105;
 const int ENCODING_ASCII = 106;
+const int ENCODING_DECIMAL = 107;
+const int ENCODING_BINARY = 108;
 
 /* TRIVIAL CIPHERS */
 const int CIPHER_CAESAR = 1001;
@@ -624,6 +635,7 @@ const int CIPHER_RC4A = 1202;
 const int CIPHER_RC4PLUS = 1203;
 const int CIPHER_SPRITZ = 1204;
 const int CIPHER_VMPC = 1205;
+const int CIPHER_SALSA20 = 1206;
 
 /* BLOCK CIPHERS */
 const int CIPHER_MAGMA = 2001;
@@ -633,7 +645,7 @@ const int CIPHER_AES = 2002;
 const int CIPHER_RSA_GENERATOR = 3001;
 const int CIPHER_RSA = 3002;
 
-/* HASH ALGORITHMS */
+/* DIGESTS */
 const int HASH_SHA_1 = 4001;
 const int HASH_SHA_256 = 4002;
 const int HASH_SHA_512 = 4004;

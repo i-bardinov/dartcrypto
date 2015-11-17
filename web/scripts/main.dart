@@ -36,6 +36,8 @@ void buildStructure(int type) {
   SpanElement wrapper = querySelector('#dynamic');
   wrapper.setInnerHtml('');
 
+  client_cipher.initCipher();
+
   switch (type) {
     case CIPHER_CAESAR:
     case CIPHER_AFFINE:
@@ -43,6 +45,9 @@ void buildStructure(int type) {
       break;
     case CIPHER_HILL:
       buildBlockCiphers(type);
+      break;
+    case CIPHER_AES:
+      buildAESCipher();
       break;
     case CIPHER_BEAUFORT:
     case CIPHER_VIGENERE:
@@ -195,14 +200,13 @@ void buildAffine(int type) {
       encryptButton, getDuration(encryptButton, 2), TimingFunctions.easeInOut);
 }
 
-void buildBlockCiphers(int type) {
+buildAESCipher() {
   List inputEncode = [ENCODING_LATIN1];
   List keyEncode = [ENCODING_LATIN1];
   List outputEncode = [ENCODING_HEX];
+  List mode = [BLOCK_MODE_ECB];
   SpanElement wrapper = querySelector('#dynamic');
   wrapper.setInnerHtml(HTML_CODE_BLOCK_CIPHERS, validator: nodeValidator);
-
-  int mode = BLOCK_MODE_ECB;
 
   TextAreaElement inputTextArea = querySelector("#inputTextArea");
   TextAreaElement keyTextArea = querySelector("#keyTextArea");
@@ -213,42 +217,76 @@ void buildBlockCiphers(int type) {
   DivElement decryptButton = querySelector("#decryptButton");
   ParagraphElement descriptionParagraph = querySelector('#description');
 
+  descriptionParagraph.appendHtml(TEXT_DESCRIPTION_AES,
+      validator: nodeValidator);
+
+  modes(mode);
   encodings(inputTextArea, inputEncode, type: "Input");
   encodings(keyTextArea, keyEncode, type: "Key", changeValue: false);
   encodings(initVectorTextArea, keyEncode, type: "Key");
   encodings(outputTextArea, outputEncode, type: "Output");
 
-  String height = keyTextArea.style.height;
-  querySelector("#ecbMode").onClick.listen((e) {
-    mode = BLOCK_MODE_ECB;
-    initVectorTextArea.style.display = 'none';
-    keyTextArea.style.height = height;
+  encryptButton.onClick.listen((e) {
+    outputTextArea.value = '';
+    try {
+      var keyParams = new cipher.KeyParameter(
+          getBytesFromString(keyTextArea.value, keyEncode));
+      var params = new cipher.ParametersWithIV(
+          keyParams, getBytesFromString(initVectorTextArea.value, keyEncode));
+      var ciph = new cipher.BlockCipher("AES/CBC")..init(true, params);
+      outputTextArea.value = getStringFromBytes(
+          ciph.process(getBytesFromString(inputTextArea.value, inputEncode)),
+          outputEncode);
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
+    }
   });
-  querySelector("#cbcMode").onClick.listen((e) {
-    mode = BLOCK_MODE_CBC;
-    initVectorTextArea.style.display = 'block';
-    keyTextArea.style.height = '140px';
+  decryptButton.onClick.listen((e) {
+    inputTextArea.value = '';
+    try {
+      var keyParams = new cipher.KeyParameter(
+          getBytesFromString(keyTextArea.value, keyEncode));
+      var params = new cipher.ParametersWithIV(
+          keyParams, getBytesFromString(initVectorTextArea.value, keyEncode));
+      var ciph = new cipher.BlockCipher("AES/CBC")..init(false, params);
+      inputTextArea.value = getStringFromBytes(
+          ciph.process(getBytesFromString(outputTextArea.value, inputEncode)),
+          outputEncode);
+    } catch (exception, stackTrace) {
+      toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
+      print(exception);
+      throw new Exception(stackTrace);
+    }
   });
-  querySelector("#pcbcMode").onClick.listen((e) {
-    mode = BLOCK_MODE_PCBC;
-    initVectorTextArea.style.display = 'block';
-    keyTextArea.style.height = '140px';
-  });
-  querySelector("#cfbMode").onClick.listen((e) {
-    mode = BLOCK_MODE_CFB;
-    initVectorTextArea.style.display = 'block';
-    keyTextArea.style.height = '140px';
-  });
-  querySelector("#ofbMode").onClick.listen((e) {
-    mode = BLOCK_MODE_OFB;
-    initVectorTextArea.style.display = 'none';
-    keyTextArea.style.height = height;
-  });
-  querySelector("#ctrMode").onClick.listen((e) {
-    mode = BLOCK_MODE_CTR;
-    initVectorTextArea.style.display = 'none';
-    keyTextArea.style.height = height;
-  });
+
+  scrollTo(
+      encryptButton, getDuration(encryptButton, 2), TimingFunctions.easeInOut);
+}
+
+void buildBlockCiphers(int type) {
+  List inputEncode = [ENCODING_LATIN1];
+  List keyEncode = [ENCODING_LATIN1];
+  List outputEncode = [ENCODING_HEX];
+  List mode = [BLOCK_MODE_ECB];
+  SpanElement wrapper = querySelector('#dynamic');
+  wrapper.setInnerHtml(HTML_CODE_BLOCK_CIPHERS, validator: nodeValidator);
+
+  TextAreaElement inputTextArea = querySelector("#inputTextArea");
+  TextAreaElement keyTextArea = querySelector("#keyTextArea");
+  TextAreaElement outputTextArea = querySelector("#outputTextArea");
+  TextAreaElement initVectorTextArea = querySelector("#initvectTextArea");
+  DivElement encryptButton = querySelector("#encryptButton");
+  DivElement keyGenerateButton = querySelector("#keyGenerateButton");
+  DivElement decryptButton = querySelector("#decryptButton");
+  ParagraphElement descriptionParagraph = querySelector('#description');
+
+  modes(mode);
+  encodings(inputTextArea, inputEncode, type: "Input");
+  encodings(keyTextArea, keyEncode, type: "Key", changeValue: false);
+  encodings(initVectorTextArea, keyEncode, type: "Key");
+  encodings(outputTextArea, outputEncode, type: "Output");
 
   var cipher = null;
   if (type == CIPHER_HILL) {
@@ -508,7 +546,6 @@ void buildStandardHash(int type) {
   encodings(inputTextArea, inputEncode, type: "Input");
 
   String digestName;
-  client_cipher.initCipher();
   if (type == HASH_SHA_1) {
     descriptionParagraph.appendHtml(TEXT_DESCRIPTION_SHA_1,
         validator: nodeValidator);
@@ -600,7 +637,8 @@ void buildStandardHash(int type) {
     outputTextArea.value = '';
     try {
       digest.reset();
-      outputTextArea.value = bytesToHexString(digest.process(getBytesFromString(inputTextArea.value, inputEncode)));
+      outputTextArea.value = bytesToHexString(
+          digest.process(getBytesFromString(inputTextArea.value, inputEncode)));
     } catch (exception, stackTrace) {
       toast(exception.toString().replaceAll(new RegExp('Exception: '), ''));
       print(exception);
@@ -615,6 +653,47 @@ void buildStandardHash(int type) {
       inputTextArea, getDuration(inputTextArea, 2), TimingFunctions.easeInOut);
 }
 
+void modes(List mode) {
+  TextAreaElement initVectorTextArea = querySelector("#initvectTextArea");
+  TextAreaElement keyTextArea = querySelector("#keyTextArea");
+  String height = keyTextArea.style.height;
+  querySelector("#ecbMode")?.onClick.listen((e) {
+    mode[0] = BLOCK_MODE_ECB;
+    initVectorTextArea.style.display = 'none';
+    keyTextArea.style.height = height;
+  });
+  querySelector("#cbcMode")?.onClick.listen((e) {
+    mode[0] = BLOCK_MODE_CBC;
+    initVectorTextArea.style.display = 'block';
+    keyTextArea.style.height = '140px';
+  });
+  querySelector("#pcbcMode")?.onClick.listen((e) {
+    mode[0] = BLOCK_MODE_PCBC;
+    initVectorTextArea.style.display = 'block';
+    keyTextArea.style.height = '140px';
+  });
+  querySelector("#gctrMode")?.onClick.listen((e) {
+    mode[0] = BLOCK_MODE_GCTR;
+    initVectorTextArea.style.display = 'block';
+    keyTextArea.style.height = '140px';
+  });
+  querySelector("#cfbMode")?.onClick.listen((e) {
+    mode[0] = BLOCK_MODE_CFB;
+    initVectorTextArea.style.display = 'block';
+    keyTextArea.style.height = '140px';
+  });
+  querySelector("#ofbMode")?.onClick.listen((e) {
+    mode[0] = BLOCK_MODE_OFB;
+    initVectorTextArea.style.display = 'none';
+    keyTextArea.style.height = height;
+  });
+  querySelector("#ctrMode")?.onClick.listen((e) {
+    mode[0] = BLOCK_MODE_CTR;
+    initVectorTextArea.style.display = 'none';
+    keyTextArea.style.height = height;
+  });
+}
+
 void encodings(TextAreaElement field, List encode,
     {String type: "Input", bool changeValue: true}) {
   if (field == null) throw new ArgumentError.notNull('field');
@@ -625,6 +704,8 @@ void encodings(TextAreaElement field, List encode,
     if (encode[0] == ENCODING_BASE64) querySelector("#base64$type").click();
     if (encode[0] == ENCODING_UTF8) querySelector("#utf8$type").click();
     if (encode[0] == ENCODING_ASCII) querySelector("#ascii$type").click();
+    if (encode[0] == ENCODING_BINARY) querySelector("#abinary$type").click();
+    if (encode[0] == ENCODING_DECIMAL) querySelector("#decimal$type").click();
   }
 
   querySelector("#latin1$type")?.onClick?.listen((e) {

@@ -7,7 +7,7 @@ async.Future toast(String msg, {int fadeIn: 500, int show: 3000, int fadeOut: 50
   var isCompleted = false, startTime = null, completer = new async.Completer();
   DivElement el = new DivElement()
     ..style.width = '200px'
-    ..style.height = '40px'
+    ..style.height = '60px'
     ..style.position = 'fixed'
     ..style.left = '50%'
     ..style.marginLeft = '-100px'
